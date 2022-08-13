@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "B2S2",
+    "slug": "B2S2",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
