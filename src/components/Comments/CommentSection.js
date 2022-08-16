@@ -1,10 +1,11 @@
-import { StyleSheet, View, Text } from 'react-native'
-import { useRef, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { useDispatch } from 'react-redux'
+import { StyleSheet, TextInput } from 'react-native'
+import { useRef, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import BottomSheet, {BottomSheetFlatList, BottomSheetView} from '@gorhom/bottom-sheet'
 
-import BottomSheet, {BottomSheetFlatList} from '@gorhom/bottom-sheet'
+import ParenComment from './ParenComment'
 
+import { MaterialIcons } from '@expo/vector-icons'; 
 import themes from '../../values/themes'
 import { closeCS } from '../../redux/slices/CommentSectionSlice'
 
@@ -12,18 +13,14 @@ const CommentSection = () => {
   const dispatch = useDispatch();
 
   const botSheet = useRef(null);
-  const flatList = useRef(null);
-  const [canSnap, setCanSnap] = useState(true);
   const { isOpen, data } = useSelector(state => state.isCsOpen);
-  const testdata = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const testdata = [1, 2, 3,];
 
   const close = () => {
     dispatch(closeCS());
   }
 
   useEffect(() => {
-    console.log(data);
-
     if(isOpen){
       botSheet.current.expand();
     }
@@ -34,9 +31,7 @@ const CommentSection = () => {
 
   const renderItem = ({item}) => {
     return (
-      <View>
-        <Text style={styles.text}>test text</Text>
-      </View>
+      <ParenComment/>
     )
   }
 
@@ -46,20 +41,36 @@ const CommentSection = () => {
       snapPoints={['75%']}
       index={-1}
       handleHeight={40}
-      enablePanDownToClose={canSnap}
+      enablePanDownToClose={true}
       onClose={close}
       backgroundStyle={styles.sheet}
       handleStyle={styles.handle}
     >
-      <BottomSheetFlatList
-        ref={flatList}
-        data={testdata}
-        keyExtractor={(item)=>item}
-        renderItem={renderItem}
-        estimatedItemSize={10}
-        onScrollBeginDrag={()=>setCanSnap(false)}
-        onScrollEndDrag={()=>setCanSnap(true)}
-      />
+      <BottomSheetView style={styles.container}>
+        <BottomSheetFlatList
+          data={testdata}
+          keyExtractor={(item)=>item}
+          renderItem={renderItem}
+          nestedScrollEnabled
+          style={styles.flatlist}
+        />
+
+        <BottomSheetView style={styles.addComment}>
+          <TextInput 
+            style={styles.input}
+            placeholder='Add Comment...'
+            multiline={true}
+            placeholderTextColor={themes.ACTIVE}
+          />
+          <BottomSheetView style={styles.icon}>
+            <MaterialIcons
+              name='tag-faces'
+              size={26}
+              color={themes.ACTIVE}
+            />
+          </BottomSheetView>
+        </BottomSheetView>
+      </BottomSheetView>
     </BottomSheet>
   )
 }
@@ -73,12 +84,36 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
   },
-  comment: {
-    height: 70,
+
+  container: {
+    flex: 1,
+    flexDirection: 'column',
   },
-  text: {
-    color: themes.ACTIVE,
-    fontSize: 16,
+  flatlist: {
+    flex: 1,
+  },
+  addComment: {
+    borderTopWidth: 1,
+    flexDirection: 'row',
+    paddingLeft: 15,
+  },
+  input: {
+    flex: 1,
+    color: themes.COLOR,
+    fontSize: themes.SIZE,
+    alignItems: 'center',
+    marginTop: 5,
+    marginBottom: 3,
+    borderRadius: 12,
+    paddingVertical: 3,
+    paddingLeft: 10,
+    backgroundColor: themes.CONSTRACT,
+    borderTopColor: themes.ACTIVE,
+  },
+  icon: {
+    width: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 })
 

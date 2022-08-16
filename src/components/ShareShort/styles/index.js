@@ -13,7 +13,13 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         alignItems: 'center',
+    },
+    pressable: {
+        position: 'absolute',
+        width: 45,
+        height: 40,
         zIndex: 10,
+        top: 20,
     },
     commentAddition: {
         marginTop: 15,

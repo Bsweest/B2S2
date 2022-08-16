@@ -5,18 +5,18 @@ import LottieView from 'lottie-react-native'
 
 import styles from './styles' 
 
-export default function HeartButton({isLike, setIsLike, countHeart, setCountHeart}) {
+export default function HeartButton({heart, setHeart}) {
   const icon = useRef(null);
   const firstLoad = useRef(true);
   const isFinish = useRef(false);
 
   useEffect(() => {
-    if(isLike){
+    if(heart.isLike){
       isFinish.current = false;
       icon.current.play(0, 25);
       
       if(!firstLoad.current) {
-        setCountHeart(prev => prev+1);
+        setHeart(prev => ({...prev, countHeart: prev.countHeart+1}));
       }
     }
     else{
@@ -24,35 +24,37 @@ export default function HeartButton({isLike, setIsLike, countHeart, setCountHear
       icon.current.play(7, 0);
 
       if(!firstLoad.current) {
-        setCountHeart(prev => prev-1);
+        setHeart(prev => ({...prev, countHeart: prev.countHeart-1}));
       }
     }
 
     firstLoad.current = false;
-  }, [isLike])
+  }, [heart.isLike])
   
   const updateLike = () => {
     if(!isFinish.current) return;
-    setIsLike((prev) => !prev)
+    setHeart(prev => ({...prev, isLike: !prev.isLike}));
   }
 
   return (
     <View style={styles.container}>
-      <Pressable onPress={updateLike} style={styles.icon}>
-        <View style={styles.icon}>
-          <LottieView
-            ref={icon}
-            source={require('../../assets/heart_animation.json')}
-            style={styles.heartLottie}
-            autoPlay={false}
-            loop={false}
-            resizeMode='cover'
-            onAnimationFinish={()=>{isFinish.current=true}}          
-          />
-        </View>
-      </Pressable>
+
+      <Pressable onPress={updateLike} style={styles.pressable}/>
+      
+      <View style={styles.icon}>
+        <LottieView
+          ref={icon}
+          source={require('../../assets/heart_animation.json')}
+          style={styles.heartLottie}
+          autoPlay={false}
+          loop={false}
+          resizeMode='cover'
+          onAnimationFinish={()=>{isFinish.current=true}}          
+        />
+      </View>
+
       <Text style={styles.text}>
-        {countHeart}
+        {heart.countHeart}
       </Text>
     </View>
   )

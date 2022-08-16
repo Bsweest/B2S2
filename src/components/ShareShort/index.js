@@ -8,6 +8,7 @@ import { Video } from 'expo-av'
 import { TapGestureHandler } from 'react-native-gesture-handler'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import TextTicker from 'react-native-text-ticker'
+import ReadMore from '@fawazahmed/react-native-read-more'
 
 import HeartButton from './HeartButton'
 import OpenComment from './OpenComment'
@@ -15,6 +16,7 @@ import BookmarkButton from './BookmarkButton'
 import ShareButton from './ShareButton'
 import OpenAvatar from './OpenAvatar'
 
+import themes from '../../values/themes'
 import { closeCS } from '../../redux/slices/CommentSectionSlice'
 
 const feedItemHeight = Dimensions.get('window').height;
@@ -31,8 +33,10 @@ const ShortVideo = ({item}) => {
   const doubleTap = useRef(null);
 
   //state for video information
-  const [isLike, setIsLike] = useState(false);
-  const [countHeart, setCountHeart] = useState(2000);
+  const [heart, setHeart] = useState({
+    isLike: true,
+    countHeart: 2000,
+  });
 
   const changeShort = () => {
     dispatch(closeCS());
@@ -46,7 +50,7 @@ const ShortVideo = ({item}) => {
   }
 
   const updateLike = () => {
-    setIsLike((prev) => !prev)
+    setHeart(prev => ({...prev, isLike: !prev.isLike}));
   }
 
   return (
@@ -90,7 +94,14 @@ const ShortVideo = ({item}) => {
               music hiphop for life letgo mot hai ba bon
             </TextTicker>
           </View> 
-          <Text style={styles.caption}>caption</Text>
+          <ReadMore 
+            style={styles.caption}
+            numberOfLines={2}
+            seeLessStyle={styles.readMore}
+            seeMoreStyle={styles.readMore}
+          >
+            caption
+          </ReadMore>
           <Text style={styles.originalPoster}>@OP</Text>
         </View>
         
@@ -99,12 +110,9 @@ const ShortVideo = ({item}) => {
           <BookmarkButton/>
           <OpenComment data={item} setStatus={setStatus}/>
           <HeartButton 
-            isLike={isLike} 
-            setIsLike={setIsLike} 
-            countHeart={countHeart} 
-            setCountHeart={setCountHeart}
+            heart={heart} 
+            setHeart={setHeart} 
           />
-
           <OpenAvatar/>
         </View>
       </View>
@@ -148,13 +156,20 @@ const styles = StyleSheet.create({
   },
   originalPoster: {
     fontWeight: '500',
-    fontSize: 24,
+    fontSize: 22,
     color: 'white',
   },
   caption: {
     fontSize: 20,
     color: 'white',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginBottom: 5,
+  },
+  readMore: {
+    color: themes.SECONDCOLOR,
+    fontSize: 18,
+    marginTop: 3,
+    marginLeft: 3,
   },
   musicContainer: {
     justifyContent: 'center',

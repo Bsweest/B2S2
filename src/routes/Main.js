@@ -10,9 +10,10 @@ import InboxScene from '../views/InboxScene'
 import ProfileScene from '../views/ProfileScene'
 import SearchScene from '../views/SearchScene'
 
+import CommentSection from '../components/Comments/CommentSection'
+
 import Ionicons from '@expo/vector-icons/Ionicons'
 import AddShortButton from '../assets/AddShortButton.svg'
-import CommentSection from '../components/Comments/CommentSection'
 import themes from '../values/themes'
 
 const BottomTab = createBottomTabNavigator();
@@ -36,7 +37,7 @@ export default function Main() {
                 <Ionicons 
                   name={ focused ? 'ios-home' : 'ios-home-outline' }
                   size={iconsize} 
-                  color={themes.ACTIVE}
+                  color={ focused ? themes.ACTIVE : themes.INACTIVE}
                 />
               ),
               tabBarLabelStyle: styles.label,
@@ -48,8 +49,7 @@ export default function Main() {
                 <Ionicons 
                   name={ focused ? 'ios-search' : 'ios-search-outline' }
                   size={iconsize} 
-                  color={themes.ACTIVE}
-                />
+                  color={ focused ? themes.ACTIVE : themes.INACTIVE}                />
               ),
               tabBarLabelStyle: styles.label,
             }}
@@ -70,8 +70,7 @@ export default function Main() {
                 <Ionicons 
                   name={ focused ? 'ios-chatbox-ellipses' : 'ios-chatbox-outline' }
                   size={iconsize} 
-                  color={themes.ACTIVE}
-                />
+                  color={ focused ? themes.ACTIVE : themes.INACTIVE}                />
               ),
               tabBarLabelStyle: styles.label,
             }}
@@ -82,8 +81,7 @@ export default function Main() {
                 <Ionicons 
                   name={ focused ? 'ios-person' : 'person-outline' }
                   size={iconsize} 
-                  color={themes.ACTIVE}
-                />
+                  color={ focused ? themes.ACTIVE : themes.INACTIVE}                />
               ),
               tabBarLabelStyle: styles.label,
             }}

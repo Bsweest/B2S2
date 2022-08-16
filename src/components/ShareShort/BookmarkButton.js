@@ -28,7 +28,7 @@ export default function BookmarkButton() {
 
   return (
     <View style={styles.container}>
-      <Pressable onPress={updateMark}>
+      <Pressable onPress={updateMark} style={styles.icon}>
         <View style={styles.icon}>
           <LottieView
             ref={icon}
