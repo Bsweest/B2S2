@@ -32,7 +32,7 @@ export default function BookmarkButton() {
         <View style={styles.icon}>
           <LottieView
             ref={icon}
-            source={require('../../assets/bookmark_animation.json')}
+            source={require('../../../assets/bookmark_animation.json')}
             style={styles.bmLottie}
             autoPlay={false}
             loop={false}

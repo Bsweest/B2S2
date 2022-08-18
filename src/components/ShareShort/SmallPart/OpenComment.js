@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 import styles from './styles'
-import { openCS } from '../../redux/slices/CommentSectionSlice';
+import { openCS } from '../../../redux/slices/CommentSectionSlice';
 
 export default function OpenComment({data, setStatus}) {
   const dispatch = useDispatch();
@@ -20,7 +20,7 @@ export default function OpenComment({data, setStatus}) {
         <View style={styles.commentAddition}>
           <FontAwesome 
             name='commenting'
-            size={45}
+            size={36}
             color={'#FBFBFB'}
           />
         </View>

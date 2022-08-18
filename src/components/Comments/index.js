@@ -46,12 +46,13 @@ const Comment = ({isParent}) => {
     <View style={styles.container}>
 
       <View style={[styles.avatarContainer, {
-        width: isParent ? 70 : 50,
+        width: isParent ? 50 : 40,
       }]}>
         <Image 
           style={[styles.avatar, {
-            height: isParent ? 50 : 35,
-            width: isParent ? 50 : 35,
+            height: isParent ? 40 : 30,
+            width: isParent ? 40 : 30,
+            borderRadius: isParent ? 20 : 15,
           }]}
           source={require('../../assets/placeholder/user.png')}
         /> 
@@ -107,7 +108,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatar: {
-    borderRadius: 25,
     borderWidth: 1,
     backgroundColor: 'white',
     borderColor: 'white',

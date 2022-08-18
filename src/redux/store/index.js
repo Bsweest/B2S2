@@ -1,8 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import openCommenSectionReducer from '../slices/CommentSectionSlice'
+import commenSectionReducer from '../slices/CommentSectionSlice'
+import modalShortReducer from '../slices/ModalShortSlice'
 
 export default configureStore({
     reducer: {
-        isCsOpen: openCommenSectionReducer,
+        commentSection: commenSectionReducer,
+        modalShort: modalShortReducer,
     }
 });

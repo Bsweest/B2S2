@@ -10,11 +10,11 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import TextTicker from 'react-native-text-ticker'
 import ReadMore from '@fawazahmed/react-native-read-more'
 
-import HeartButton from './HeartButton'
-import OpenComment from './OpenComment'
-import BookmarkButton from './BookmarkButton'
-import ShareButton from './ShareButton'
-import OpenAvatar from './OpenAvatar'
+import HeartButton from './SmallPart/HeartButton'
+import OpenComment from './SmallPart/OpenComment'
+import BookmarkButton from './SmallPart/BookmarkButton'
+import ShareButton from './SmallPart/ShareButton'
+import OpenAvatar from './SmallPart/OpenAvatar'
 
 import themes from '../../values/themes'
 import { closeCS } from '../../redux/slices/CommentSectionSlice'
@@ -39,6 +39,7 @@ const ShortVideo = ({item}) => {
   });
 
   const changeShort = () => {
+    console.log('log')
     dispatch(closeCS());
     setStatus(!status);
   }
@@ -65,6 +66,8 @@ const ShortVideo = ({item}) => {
         onViewportEnter={playShort}
         onViewportLeave={pauseShort}
         preTriggerRatio={-1}
+        usePoster={true}
+        posterSource={require('../../../tests/Background.png')}
       />
 
       <TapGestureHandler
@@ -83,7 +86,7 @@ const ShortVideo = ({item}) => {
       <View style={styles.overlay}>
         <View style={styles.leftContainer}>
           <View style={styles.musicContainer}>
-            <Ionicons name='md-musical-notes-sharp' size={24} style={styles.musicIcon}/>
+            <Ionicons name='md-musical-notes-sharp' size={22} style={styles.musicIcon}/>
             <TextTicker
               style={styles.musicTick}
               duration={6000}
@@ -155,15 +158,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   originalPoster: {
-    fontWeight: '500',
-    fontSize: 22,
+    fontWeight: '700',
+    fontSize: 20,
     color: 'white',
   },
   caption: {
-    fontSize: 20,
+    fontSize: themes.SIZE,
     color: 'white',
     justifyContent: 'center',
-    marginBottom: 5,
+    marginBottom: 10,
   },
   readMore: {
     color: themes.SECONDCOLOR,
@@ -181,7 +184,7 @@ const styles = StyleSheet.create({
     marginBottom: -5,
   },  
   musicTick: {
-    fontSize: 20,
+    fontSize: themes.SIZE,
     color: 'white'
   }
 })

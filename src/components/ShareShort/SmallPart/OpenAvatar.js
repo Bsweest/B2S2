@@ -7,7 +7,7 @@ export default function OpenAvatar() {
     <View style={styles.avatarContainer}>
       <Image 
         style={styles.avatarImg}
-        source={require('../../../tests/ninon.jpg')}
+        source={require('../../../../tests/ninon.jpg')}
       /> 
       <FollowButton/>
     </View>
@@ -22,10 +22,10 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   avatarImg: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    borderWidth: 3,
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    borderWidth: 2,
     borderColor: 'white',
   },
 })

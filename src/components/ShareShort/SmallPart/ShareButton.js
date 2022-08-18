@@ -12,7 +12,7 @@ export default function ShareButton() {
           <FontAwesome 
             style={styles.commentAddition}
             name='share'
-            size={40}
+            size={36}
             color={'#FBFBFB'}
           />
         </View>
