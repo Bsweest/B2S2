@@ -1,25 +1,36 @@
-import { View, Text, StyleSheet, Dimensions, Image } from 'react-native'
-import React from 'react'
+import { View, Text, StyleSheet, Dimensions, Image, Modal, Pressable } from 'react-native'
+import React, { useState } from 'react'
 
 import themes from '../../values/themes';
+import { useDispatch } from 'react-redux';
+import { openModalShort } from '../../redux/slices/ModalShortSlice';
 
 const littleWidth = Dimensions.get('window').width * 44 / 100;
 const littleHeight = Dimensions.get('window').height * 44 / 100;
 const allHeight = littleHeight + 100;
 
-const LittleShort = () => {
+const LittleShort = ({data}) => {
+  const dispatch =  useDispatch();
+
+  const open = () => {
+    dispatch(openModalShort(data));
+  }
+
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.poster}
-        source={require('../../../tests/Background.png')}
-        resizeMode='cover'
-      />
+
+      <Pressable onPress={open}>
+        <Image
+          style={styles.poster}
+          source={require('../../../tests/Background.png')}
+          resizeMode='cover'
+        />
+      </Pressable>
 
       <Text style={styles.caption}
         numberOfLines={2}
       >
-        #SupaHot Test dAta Ley Lospim Neifs To 2 Line
+        #SupaHot Test Data Ley Lospim Neifs To 2 Line 
       </Text>
 
       <View style={styles.originalPoster}>
@@ -46,6 +57,7 @@ const styles = StyleSheet.create({
   poster: {
     height: littleHeight,
     width: littleWidth,
+    borderRadius: 8,
   },
   caption: {
     fontWeight: '500',

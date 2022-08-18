@@ -15,6 +15,7 @@ import CommentSection from '../components/Comments/CommentSection'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import AddShortButton from '../assets/AddShortButton.svg'
 import themes from '../values/themes'
+import ModalShort from '../components/ShareShort/ModalShort'
 
 const BottomTab = createBottomTabNavigator();
 const iconsize = 28;
@@ -28,6 +29,7 @@ export default function Main() {
             headerShown: false,
             tabBarActiveTintColor: themes.ACTIVE,
             tabBarStyle: styles.navigator,
+            tabBarHideOnKeyboard: true,
           }}
           initialRouteName='Home'
         >
@@ -49,14 +51,15 @@ export default function Main() {
                 <Ionicons 
                   name={ focused ? 'ios-search' : 'ios-search-outline' }
                   size={iconsize} 
-                  color={ focused ? themes.ACTIVE : themes.INACTIVE}                />
+                  color={ focused ? themes.ACTIVE : themes.INACTIVE}
+                />
               ),
               tabBarLabelStyle: styles.label,
             }}
           />
           <BottomTab.Screen name='AddShort' component={AddScene} 
             options={{
-              tabBarIcon: ({focused}) => (
+              tabBarIcon: () => (
                 <AddShortButton 
                   style={styles.addicon}
                 />
@@ -70,7 +73,8 @@ export default function Main() {
                 <Ionicons 
                   name={ focused ? 'ios-chatbox-ellipses' : 'ios-chatbox-outline' }
                   size={iconsize} 
-                  color={ focused ? themes.ACTIVE : themes.INACTIVE}                />
+                  color={ focused ? themes.ACTIVE : themes.INACTIVE}
+                />
               ),
               tabBarLabelStyle: styles.label,
             }}
@@ -81,15 +85,17 @@ export default function Main() {
                 <Ionicons 
                   name={ focused ? 'ios-person' : 'person-outline' }
                   size={iconsize} 
-                  color={ focused ? themes.ACTIVE : themes.INACTIVE}                />
+                  color={ focused ? themes.ACTIVE : themes.INACTIVE}
+                />
               ),
               tabBarLabelStyle: styles.label,
             }}
           />
         </BottomTab.Navigator>
+        <ModalShort style={styles.ms}/>
+        <CommentSection style={styles.cs}/>
       </NavigationContainer>
 
-      <CommentSection/>
 
     </GestureHandlerRootView>
   );
@@ -104,14 +110,20 @@ const styles = StyleSheet.create({
     elevation: 0,
     backgroundColor: themes.TRANSPARENT,
     borderRadius: 20,
-    height: 65,
+    height: 55,
   },
   addicon: {
-    height: 40,
-    width: 80,
+    height: 35,
+    width: 75,
     marginTop: -15,
   },
   label: {
     fontSize: 13.5,
+  },
+  cs: {
+    zIndex: 50,
+  },
+  ms: {
+    zIndex: 45,
   }
 });

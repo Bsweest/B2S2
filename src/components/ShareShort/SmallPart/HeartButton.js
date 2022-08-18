@@ -44,7 +44,7 @@ export default function HeartButton({heart, setHeart}) {
       <View style={styles.icon}>
         <LottieView
           ref={icon}
-          source={require('../../assets/heart_animation.json')}
+          source={require('../../../assets/heart_animation.json')}
           style={styles.heartLottie}
           autoPlay={false}
           loop={false}

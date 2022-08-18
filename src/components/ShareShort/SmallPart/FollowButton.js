@@ -29,7 +29,7 @@ const followed = {
 const FollowButton = () => {
   const [isFollow, setIsFollow] = useState(false);
   const [svgProps, setSvgProps] = useState(notFollow);
-  const [radius, setRadius] = useState(30);
+  const [radius, setRadius] = useState(24);
   const isFinish = useRef(false);
   
   const update = ()=>{
@@ -41,11 +41,11 @@ const FollowButton = () => {
     if(isFollow) {
       isFinish.current = false;
       setSvgProps(followed);
-      setRadius(38);
+      setRadius(32);
 
       const timer = setTimeout(() => {
         isFinish.current = false;
-        setRadius(30);
+        setRadius(24);
       }, 1000);
 
       return () => clearTimeout(timer)

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const openCommentSection = createSlice({
-    name: 'isCsOpen',
+const commentSection = createSlice({
+    name: 'commentSection',
     initialState: {
         isOpen: false,
         data: null,
@@ -18,6 +18,6 @@ const openCommentSection = createSlice({
     }
 })
 
-export const { openCS, closeCS } = openCommentSection.actions;
+export const { openCS, closeCS } = commentSection.actions;
 
-export default openCommentSection.reducer;
+export default commentSection.reducer;
