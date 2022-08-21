@@ -2,15 +2,34 @@ import { View, StyleSheet, TextInput, Pressable } from 'react-native'
 import React, { useRef } from 'react'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
 import SearchList from '../components/LittleShort/SearchList'
+import SearchDetails from '../components/LittleShort/SearchDetails';
 
 import themes from '../values/themes'
 import { MaterialIcons } from '@expo/vector-icons'; 
 
+const NavStack = createBottomTabNavigator();
 const TopTab = createMaterialTopTabNavigator();
 
 export default function SearchScene() {
+
+  return (
+    <NavStack.Navigator 
+      initialRouteName='Results'
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: styles.tabBar,
+      }}
+    >
+        <NavStack.Screen name='SearchResults' component={Results}/>
+        <NavStack.Screen name='SearchDetails' component={SearchDetails}/>
+    </NavStack.Navigator>
+  )
+}
+
+const Results = () => {
   const input = useRef(null);
 
   const cancel = () => {
@@ -43,6 +62,9 @@ export default function SearchScene() {
 }
 
 const styles = StyleSheet.create({
+  tabBar: {
+    display: 'none',
+  },
   container: {
     flex: 1,
     backgroundColor: themes.ACTIVE,

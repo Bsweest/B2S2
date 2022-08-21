@@ -24,7 +24,7 @@ const feedItemWidth = Dimensions.get('window').width;
 
 const ViewportAwareVideo = Viewport.Aware(Video);
 
-const ShortVideo = ({item}) => {
+const ShortVideo = ({ item }) => {
   const dispatch = useDispatch();
 
   //state for parent component
@@ -39,7 +39,6 @@ const ShortVideo = ({item}) => {
   });
 
   const changeShort = () => {
-    console.log('log')
     dispatch(closeCS());
     setStatus(!status);
   }
@@ -55,19 +54,17 @@ const ShortVideo = ({item}) => {
   }
 
   return (
-    <View style={{height: feedItemHeight, width: feedItemWidth}}>
+    <View style={styles.container}>
 
       <ViewportAwareVideo
         style={styles.videoContainer}
-        resizeMode='cover'  
+        resizeMode={'contain'}
         shouldPlay={status && inUse}
         isLooping
         source={{uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',}}
         onViewportEnter={playShort}
         onViewportLeave={pauseShort}
         preTriggerRatio={-1}
-        usePoster={true}
-        posterSource={require('../../../tests/Background.png')}
       />
 
       <TapGestureHandler
@@ -125,6 +122,11 @@ const ShortVideo = ({item}) => {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    height: feedItemHeight, 
+    width: feedItemWidth,
+    backgroundColor: themes.BACKGROUND, 
+   },
   videoContainer: {
     flex: 1,
     zIndex: 1

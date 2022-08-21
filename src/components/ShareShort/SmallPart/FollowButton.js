@@ -48,7 +48,7 @@ const FollowButton = () => {
         setRadius(24);
       }, 1000);
 
-      return () => clearTimeout(timer)
+      return () => clearTimeout(timer);
     }
 
     else {

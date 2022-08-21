@@ -1,6 +1,5 @@
-import React from 'react'
 import { StyleSheet } from "react-native"
-import { NavigationContainer } from '@react-navigation/native'
+import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
@@ -15,10 +14,19 @@ import CommentSection from '../components/Comments/CommentSection'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import AddShortButton from '../assets/AddShortButton.svg'
 import themes from '../values/themes'
-import ModalShort from '../components/ShareShort/ModalShort'
 
 const BottomTab = createBottomTabNavigator();
 const iconsize = 28;
+
+const getTabBarStyle = (route) => {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'SearchResults';
+  switch (routeName) {
+    case 'SearchResults':
+      return (styles.navigator);
+    case 'SearchDetails':
+      return (styles.none);
+  }
+}
 
 export default function Main() {
   return (
@@ -46,7 +54,7 @@ export default function Main() {
             }}
           />
           <BottomTab.Screen name='Search' component={SearchScene} 
-            options={{
+            options={ ({route}) => ({
               tabBarIcon: ({focused}) => (
                 <Ionicons 
                   name={ focused ? 'ios-search' : 'ios-search-outline' }
@@ -55,7 +63,8 @@ export default function Main() {
                 />
               ),
               tabBarLabelStyle: styles.label,
-            }}
+              tabBarStyle: getTabBarStyle(route),
+            })}
           />
           <BottomTab.Screen name='AddShort' component={AddScene} 
             options={{
@@ -92,8 +101,8 @@ export default function Main() {
             }}
           />
         </BottomTab.Navigator>
-        <ModalShort style={styles.ms}/>
-        <CommentSection style={styles.cs}/>
+        
+        <CommentSection/>
       </NavigationContainer>
 
 
@@ -107,10 +116,10 @@ const styles = StyleSheet.create({
     bottom: 10,
     left: 12,
     right: 12,
-    elevation: 0,
-    backgroundColor: themes.TRANSPARENT,
     borderRadius: 20,
-    height: 55,
+    height: 52,
+    borderTopWidth: 0,
+    backgroundColor: themes.TRANSPARENT,
   },
   addicon: {
     height: 35,
@@ -120,10 +129,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13.5,
   },
-  cs: {
-    zIndex: 50,
-  },
-  ms: {
-    zIndex: 45,
+  none: {
+    display: 'none'
   }
 });

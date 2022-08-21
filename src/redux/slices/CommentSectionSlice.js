@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const commentSection = createSlice({
+const commentSectionSlice = createSlice({
     name: 'commentSection',
     initialState: {
         isOpen: false,
@@ -18,6 +18,6 @@ const commentSection = createSlice({
     }
 })
 
-export const { openCS, closeCS } = commentSection.actions;
+export const { openCS, closeCS } = commentSectionSlice.actions;
 
-export default commentSection.reducer;
+export default commentSectionSlice.reducer;
