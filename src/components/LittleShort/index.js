@@ -1,19 +1,20 @@
-import { View, Text, StyleSheet, Dimensions, Image, Modal, Pressable } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, StyleSheet, Dimensions, Image, Pressable } from 'react-native'
+import { useDispatch } from 'react-redux';
+
+import { openSD } from '../../redux/slices/SearchDetailsSlice';
 
 import themes from '../../values/themes';
-import { useDispatch } from 'react-redux';
-import { openModalShort } from '../../redux/slices/ModalShortSlice';
 
 const littleWidth = Dimensions.get('window').width * 44 / 100;
 const littleHeight = Dimensions.get('window').height * 44 / 100;
 const allHeight = littleHeight + 100;
 
-const LittleShort = ({data}) => {
-  const dispatch =  useDispatch();
+const LittleShort = ({index, navigation}) => {
+  const dispatch = useDispatch();
 
   const open = () => {
-    dispatch(openModalShort(data));
+    navigation.navigate('SearchDetails');
+    dispatch(openSD(index));
   }
 
   return (

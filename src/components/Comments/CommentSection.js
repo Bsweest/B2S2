@@ -1,20 +1,19 @@
 import { StyleSheet, TextInput } from 'react-native'
 import { useRef, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
 import BottomSheet, {BottomSheetFlatList, BottomSheetView} from '@gorhom/bottom-sheet'
+import { useSelector, useDispatch } from 'react-redux'
 
 import ParenComment from './ParenComment'
 
 import { MaterialIcons } from '@expo/vector-icons'; 
 import themes from '../../values/themes'
 import { closeCS } from '../../redux/slices/CommentSectionSlice'
-import ModalShort from '../ShareShort/ModalShort'
 
 const CommentSection = () => {
   const dispatch = useDispatch();
+  const { isOpen, data } = useSelector(state => state.commentSection);
 
   const botSheet = useRef(null);
-  const { isOpen, data } = useSelector(state => state.commentSection);
   const testdata = [1, 2, 3,];
 
   const close = () => {
@@ -73,7 +72,6 @@ const CommentSection = () => {
         </BottomSheetView>
       </BottomSheetView>
 
-      {/* <ModalShort/> */}
     </BottomSheet>
   )
 }
