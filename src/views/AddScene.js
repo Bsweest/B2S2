@@ -1,10 +1,20 @@
-import { View, Text } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-export default function AddScene() {
+const AddScene = () => {
   return (
-    <View>
-      <Text>AddScene</Text>
+    <View style={styles.container}>
+      
     </View>
   )
 }
+
+export default AddScene
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'green'
+  }
+})
+

@@ -1,24 +1,17 @@
 import { View, StyleSheet } from 'react-native'
 import React, { useEffect } from 'react'
 import { FlashList } from '@shopify/flash-list'
-import { useDispatch } from 'react-redux'
-import { getSearchDetails } from '../../redux/slices/SearchDetailsSlice'
 
 import themes from '../../values/themes'
 import LittleShort from '.'
 
 const SearchList = ({ navigation }) => {
-  const dispatch = useDispatch();
 
-  const data = [0, 1, 12, 2];
-
-  useEffect(() => {
-    dispatch(getSearchDetails(data));
-  }, [])
+  const data = [0, 1, 12, 2, 4, 6];
 
   const renderItem = ({item, index}) => {
     return (
-      <LittleShort index={index} navigation={navigation}/>
+      <LittleShort navigation={navigation} index={index} item={item}/>
     )
   }
 
@@ -26,7 +19,7 @@ const SearchList = ({ navigation }) => {
     <View style={styles.container}>
       <FlashList
         data={data}
-        estimatedItemSize={8}
+        estimatedItemSize={6}
         renderItem={renderItem}
         keyExtractor={(item)=>item}
         numColumns={2}
@@ -40,7 +33,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: themes.BACKGROUND,
-    paddingHorizontal: '2%',
+    paddingLeft: '3%',
     paddingTop: 10,
   },
 })

@@ -1,25 +1,12 @@
 import { StyleSheet } from 'react-native'
 import { Viewport } from '@skele/components'
 import { FlashList } from '@shopify/flash-list'
-import { useEffect, useRef } from 'react'
-import { useSelector } from 'react-redux'
+import { useRef } from 'react'
 
 import ShortVideo from '.'
 
-const ListShort = ({ isMain, data }) => {
-  const list = useRef(null);
-  const { index } =  useSelector(state => state.searchDetails);
-
-  useEffect(() => {
-    if(!isMain){
-      list.current?.scrollToIndex({
-        index,
-        animated: false,
-      });
-    }
-  
-  }, [index])
-  
+const ListShort = ({ data }) => {
+  const list = useRef(null);  
 
   const renderItem = ({item}) => {
     return (
