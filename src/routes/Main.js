@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native"
+import { Image, StyleSheet, View } from "react-native"
 import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -12,11 +12,10 @@ import SearchScene from '../views/SearchScene'
 import CommentSection from '../components/Comments/CommentSection'
 
 import Ionicons from '@expo/vector-icons/Ionicons'
-import AddShortButton from '../assets/AddShortButton.svg'
 import themes from '../values/themes'
 
 const BottomTab = createBottomTabNavigator();
-const iconsize = 28;
+const iconsize = 25;
 
 const getTabBarStyle = (route) => {
   const routeName = getFocusedRouteNameFromRoute(route) ?? 'SearchResults';
@@ -69,9 +68,12 @@ export default function Main() {
           <BottomTab.Screen name='AddShort' component={AddScene} 
             options={{
               tabBarIcon: () => (
-                <AddShortButton 
-                  style={styles.addicon}
-                />
+                <View style={styles.addicon}>
+                  <Image 
+                    source={require('../assets/AddShortButton.png')}
+                    style={styles.icon}
+                  />
+                </View>
               ),
               tabBarLabel: ()=>null,
             }}
@@ -117,17 +119,23 @@ const styles = StyleSheet.create({
     left: 12,
     right: 12,
     borderRadius: 20,
-    height: 52,
+    height: 48,
     borderTopWidth: 0,
     backgroundColor: themes.TRANSPARENT,
   },
   addicon: {
+    height: 30,
+    width: 50,
+    marginTop: -14,
+  },
+  icon: {
     height: 35,
-    width: 75,
-    marginTop: -15,
+    width: 60,
+    overflow: 'visible',
   },
   label: {
     fontSize: 13.5,
+    fontWeight: '700',
   },
   none: {
     display: 'none'

@@ -1,35 +1,14 @@
 import { View, StyleSheet, TextInput, Pressable } from 'react-native'
 import React, { useRef } from 'react'
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
-import SearchList from '../components/LittleShort/SearchList'
-import SearchDetails from '../components/LittleShort/SearchDetails';
+import CombinedList from '../components/LittleShort/CombinedList'
 
 import themes from '../values/themes'
 import { MaterialIcons } from '@expo/vector-icons'; 
 
-const NavStack = createBottomTabNavigator();
-const TopTab = createMaterialTopTabNavigator();
-
 export default function SearchScene() {
 
-  return (
-    <NavStack.Navigator 
-      initialRouteName='Results'
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: styles.tabBar,
-      }}
-    >
-        <NavStack.Screen name='SearchResults' component={Results}/>
-        <NavStack.Screen name='SearchDetails' component={SearchDetails}/>
-    </NavStack.Navigator>
-  )
-}
-
-const Results = () => {
   const input = useRef(null);
 
   const cancel = () => {
@@ -38,8 +17,8 @@ const Results = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+
       <View style={styles.searchContainer}>
-        <MaterialIcons name="arrow-back" size={24} color="black" style={styles.btnBack}/>
         <View style={styles.inputContainer}>
           <TextInput
             ref={input}
@@ -53,10 +32,8 @@ const Results = () => {
         </View>
       </View>
 
-      <TopTab.Navigator>
-        <TopTab.Screen name='Top' component={SearchList}/>
-        <TopTab.Screen name='New' component={SearchList}/>
-      </TopTab.Navigator>
+      <CombinedList/>
+
     </SafeAreaView>
   )
 }
@@ -71,11 +48,13 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     height: 55,
+    marginLeft: 15,
     flexDirection: 'row',
     alignItems: 'center',
   },
   btnBack: {
-    marginHorizontal: 10,
+    position: 'absolute',
+    right: 10,
   },
   inputContainer: {
     flex: 1,
