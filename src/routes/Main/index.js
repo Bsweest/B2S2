@@ -3,16 +3,16 @@ import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-naviga
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
-import HomeScene from '../views/HomeScene'
-import AddScene from '../views/AddScene'
-import InboxScene from '../views/InboxScene'
-import ProfileScene from '../views/ProfileScene'
-import SearchScene from '../views/SearchScene'
+import HomeScene from './views/HomeScene'
+import AddScene from './views/AddScene'
+import InboxScene from './views/InboxScene'
+import ProfileScene from './views/ProfileScene'
+import SearchScene from './views/SearchScene'
 
-import CommentSection from '../components/Comments/CommentSection'
+import CommentSection from '../../components/Comments/CommentSection'
 
 import Ionicons from '@expo/vector-icons/Ionicons'
-import themes from '../values/themes'
+import themes from "../../values/themes"
 
 const BottomTab = createBottomTabNavigator();
 const iconsize = 25;
@@ -70,7 +70,7 @@ export default function Main() {
               tabBarIcon: () => (
                 <View style={styles.addicon}>
                   <Image 
-                    source={require('../assets/AddShortButton.png')}
+                    source={require('../../assets/AddShortButton.png')}
                     style={styles.icon}
                   />
                 </View>

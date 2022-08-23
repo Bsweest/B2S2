@@ -1,5 +1,5 @@
 import { View, StyleSheet } from 'react-native'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { FlashList } from '@shopify/flash-list'
 
 import themes from '../../values/themes'
@@ -9,9 +9,9 @@ const SearchList = ({ navigation }) => {
 
   const data = [0, 1, 12, 2, 4, 6];
 
-  const renderItem = ({item, index}) => {
+  const renderItem = ({ item }) => {
     return (
-      <LittleShort navigation={navigation} index={index} item={item}/>
+      <LittleShort navigation={navigation} item={item}/>
     )
   }
 

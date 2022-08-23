@@ -1,4 +1,4 @@
-import ListShort from "../components/ShareShort/ListShort"
+import ListShort from '../../../components/ShareShort/ListShort'
 
 export default function HomeScene() {
   const data = [10, 9, 8, 3];

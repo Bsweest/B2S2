@@ -109,7 +109,6 @@ const styles = StyleSheet.create({
   },
   avatar: {
     borderWidth: 1,
-    backgroundColor: 'white',
     borderColor: 'white',
   },
   commentContainer: {
