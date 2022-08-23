@@ -9,6 +9,14 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         margin: 1,
     },
+    shareContainer: {
+        width: 85,
+        height: 60,
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        flexDirection: 'column',
+        margin: 1,
+    },
     icon: {
         width: 50,
         height: 50,

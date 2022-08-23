@@ -9,7 +9,7 @@ const littleWidth = Dimensions.get('window').width * 44 / 100;
 const littleHeight = Dimensions.get('window').height * 44 / 100;
 const allHeight = littleHeight + 100;
 
-const LittleShort = ({ navigation, index, item }) => {
+const LittleShort = ({ navigation, item }) => {
   const dispatch = useDispatch();
 
   const open = () => {

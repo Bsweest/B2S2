@@ -2,13 +2,10 @@ import { View, StyleSheet, TextInput, Pressable } from 'react-native'
 import React, { useRef } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import CombinedList from '../components/LittleShort/CombinedList'
-
-import themes from '../values/themes'
+import themes from '../../../values/themes'
 import { MaterialIcons } from '@expo/vector-icons'; 
 
-export default function SearchScene() {
-
+const InboxScene = () => {
   const input = useRef(null);
 
   const cancel = () => {
@@ -23,38 +20,39 @@ export default function SearchScene() {
           <TextInput
             ref={input}
             style={styles.input}
-            placeholder='Search Short...'
+            placeholder='Search Friend...'
             numberOfLines={1}
           />
           <Pressable style={styles.cancel} onPress={cancel}>
-            <MaterialIcons name="cancel" size={24} color="black" />
+            <MaterialIcons name="cancel" size={24} color={themes.SECONDCOLOR} />
           </Pressable>
         </View>
       </View>
 
-      <CombinedList/>
-
+      
+      
     </SafeAreaView>
   )
 }
 
+
 const styles = StyleSheet.create({
-  tabBar: {
-    display: 'none',
-  },
   container: {
     flex: 1,
-    backgroundColor: themes.ACTIVE,
+  },
+  content: {
+    flex: 1,
+    zIndex: 0,
   },
   searchContainer: {
-    height: 55,
-    marginLeft: 15,
+    height: 50,
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  btnBack: {
-    position: 'absolute',
-    right: 10,
+    zIndex: 10,
+    paddingLeft: 15,
+    backgroundColor: themes.CONSTRACT,
+    borderBottomColor: themes.ACTIVE,
+    borderBottomWidth: 0.5,
   },
   inputContainer: {
     flex: 1,
@@ -75,3 +73,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   }
 })
+
+export default InboxScene

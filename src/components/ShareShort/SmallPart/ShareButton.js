@@ -6,7 +6,7 @@ import styles from './styles'
 
 export default function ShareButton() {
   return (
-    <View style={styles.container}>
+    <View style={styles.shareContainer}>
       <TouchableOpacity>
         <View style={styles.icon}>
           <FontAwesome 

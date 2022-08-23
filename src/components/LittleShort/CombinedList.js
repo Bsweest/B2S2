@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import SearchList from './SearchList';
 import SearchDetails from './SearchDetails';
 
-const NavStack = createStackNavigator();
+const NavStack = createNativeStackNavigator();
 
 const CombinedList = () => {
   return (
@@ -17,9 +17,8 @@ const CombinedList = () => {
       }}
     >
       <NavStack.Screen name='SearchResults' component={SearchList}/>
-      <NavStack.Group screenOptions={{ presentation: 'modal' }}>
-        <NavStack.Screen name='SearchDetails' component={SearchDetails}/>
-      </NavStack.Group>
+      <NavStack.Screen name='SearchDetails' component={SearchDetails}/>
+    
     </NavStack.Navigator>
   )
 }

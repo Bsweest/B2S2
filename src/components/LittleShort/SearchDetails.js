@@ -1,27 +1,27 @@
 import { StyleSheet, View, Pressable } from 'react-native'
-import React, { useEffect } from 'react'
+import React from 'react'
 import ShortVideo from '../ShareShort'
+import { useDispatch, useSelector } from 'react-redux';
+
+import { removeSearchDetails } from '../../redux/slices/SearchDetailsSlice';
 
 import { Ionicons } from '@expo/vector-icons'; 
-import { useSelector } from 'react-redux';
+
 
 const SearchDetails = ({ navigation }) => {
+  const dispatch = useDispatch();
   const { data } =  useSelector(state => state.searchDetails);
 
-  useEffect(() => {
-    console.log('data', data)
-  
-    return () => {
-      console.log('Out')
-    }
-  }, [])
-  
+  const goBack = () => {
+    dispatch(removeSearchDetails());
+    navigation.navigate('SearchResults');
+  }
   
   return (
     <View style={styles.container}>
       <ShortVideo style={styles.video} item={data}/>
 
-      <Pressable style={styles.btnBack} onPress={()=>navigation.navigate('SearchResults')}>
+      <Pressable style={styles.btnBack} onPress={goBack}>
         <Ionicons 
           name="arrow-back-outline" 
           size={40} color="white" 
@@ -35,6 +35,7 @@ const SearchDetails = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    zIndex: 20,
   },
   btnBack: {
     position: 'absolute',
