@@ -14,7 +14,7 @@ const SearchDetails = ({ navigation }) => {
 
   const goBack = () => {
     dispatch(removeSearchDetails());
-    navigation.navigate('SearchResults');
+    navigation.goBack();
   }
   
   return (

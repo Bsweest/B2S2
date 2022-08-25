@@ -36,6 +36,7 @@ export default function SearchScene() {
           </Pressable>
         </View>
       </View>
+      
       <CombinedList style={styles.result}/>
 
     </SafeAreaView>
