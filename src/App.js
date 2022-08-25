@@ -1,5 +1,5 @@
 import { Provider } from "react-redux"
-import Main from "./routes/Main"
+import Main from './routes/Main'
 
 import store from "./redux/store"
 

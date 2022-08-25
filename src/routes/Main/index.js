@@ -17,12 +17,22 @@ import themes from "../../values/themes"
 const BottomTab = createBottomTabNavigator();
 const iconsize = 25;
 
-const getTabBarStyle = (route) => {
+const getTabBarStyleSearch = (route) => {
   const routeName = getFocusedRouteNameFromRoute(route) ?? 'SearchResults';
   switch (routeName) {
     case 'SearchResults':
       return (styles.navigator);
     case 'SearchDetails':
+      return (styles.none);
+  }
+}
+
+const getTabBarStyleInbox = (route) => {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'MessList';
+  switch (routeName) {
+    case 'MessList':
+      return (styles.navigator);
+    case 'ChatScreen':
       return (styles.none);
   }
 }
@@ -62,7 +72,7 @@ export default function Main() {
                 />
               ),
               tabBarLabelStyle: styles.label,
-              tabBarStyle: getTabBarStyle(route),
+              tabBarStyle: getTabBarStyleSearch(route),
             })}
           />
           <BottomTab.Screen name='AddShort' component={AddScene} 
@@ -88,6 +98,7 @@ export default function Main() {
                 />
               ),
               tabBarLabelStyle: styles.label,
+              tabBarStyle: getTabBarStyleInbox(route),
             }}
           />
           <BottomTab.Screen name='Profile' component={ProfileScene} 

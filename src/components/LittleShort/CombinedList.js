@@ -1,4 +1,3 @@
-import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -13,7 +12,6 @@ const CombinedList = () => {
       initialRouteName='SearchResults'
       screenOptions={{
         headerShown: false,
-        tabBarStyle: styles.tabBar,
       }}
     >
       <NavStack.Screen name='SearchResults' component={SearchList}/>
@@ -24,5 +22,3 @@ const CombinedList = () => {
 }
 
 export default CombinedList
-
-const styles = StyleSheet.create({})
