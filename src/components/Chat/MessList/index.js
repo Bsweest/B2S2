@@ -1,6 +1,6 @@
-import { StyleSheet, View } from 'react-native'
-import React from 'react'
-import FlashList from '@shopify/flash-list/dist/FlashList'
+import { StyleSheet, View, TextInput, Pressable } from 'react-native'
+import React, { useRef } from 'react'
+import { FlashList } from '@shopify/flash-list'
 
 import Messenger from './Messenger'
 
@@ -30,6 +30,7 @@ const MessList = ({ navigation }) => {
             ref={input}
             style={styles.input}
             placeholder='Search Friend...'
+            placeholderTextColor={themes.SECONDCOLOR}
             numberOfLines={1}
           />
           <Pressable style={styles.cancel} onPress={cancel}>
@@ -51,6 +52,7 @@ const MessList = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: themes.BACKGROUND,
   },
   searchContainer: {
     height: 50,
@@ -58,7 +60,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 10,
     paddingLeft: 15,
-    backgroundColor: themes.CONSTRACT,
+    backgroundColor: themes.BACKGROUND,
     borderBottomColor: themes.ACTIVE,
     borderBottomWidth: 0.5,
   },
@@ -68,13 +70,14 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     paddingHorizontal: 10,
     marginRight: 15,
-    backgroundColor: 'whitesmoke',
+    backgroundColor: themes.CONSTRACT,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   input: {
     fontSize: themes.SIZE,
+    color: themes.COLOR,
   },
   cancel: {
     width: 30,

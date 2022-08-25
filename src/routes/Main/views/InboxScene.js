@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
@@ -11,17 +11,17 @@ const InboxScene = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-
-      <InboxStack.Navigator
-        initialRouteName='MessList'
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
-        <InboxStack.Screen name='MessList' component={MessList}/>
-        <InboxStack.Screen name='ChatScreen' component={ChatScreen}/>
-      </InboxStack.Navigator>
-      
+      <View style={styles.container}>
+        <InboxStack.Navigator
+          initialRouteName='MessList'
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <InboxStack.Screen name='MessList' component={MessList}/>
+          <InboxStack.Screen name='ChatScreen' component={ChatScreen}/>
+        </InboxStack.Navigator>
+      </View>
     </SafeAreaView>
   )
 }

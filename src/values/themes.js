@@ -8,6 +8,7 @@ const themes = {
     TRANSPARENT: 'rgba(0,0,0,0.55)',
     SIZE: 15,
     NOTE: 12,
+    BIG: 18,
 }
 
 export default themes;

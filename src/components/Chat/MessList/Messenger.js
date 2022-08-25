@@ -8,10 +8,11 @@ import { openMessages } from '../../../redux/slices/MessagesSlice'
 const Messenger = ({ item, navigation }) => {
   const dispatch = useDispatch();
 
-  const [read, setRead] = useState(false);
+  const [read, setRead] = useState(true);
 
   const openChat = () => {
     dispatch(openMessages(item));
+    navigation.navigate('ChatScreen');
   }
 
   return (
@@ -42,18 +43,19 @@ const Messenger = ({ item, navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 80,
+    height: 70,
     flexDirection: 'row',
     alignItems: 'center',
   },
   avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     marginHorizontal: 15,
   },
   messageContainer: {
-    flexDirection: 'row',
+    height: 60,
+    flexDirection: 'column',
     justifyContent: 'space-evenly',
   },
   messenger: {

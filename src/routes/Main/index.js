@@ -89,7 +89,7 @@ export default function Main() {
             }}
           />
           <BottomTab.Screen name='Inbox' component={InboxScene} 
-            options={{
+            options={ ({route}) => ({
               tabBarIcon: ({focused}) => (
                 <Ionicons 
                   name={ focused ? 'ios-chatbox-ellipses' : 'ios-chatbox-outline' }
@@ -99,7 +99,7 @@ export default function Main() {
               ),
               tabBarLabelStyle: styles.label,
               tabBarStyle: getTabBarStyleInbox(route),
-            }}
+            })}
           />
           <BottomTab.Screen name='Profile' component={ProfileScene} 
             options={{
