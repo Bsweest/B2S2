@@ -1,6 +1,5 @@
 import { View, StyleSheet, TextInput, Pressable } from 'react-native'
 import React, { useRef } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
 
 import CombinedList from '../../../components/LittleShort/CombinedList'
 
@@ -18,7 +17,7 @@ export default function SearchScene() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
 
       <View style={[
         styles.searchContainer, 
@@ -29,6 +28,7 @@ export default function SearchScene() {
             ref={input}
             style={styles.input}
             placeholder='Search Short...'
+            placeholderTextColor={themes.SECONDCOLOR}
             numberOfLines={1}
           />
           <Pressable style={styles.cancel} onPress={cancel}>
@@ -39,7 +39,7 @@ export default function SearchScene() {
       
       <CombinedList style={styles.result}/>
 
-    </SafeAreaView>
+    </View>
   )
 }
 
@@ -60,13 +60,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 10,
     paddingLeft: 15,
-    backgroundColor: themes.CONSTRACT,
+    backgroundColor: themes.BACKGROUND,
     borderBottomColor: themes.ACTIVE,
     borderBottomWidth: 0.5,
-  },
-  btnBack: {
-    position: 'absolute',
-    right: 10,
   },
   inputContainer: {
     flex: 1,
@@ -74,7 +70,8 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     paddingHorizontal: 10,
     marginRight: 15,
-    backgroundColor: 'whitesmoke',
+    backgroundColor: themes.CONSTRACT,
+    color: themes.COLOR,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',

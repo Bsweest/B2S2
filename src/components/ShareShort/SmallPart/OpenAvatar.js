@@ -1,14 +1,25 @@
-import { View, Image, StyleSheet } from 'react-native'
+import { View, Image, StyleSheet, Pressable } from 'react-native'
+import { useDispatch } from 'react-redux'
+import { openShareProfile } from '../../../redux/slices/ShareProfileSlice';
 
 import FollowButton from './FollowButton'
 
-export default function OpenAvatar() {
+const OpenAvatar = ({ navigation, data }) => {
+  const dispatch = useDispatch();
+
+  const open = () => {
+    dispatch(openShareProfile(data));
+    navigation.navigate('ShareProfile');
+  }
+
   return (
     <View style={styles.avatarContainer}>
-      <Image 
-        style={styles.avatarImg}
-        source={require('../../../../tests/ninon.jpg')}
-      /> 
+      <Pressable onPress={open}>
+        <Image 
+          style={styles.avatarImg}
+          source={require('../../../../tests/ninon.jpg')}
+        /> 
+      </Pressable>
       <FollowButton/>
     </View>
   )
@@ -29,3 +40,5 @@ const styles = StyleSheet.create({
     borderColor: 'white',
   },
 })
+
+export default OpenAvatar

@@ -19,7 +19,7 @@ const SearchDetails = ({ navigation }) => {
   
   return (
     <View style={styles.container}>
-      <ShortVideo style={styles.video} item={data}/>
+      <ShortVideo style={styles.video} item={data} modal={true}/>
 
       <Pressable style={styles.btnBack} onPress={goBack}>
         <Ionicons 

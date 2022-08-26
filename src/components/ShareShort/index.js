@@ -1,8 +1,9 @@
 import { StyleSheet, View, Dimensions, Text } from 'react-native'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Viewport } from '@skele/components'
 import { useIsFocused } from '@react-navigation/native'
 import { useDispatch } from 'react-redux'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Video } from 'expo-av'
 import { TapGestureHandler } from 'react-native-gesture-handler'
@@ -24,8 +25,10 @@ const feedItemWidth = Dimensions.get('window').width;
 
 const ViewportAwareVideo = Viewport.Aware(Video);
 
-const ShortVideo = ({ item }) => {
+const ShortVideo = ({ item, navigation, modal }) => {
   const dispatch = useDispatch();
+  const insets = useSafeAreaInsets();
+
 
   //state for parent component
   const [status, setStatus] = useState(false);
@@ -37,6 +40,12 @@ const ShortVideo = ({ item }) => {
     isLike: true,
     countHeart: 2000,
   });
+
+  useEffect(() => {
+    if(modal) playShort();
+  
+  }, [])
+  
 
   const changeShort = () => {
     dispatch(closeCS());
@@ -54,7 +63,11 @@ const ShortVideo = ({ item }) => {
   }
 
   return (
-    <View style={styles.container}>
+    <View 
+      style={[styles.container, {
+        height: feedItemHeight - insets.top
+      }]}
+    >
 
       <ViewportAwareVideo
         style={styles.videoContainer}
@@ -76,7 +89,11 @@ const ShortVideo = ({ item }) => {
           numberOfTaps={2}
           onActivated={updateLike}
         >
-          <View style={styles.touch}/>
+          <View 
+            style={[styles.touch, {
+              height: feedItemHeight - insets.top
+            }]}
+          />
         </TapGestureHandler>
       </TapGestureHandler>
     
@@ -113,7 +130,7 @@ const ShortVideo = ({ item }) => {
             heart={heart} 
             setHeart={setHeart} 
           />
-          <OpenAvatar/>
+          <OpenAvatar navigation={navigation} data={item}/>
         </View>
       </View>
       
@@ -123,17 +140,15 @@ const ShortVideo = ({ item }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: feedItemHeight, 
     width: feedItemWidth,
     backgroundColor: themes.BACKGROUND, 
-   },
+  },
   videoContainer: {
     flex: 1,
     zIndex: 1
   },
   touch:{
     width: feedItemWidth,
-    height: feedItemHeight,
     position: 'absolute',
     flex: 1,
     zIndex: 2,
@@ -147,7 +162,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingStart: 12,
     paddingEnd: 5,
-    bottom: 85,
+    bottom: 100,
     justifyContent: 'space-between',
   },
   leftContainer: {
