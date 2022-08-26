@@ -6,7 +6,7 @@ import { getSearchDetails } from '../../redux/slices/SearchDetailsSlice';
 import themes from '../../values/themes';
 
 const littleWidth = Dimensions.get('window').width * 44 / 100;
-const littleHeight = Dimensions.get('window').height * 44 / 100;
+const littleHeight = Dimensions.get('window').width * 66 / 100;
 const allHeight = littleHeight + 100;
 
 const LittleShort = ({ navigation, item }) => {

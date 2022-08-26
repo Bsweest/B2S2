@@ -5,12 +5,12 @@ import { useRef } from 'react'
 
 import ShortVideo from '.'
 
-const ListShort = ({ data }) => {
+const ListShort = ({ data, navigation }) => {
   const list = useRef(null);  
 
   const renderItem = ({item}) => {
     return (
-      <ShortVideo item={item}/>
+      <ShortVideo item={item} navigation={navigation} modal={false}/>
     )
   };
 

@@ -13,7 +13,7 @@ const searchDetailsSlice = createSlice({
             state.topVisible = false;
             state.data = action.payload;
         },
-        removeSearchDetails: (state) => (init)
+        removeSearchDetails: () => (init)
     }
 })
 

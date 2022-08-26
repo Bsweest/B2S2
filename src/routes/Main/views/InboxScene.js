@@ -10,19 +10,17 @@ const InboxStack = createNativeStackNavigator();
 const InboxScene = () => {
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
-        <InboxStack.Navigator
-          initialRouteName='MessList'
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-          <InboxStack.Screen name='MessList' component={MessList}/>
-          <InboxStack.Screen name='ChatScreen' component={ChatScreen}/>
-        </InboxStack.Navigator>
-      </View>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <InboxStack.Navigator
+        initialRouteName='MessList'
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <InboxStack.Screen name='MessList' component={MessList}/>
+        <InboxStack.Screen name='ChatScreen' component={ChatScreen}/>
+      </InboxStack.Navigator>
+    </View>
   )
 }
 
