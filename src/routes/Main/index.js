@@ -48,6 +48,16 @@ const getTabBarStyleHome = (route) => {
   }
 }
 
+const getTabBarStyleProfile = (route) => {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'OwnProfile';
+  switch (routeName) {
+    case 'OwnProfile':
+      return (styles.navigator);
+    case 'OwnShort':
+      return (styles.none);
+  }
+}
+
 export default function Main() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -115,7 +125,7 @@ export default function Main() {
               })}
             />
             <BottomTab.Screen name='Profile' component={ProfileScene} 
-              options={{
+              options={ ({route}) => ({
                 tabBarIcon: ({focused}) => (
                   <Ionicons 
                     name={ focused ? 'ios-person' : 'person-outline' }
@@ -124,7 +134,8 @@ export default function Main() {
                   />
                 ),
                 tabBarLabelStyle: styles.label,
-              }}
+                tabBarStyle: getTabBarStyleProfile(route),
+              })}
             />
           </BottomTab.Navigator>
           

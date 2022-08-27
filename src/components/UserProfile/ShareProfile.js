@@ -1,6 +1,5 @@
-import { Pressable, StyleSheet, Text, View, Dimensions } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -12,7 +11,6 @@ import { Ionicons } from '@expo/vector-icons'
 import SearchDetails from '../LittleShort/SearchDetails';
 
 const ProfileStack = createNativeStackNavigator();
-const parentWitdh = Dimensions.get('window').width;
 
 const ShareProfile = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -89,9 +87,6 @@ const styles = StyleSheet.create({
   btnAll: {
     marginHorizontal: 10,
   },
-  userprofile: {
-    width: parentWitdh,
-  }
 })
 
 export default ShareProfile
