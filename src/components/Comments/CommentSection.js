@@ -60,7 +60,7 @@ const CommentSection = () => {
             style={styles.input}
             placeholder='Add Comment...'
             multiline={true}
-            placeholderTextColor={themes.ACTIVE}
+            placeholderTextColor={themes.SECONDCOLOR}
           />
           <BottomSheetView style={styles.icon}>
             <MaterialIcons

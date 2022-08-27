@@ -19,7 +19,7 @@ const Comment = ({isParent}) => {
   useEffect(() => {
     if(heart.isLike){
       isFinish.current = false;
-      lottie.current.play(0, 65);
+      lottie.current.play(40, 80);
       
       if(!firstLoad.current) {
         setHeart(prev => ({...prev, countHeart: prev.countHeart+1}));
@@ -27,7 +27,7 @@ const Comment = ({isParent}) => {
     }
     else{
       isFinish.current = false;
-      lottie.current.play(100, 115);
+      lottie.current.play(40, 0);
 
       if(!firstLoad.current) {
         setHeart(prev => ({...prev, countHeart: prev.countHeart-1}));
@@ -59,7 +59,9 @@ const Comment = ({isParent}) => {
       </View>
 
       <View style={styles.commentContainer}>
+        
         <Text style={styles.commenter}>Nguoi Dung</Text>
+        
         <ReadMore 
           style={styles.content}
           numberOfLines={2}
@@ -69,6 +71,18 @@ const Comment = ({isParent}) => {
           Content Comment
           Hang 2 Hang 3 Dang 4 Dang 5
         </ReadMore>
+
+        <View style={styles.commentInfo}>
+          <Text style={styles.infoTime}>
+            18-10-2022
+          </Text>
+          <Pressable>
+            <Text style={styles.reply}>
+              Reply
+            </Text>
+          </Pressable>
+        </View>
+        
       </View>
 
       <View style={styles.heartContainer}>
@@ -81,15 +95,14 @@ const Comment = ({isParent}) => {
           <LottieView
             ref={lottie}
             source={require('../../assets/comment_heart.json')}
-            style={styles.heartContainer}
             autoPlay={false}
             loop={false}
             speed={2}
             resizeMode='cover'
+            style={styles.heartLottie}
             onAnimationFinish={()=>{isFinish.current=true}}
           />
         </View>
-
 
         <Text style={styles.numHeart}>{heart.countHeart}</Text>
       </View>
@@ -104,7 +117,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   avatarContainer: {
-    width: 70,
     alignItems: 'center',
   },
   avatar: {
@@ -114,7 +126,7 @@ const styles = StyleSheet.create({
   commentContainer: {
     flex: 1,
     flexDirection: 'column',
-    paddingEnd: 35,
+    paddingEnd: 15,
   },
   commenter: {
     color: themes.SECONDCOLOR,
@@ -131,12 +143,27 @@ const styles = StyleSheet.create({
     marginTop: 3,
     marginLeft: 3,
   },
+  commentInfo: {
+    flexDirection: 'row',
+    marginTop: 5,
+    justifyContent: 'flex-end',
+  },
+  infoTime: {
+    color: themes.SECONDCOLOR,
+    fontSize: themes.SMALL,
+    marginRight: 20,
+  },
+  reply: {
+    color: themes.SECONDCOLOR,
+    fontSize: themes.SMALL,
+    fontWeight: 'bold'
+  },
   
   heartContainer: {
     width: 70,
     alignItems: 'center',
     flexDirection: 'column',
-    paddingTop: 5,
+    marginTop: 10,
   },
   icon: {
     width: 30,
@@ -151,15 +178,14 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   heartLottie: {
-    width: 20,
-    height: 20,
+    width: 50,
+    height: 50,
     overflow: 'visible',
     zIndex: 9,
   },
   numHeart: {
     color: themes.SECONDCOLOR,
-    fontSize: 20,
-    marginTop: 5,
+    fontSize: themes.SIZE,
   }
 })
 

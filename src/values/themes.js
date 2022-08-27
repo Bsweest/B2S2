@@ -6,9 +6,10 @@ const themes = {
     CONSTRACT: '#2a2a2a',
     BACKGROUND: '#121212',
     TRANSPARENT: 'rgba(0,0,0,0.55)',
-    SIZE: 15,
-    NOTE: 12,
     BIG: 18,
+    SIZE: 15,
+    SMALL: 13,
+    NOTE: 12,
 }
 
 export default themes;
