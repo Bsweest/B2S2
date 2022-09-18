@@ -1,22 +1,22 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import TextField from '../components/TextField'
-import Button from '../components/Button'
 import { Ionicons } from '@expo/vector-icons'; 
 import { FontAwesome5 } from '@expo/vector-icons'; 
 import FlatButton from '../components/FlatButton'
-const ForgotPassword = () => {
+const ForgotPassword = ({navigation}) => {
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
-        <Ionicons style={styles.backArrow} name="arrow-back" size={24} color="black" />
+        <TouchableOpacity onPress={() => navigation.navigate('LoginWithEmail')} style={styles.backArrow}>
+          <Ionicons  name="arrow-back" size={24} color="black" />
+        </TouchableOpacity>
         <Text style={styles.txtSignUp}>Forgot password</Text>
       </View>
       <View style={styles.midContainer}>
         <TextField  placeholder="Email"
             keyboardType="email-address"/>
-
-        <FlatButton title="Next"/>
+        <FlatButton click={()=>navigation.navigate('OTPCode')} title="Next"/>
       </View>
     </View>
   )

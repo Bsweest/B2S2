@@ -6,7 +6,7 @@ import { AntDesign } from '@expo/vector-icons';
 const RoundedButton = (props) => {
     const { iconName, iconColor } = props;
   return (
-    <TouchableOpacity style={styles.roundedButton}>
+    <TouchableOpacity onPress={props.click} style={styles.roundedButton}>
         <AntDesign name={iconName} size={24} color={iconColor} />
     </TouchableOpacity>
   )

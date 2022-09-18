@@ -1,12 +1,14 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import TextField from '../components/TextField'
-import Button from '../components/Button'
+import IconButton from '../components/IconButton'
 import { Ionicons } from '@expo/vector-icons'; 
 import { FontAwesome5 } from '@expo/vector-icons'; 
 
-
-const Signup = () => {
+const LogIn = ({navigation}) => {
+  const Click =()=>{
+    console.log('fdsfsdf')
+  }
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
@@ -21,7 +23,8 @@ const Signup = () => {
               Manage your account, check notifications, comment on videos, and more
           </Text>
 
-          <Button
+          <IconButton
+            click = {() => navigation.navigate('LoginWithEmail')}
             title='User Email'
             bgColor='white'
             iconname='user'
@@ -29,22 +32,22 @@ const Signup = () => {
 
           {/*  */}
 
-          <Button
+          <IconButton
             title='Continue with Facebook'
             bgColor='white'
             iconname='facebook'
           />
-          <Button
+          <IconButton
             title='Continue with Twitter'
             bgColor='white'
             iconname='twitter'
           />
-          <Button
+          <IconButton
             title='Continue with Instagram'
             bgColor='white'
             iconname='instagram'
           />
-          <Button
+          <IconButton
             title='Continue with Google'
             bgColor='white'
             iconname='google'
@@ -55,14 +58,14 @@ const Signup = () => {
       <View style={styles.bottomContainer}>
           <Text>Don't have an account?</Text>
           <TouchableOpacity>
-            <Text style={styles.btnLogin}>Sign Up</Text>
+            <Text onPress={() => navigation.navigate('SignUp')}  style={styles.btnLogin}>Sign Up</Text>
           </TouchableOpacity>
       </View>
     </View>
   )
 }
 
-export default Signup
+export default LogIn
 
 const styles = StyleSheet.create({
   container: {

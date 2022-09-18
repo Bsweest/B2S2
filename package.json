@@ -15,7 +15,7 @@
     "@legendapp/motion": "^2.1.10",
     "@react-navigation/bottom-tabs": "^6.3.2",
     "@react-navigation/material-top-tabs": "^6.2.2",
-    "@react-navigation/native": "^6.0.11",
+    "@react-navigation/native": "^6.0.12",
     "@react-navigation/native-stack": "^6.7.0",
     "@reduxjs/toolkit": "^1.8.4",
     "@shopify/flash-list": "1.1.0",

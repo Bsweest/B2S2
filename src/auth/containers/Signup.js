@@ -1,16 +1,18 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import TextField from '../components/TextField'
-import Button from '../components/Button'
+import IconButton from '../components/IconButton'
 import { Ionicons } from '@expo/vector-icons'; 
 import { FontAwesome5 } from '@expo/vector-icons'; 
 
 
-const Signup = () => {
+const SignUp = ({navigation}) => {
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
-        <Ionicons style={styles.topItem} name="arrow-back" size={24} color="black" />
+        <TouchableOpacity onPress={() => navigation.navigate('LogIn')}>
+          <Ionicons style={styles.topItem} name="arrow-back" size={24} color="black" />
+        </TouchableOpacity>
         <View style={styles.form}>
           <Text style={styles.topText}>Sign Up for Tiktok</Text>
           <Text style={{
@@ -21,7 +23,8 @@ const Signup = () => {
               Create a profile, follow other accounts, make your own videos, and more
           </Text>
 
-          <Button
+          <IconButton
+            click = {() => navigation.navigate('SignUpWithEmail')}
             title='User Email'
             bgColor='white'
             iconname='user'
@@ -36,22 +39,22 @@ const Signup = () => {
             </View>
             <View style={{flex: 1, height: 1, backgroundColor: 'black'}} />
           </View>
-          <Button
+          <IconButton
             title='Continue with Facebook'
             bgColor='white'
             iconname='facebook'
           />
-          <Button
+          <IconButton
             title='Continue with Twitter'
             bgColor='white'
             iconname='twitter'
           />
-          <Button
+          <IconButton
             title='Continue with Instagram'
             bgColor='white'
             iconname='instagram'
           />
-          <Button
+          <IconButton
             title='Continue with Google'
             bgColor='white'
             iconname='google'
@@ -69,7 +72,7 @@ const Signup = () => {
   )
 }
 
-export default Signup
+export default SignUp
 
 const styles = StyleSheet.create({
   container: {

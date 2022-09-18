@@ -6,13 +6,16 @@ import {
   Pressable,
 } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons'; 
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-const Button =(props) => {
+const test = () =>{
+  console.log('hhhh')
+}
+const IconButton =(props) => {
   const { iconname, title, bgColor } = props;
-
   return (
-    <Pressable>
-      <View style={styles.container}>
+    <Pressable onPress={props.click}>
+      <View  style={styles.container}>
         <View>
           <Text style={styles.buttonText}>
             {title}
@@ -24,7 +27,7 @@ const Button =(props) => {
     </Pressable>
   );
 };
-export default Button
+export default IconButton
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',

@@ -12,7 +12,7 @@ const Button =(props) => {
   const { title, bgColor } = props;
 
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={props.click}>
       <View style={[styles.container, {backgroundColor:bgColor}]}>
         <View>
           <Text style={styles.buttonText}>
