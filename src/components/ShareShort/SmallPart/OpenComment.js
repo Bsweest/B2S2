@@ -6,12 +6,12 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import styles from './styles'
 import { openCS } from '../../../redux/slices/CommentSectionSlice';
 
-export default function OpenComment({data, setStatus}) {
+export default function OpenComment({ssid, setStatus}) {
   const dispatch = useDispatch();
 
   const open = () => {
     setStatus(false);
-    dispatch(openCS(data));
+    dispatch(openCS(ssid));
   }
 
   return (

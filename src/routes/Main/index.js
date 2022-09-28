@@ -138,7 +138,7 @@ export default function Main() {
               })}
             />
           </BottomTab.Navigator>
-          
+
           <CommentSection/>
         </NavigationContainer>
       </SafeAreaView>
@@ -148,14 +148,11 @@ export default function Main() {
 
 const styles = StyleSheet.create({
   navigator: {
-    position: 'absolute',
-    bottom: 10,
-    left: 12,
-    right: 12,
-    borderRadius: 20,
-    height: 48,
+    height: 45,
     borderTopWidth: 0,
-    backgroundColor: themes.TRANSPARENT,
+    backgroundColor: themes.CONSTRACT,
+    borderTopWidth: 0.5,
+    borderTopColor: themes.ACTIVE,
   },
   addicon: {
     height: 30,
@@ -173,5 +170,8 @@ const styles = StyleSheet.create({
   },
   none: {
     display: 'none'
+  },
+  placeholder: {
+    height: 44,
   }
 });

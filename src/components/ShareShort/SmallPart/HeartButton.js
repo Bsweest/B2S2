@@ -11,7 +11,7 @@ export default function HeartButton({heart, setHeart}) {
   const isFinish = useRef(false);
 
   useEffect(() => {
-    if(heart.isLike){
+    if(heart.isHeart){
       isFinish.current = false;
       icon.current.play(0, 25);
       
@@ -29,11 +29,11 @@ export default function HeartButton({heart, setHeart}) {
     }
 
     firstLoad.current = false;
-  }, [heart.isLike])
+  }, [heart.isHeart])
   
   const updateLike = () => {
     if(!isFinish.current) return;
-    setHeart(prev => ({...prev, isLike: !prev.isLike}));
+    setHeart(prev => ({...prev, isHeart: !prev.isHeart}));
   }
 
   return (

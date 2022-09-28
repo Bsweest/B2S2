@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native'
 import { Viewport } from '@skele/components'
 import { FlashList } from '@shopify/flash-list'
 import { useRef } from 'react'
+import { View } from 'react-native'
 
 import ShortVideo from '.'
 
@@ -15,17 +16,19 @@ const ListShort = ({ data, navigation }) => {
   };
 
   return (
-    <Viewport.Tracker style={styles.container}>
-      <FlashList
-        data={data}
-        ref={list}
-        estimatedItemSize={100}
-        keyExtractor={(item)=>item}
-        renderItem={renderItem}
-        pagingEnabled
-        decelerationRate={'normal'}
-        />
-    </Viewport.Tracker>
+    <>
+      <Viewport.Tracker style={styles.container}>
+        <FlashList
+          data={data}
+          ref={list}
+          estimatedItemSize={100}
+          keyExtractor={(item)=>item.id}
+          renderItem={renderItem}
+          pagingEnabled
+          decelerationRate={'normal'}
+          />
+      </Viewport.Tracker>
+    </>
   )
 }
 

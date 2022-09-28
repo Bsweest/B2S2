@@ -1,5 +1,5 @@
 import { StyleSheet, TextInput } from 'react-native'
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import BottomSheet, {BottomSheetFlatList, BottomSheetView} from '@gorhom/bottom-sheet'
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -8,30 +8,37 @@ import ParenComment from './ParenComment'
 import { MaterialIcons } from '@expo/vector-icons'; 
 import themes from '../../values/themes'
 import { closeCS } from '../../redux/slices/CommentSectionSlice'
+import getComments from '../../services/GetComments'
 
 const CommentSection = () => {
   const dispatch = useDispatch();
   const { isOpen, data } = useSelector(state => state.commentSection);
 
   const botSheet = useRef(null);
-  const testdata = [1, 2, 3,];
+  const [fetch, setFetch] = useState();
+  const ac = new AbortController();
 
   const close = () => {
     dispatch(closeCS());
+    ac.abort();
+    setFetch();
   }
 
   useEffect(() => {
     if(isOpen){
       botSheet.current.expand();
+      getComments(data, null, ac).then((rs)=>{
+        setFetch(rs);
+        console.log('rs', rs)
+      })
     }
-    else{
-      botSheet.current.close();
-    }
+
+    return ac.abort();
   }, [isOpen])
 
   const renderItem = ({item}) => {
     return (
-      <ParenComment/>
+      <ParenComment pid={item}/>
     )
   }
 
@@ -48,8 +55,8 @@ const CommentSection = () => {
     >
       <BottomSheetView style={styles.container}>
         <BottomSheetFlatList
-          data={testdata}
-          keyExtractor={(item)=>item}
+          data={fetch}
+          keyExtractor={(item)=>item.id}
           renderItem={renderItem}
           nestedScrollEnabled
           style={styles.flatlist}

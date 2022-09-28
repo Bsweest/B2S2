@@ -41,7 +41,7 @@ const FollowButton = () => {
     if(isFollow) {
       isFinish.current = false;
       setSvgProps(followed);
-      setRadius(32);
+      setRadius(30);
 
       const timer = setTimeout(() => {
         isFinish.current = false;

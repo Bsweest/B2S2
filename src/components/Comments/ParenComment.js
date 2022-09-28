@@ -1,22 +1,34 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 import { Entypo } from '@expo/vector-icons'
-import { BottomSheetFlatList } from '@gorhom/bottom-sheet'
 import FlashList from '@shopify/flash-list/dist/FlashList'
 import { useCallback, useState } from 'react'
 
 import themes from '../../values/themes'
 import Comment from '.'
+import { useEffect } from 'react'
+import getComments from '../../services/GetComments'
 
-const ParenComment = () => {
-  const testdata = [0];
+const ParenComment = ({ pid }) => {
   const [openChildren, setOpenChildren] = useState(false);
-  const readmore = openChildren ? 'Hide Replies (1)' : 'View Replies (1)';
+  const [fetch, setFetch] = useState();
+  const ac = new AbortController();
+
+  // useEffect(() => {
+  //   getComments(data, pid, ac).then((rs)=>{
+  //     setFetch(rs);
+  //   })
+  
+  //   return () => {
+  //     ac.abort();
+  //   }
+  // }, [])
+  
 
   const renderItem = useCallback(() => {
     return (
       <Comment isParent={false}/>
     )
-  }, [testdata])
+  }, [fetch])
   
   const open = () => {
     setOpenChildren(prev => !prev);
@@ -29,7 +41,7 @@ const ParenComment = () => {
       <View style={styles.secondContainer}>
         <Pressable onPress={open}>
           <Text style={styles.openChildren}>
-            {readmore}
+            {openChildren ? 'Hide Replies (1)' : 'View Replies (1)'}
             <Entypo 
               name={openChildren ? 'chevron-thin-up' : 'chevron-thin-down'}
               size={18} color={themes.SECONDCOLOR}
@@ -37,18 +49,19 @@ const ParenComment = () => {
           </Text>
         </Pressable>
 
-        {/* {openChildren ? (
+        {openChildren ? (
           <View style={{flex: 1}}>
             <FlashList
-              data={testdata}
-              keyExtractor={(item)=>item}
+              data={fetch}
+              keyExtractor={(item)=>item.id}
               renderItem={renderItem}
               estimatedItemSize={10}
+              nestedScrollEnabled
             />
           </View>
         ):(
           <></>
-        )} */}
+        )}
       </View>
     </View>
   )

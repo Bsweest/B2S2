@@ -19,16 +19,20 @@ import OpenAvatar from './SmallPart/OpenAvatar'
 
 import themes from '../../values/themes'
 import { closeCS } from '../../redux/slices/CommentSectionSlice'
+import isStatement from '../../services/ShortService'
 
 const feedItemHeight = Dimensions.get('window').height;
 const feedItemWidth = Dimensions.get('window').width;
 
 const ViewportAwareVideo = Viewport.Aware(Video);
 
+const temp = '6e25bebf-aaaa-4e98-89c2-6f11211f9539';
+
 const ShortVideo = ({ item, navigation, modal }) => {
+  const { id, created_at, uri, caption, count_heart, count_comment, music } = item;
+
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
-
 
   //state for parent component
   const [status, setStatus] = useState(false);
@@ -36,16 +40,22 @@ const ShortVideo = ({ item, navigation, modal }) => {
   const doubleTap = useRef(null);
 
   //state for video information
-  const [heart, setHeart] = useState({
-    isLike: true,
-    countHeart: 2000,
-  });
+  const [heart, setHeart] = useState(null);
+  const [bookmark, setBookmark] = useState(null);
+  const [fetch, setFetch] = useState(false);
 
   useEffect(() => {
     if(modal) playShort();
-  
-  }, [])
-  
+
+    isStatement(temp, id).then((rs)=>{
+      setHeart({
+        isHeart: rs[0],
+        countHeart: count_heart,
+      });
+      setBookmark(rs[1]);
+      setFetch(true);
+    })
+  }, []);
 
   const changeShort = () => {
     dispatch(closeCS());
@@ -59,13 +69,13 @@ const ShortVideo = ({ item, navigation, modal }) => {
   }
 
   const updateLike = () => {
-    setHeart(prev => ({...prev, isLike: !prev.isLike}));
+    setHeart(prev => ({...prev, isHeart: !prev.isHeart}));
   }
 
   return (
     <View 
       style={[styles.container, {
-        height: feedItemHeight - insets.top
+        height: feedItemHeight - insets.top,
       }]}
     >
 
@@ -74,7 +84,7 @@ const ShortVideo = ({ item, navigation, modal }) => {
         resizeMode={'contain'}
         shouldPlay={status && inUse}
         isLooping
-        source={{uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',}}
+        source={{uri: uri}}
         onViewportEnter={playShort}
         onViewportLeave={pauseShort}
         preTriggerRatio={-1}
@@ -117,19 +127,27 @@ const ShortVideo = ({ item, navigation, modal }) => {
             seeLessStyle={styles.readMore}
             seeMoreStyle={styles.readMore}
           >
-            caption
+            {caption}
           </ReadMore>
           <Text style={styles.originalPoster}>@OP</Text>
         </View>
         
         <View style={styles.rightContainer}>
           <ShareButton/>
-          <BookmarkButton/>
-          <OpenComment data={item} setStatus={setStatus}/>
-          <HeartButton 
-            heart={heart} 
-            setHeart={setHeart} 
-          />
+          {fetch ?
+            <BookmarkButton/>
+            : 
+            <></>
+          }
+          <OpenComment data={id} setStatus={setStatus}/>
+          {fetch ? 
+            <HeartButton 
+              heart={heart} 
+              setHeart={setHeart} 
+            />
+            : 
+            <></>
+          }
           <OpenAvatar navigation={navigation} data={item}/>
         </View>
       </View>
@@ -187,7 +205,7 @@ const styles = StyleSheet.create({
   },
   readMore: {
     color: themes.SECONDCOLOR,
-    fontSize: 18,
+    fontSize: themes.SIZE,
     marginTop: 3,
     marginLeft: 3,
   },
