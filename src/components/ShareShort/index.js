@@ -19,7 +19,8 @@ import OpenAvatar from './SmallPart/OpenAvatar'
 
 import themes from '../../values/themes'
 import { closeCS } from '../../redux/slices/CommentSectionSlice'
-import isStatement from '../../services/ShortService'
+
+import shortServices from '../../../backend/services/ShortService'
 
 const feedItemHeight = Dimensions.get('window').height;
 const feedItemWidth = Dimensions.get('window').width;
@@ -29,7 +30,7 @@ const ViewportAwareVideo = Viewport.Aware(Video);
 const temp = '6e25bebf-aaaa-4e98-89c2-6f11211f9539';
 
 const ShortVideo = ({ item, navigation, modal }) => {
-  const { id, created_at, uri, caption, count_heart, count_comment, music } = item;
+  const { id, created_at, uri, caption, music } = item;
 
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
@@ -41,18 +42,16 @@ const ShortVideo = ({ item, navigation, modal }) => {
 
   //state for video information
   const [heart, setHeart] = useState(null);
-  const [bookmark, setBookmark] = useState(null);
   const [fetch, setFetch] = useState(false);
 
   useEffect(() => {
     if(modal) playShort();
 
-    isStatement(temp, id).then((rs)=>{
+    shortServices(temp, id).then((rs)=>{
       setHeart({
-        isHeart: rs[0],
-        countHeart: count_heart,
+        isHeart: rs.hs,
+        countHeart: rs.count_heart,
       });
-      setBookmark(rs[1]);
       setFetch(true);
     })
   }, []);
@@ -75,7 +74,7 @@ const ShortVideo = ({ item, navigation, modal }) => {
   return (
     <View 
       style={[styles.container, {
-        height: feedItemHeight - insets.top,
+        height: feedItemHeight - insets.top - 45
       }]}
     >
 
@@ -101,7 +100,7 @@ const ShortVideo = ({ item, navigation, modal }) => {
         >
           <View 
             style={[styles.touch, {
-              height: feedItemHeight - insets.top
+              height: feedItemHeight - insets.top - 45
             }]}
           />
         </TapGestureHandler>
@@ -139,7 +138,7 @@ const ShortVideo = ({ item, navigation, modal }) => {
             : 
             <></>
           }
-          <OpenComment data={id} setStatus={setStatus}/>
+          <OpenComment ssid={id} setStatus={setStatus}/>
           {fetch ? 
             <HeartButton 
               heart={heart} 
@@ -180,7 +179,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingStart: 12,
     paddingEnd: 5,
-    bottom: 100,
+    bottom: 10,
     justifyContent: 'space-between',
   },
   leftContainer: {

@@ -6,29 +6,30 @@ import { useCallback, useState } from 'react'
 import themes from '../../values/themes'
 import Comment from '.'
 import { useEffect } from 'react'
-import getComments from '../../services/GetComments'
+import { getComments } from '../../services/GetComments'
 
-const ParenComment = ({ pid }) => {
+const ParenComment = ({ pid, data }) => {
   const [openChildren, setOpenChildren] = useState(false);
-  const [fetch, setFetch] = useState();
+  const [children, setChildren] = useState();
   const ac = new AbortController();
 
-  // useEffect(() => {
-  //   getComments(data, pid, ac).then((rs)=>{
-  //     setFetch(rs);
-  //   })
-  
-  //   return () => {
-  //     ac.abort();
-  //   }
-  // }, [])
+  useEffect(() => {
+    if(openChildren){
+      getComments(data.id, pid, ac).then((rs)=>{
+      setChildren(rs);
+    })
+  }
+    return () => {
+      ac.abort();
+    }
+  }, [openChildren])
   
 
-  const renderItem = useCallback(() => {
+  const renderItem = ({ item }) => {
     return (
-      <Comment isParent={false}/>
+      <Comment isParent={false} data={item}/>
     )
-  }, [fetch])
+  }
   
   const open = () => {
     setOpenChildren(prev => !prev);
@@ -36,10 +37,11 @@ const ParenComment = ({ pid }) => {
 
   return (
     <View style={styles.container}>
-      <Comment isParent={true}/>
+      <Comment isParent={true} data={data}/>
 
       <View style={styles.secondContainer}>
-        <Pressable onPress={open}>
+        {data.count_children ?
+          <Pressable onPress={open}>
           <Text style={styles.openChildren}>
             {openChildren ? 'Hide Replies (1)' : 'View Replies (1)'}
             <Entypo 
@@ -47,12 +49,13 @@ const ParenComment = ({ pid }) => {
               size={18} color={themes.SECONDCOLOR}
             />
           </Text>
-        </Pressable>
+        </Pressable> : <></>
+        }
 
         {openChildren ? (
           <View style={{flex: 1}}>
             <FlashList
-              data={fetch}
+              data={children}
               keyExtractor={(item)=>item.id}
               renderItem={renderItem}
               estimatedItemSize={10}

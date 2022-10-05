@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginVertical: 5,
     justifyContent: 'center',
-    marginBottom: 10,
+    marginVertical: 10,
   },
   boxMain: {
     alignItems: 'center',

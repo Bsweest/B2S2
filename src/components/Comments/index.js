@@ -3,26 +3,42 @@ import { useRef, useState, useEffect } from 'react'
 import LottieView from 'lottie-react-native'
 
 import ReadMore from '@fawazahmed/react-native-read-more'
+import { isHeartComment } from '../../../backend/services/GetComments'
 
 import themes from '../../values/themes'
 
-const Comment = ({isParent}) => {
+const temp = '6e25bebf-aaaa-4e98-89c2-6f11211f9539';
+
+const Comment = ({isParent, data}) => {
+  const { id, created_at, ssid, uid, content, count_heart, parent_id } = data;
+
   const lottie = useRef(null);
-  const [heart, setHeart] = useState({
-    isLike: false,
-    countHeart: 700,
-  });
+  const [like, setLike] = useState();
+  const [count, setCount] = useState(count_heart);
+  const haveFetch = useRef(false);
 
   const firstLoad = useRef(true);
   const isFinish = useRef(false);
 
   useEffect(() => {
-    if(heart.isLike){
+    isHeartComment(temp, id).then((rs)=>{
+      setLike(rs);
+      haveFetch.current = true;
+    })
+  
+    return () => {}
+  }, [])
+  
+
+  useEffect(() => {
+    if(!haveFetch) return;
+
+    if(like){
       isFinish.current = false;
       lottie.current.play(40, 80);
       
       if(!firstLoad.current) {
-        setHeart(prev => ({...prev, countHeart: prev.countHeart+1}));
+        setCount(prev => (prev+1));
       }
     }
     else{
@@ -30,16 +46,20 @@ const Comment = ({isParent}) => {
       lottie.current.play(40, 0);
 
       if(!firstLoad.current) {
-        setHeart(prev => ({...prev, countHeart: prev.countHeart-1}));
+        setCount(prev => (prev-1));
       }
     }
 
     firstLoad.current = false;
-  }, [heart.isLike])
+  }, [like])
 
   const updateHeart = () => {
     if(!isFinish.current) return;
-    setHeart(prev => ({...prev, isLike: !prev.isLike}));
+    setLike(!like);
+  }
+
+  const reply = () => {
+    
   }
 
   return (
@@ -68,15 +88,14 @@ const Comment = ({isParent}) => {
           seeLessStyle={styles.readMore}
           seeMoreStyle={styles.readMore}
         >
-          Content Comment
-          Hang 2 Hang 3 Dang 4 Dang 5
+          {content}
         </ReadMore>
 
         <View style={styles.commentInfo}>
           <Text style={styles.infoTime}>
-            18-10-2022
+            {created_at}
           </Text>
-          <Pressable>
+          <Pressable onPress={reply} >
             <Text style={styles.reply}>
               Reply
             </Text>
@@ -100,11 +119,11 @@ const Comment = ({isParent}) => {
             speed={2}
             resizeMode='cover'
             style={styles.heartLottie}
-            onAnimationFinish={()=>{isFinish.current=true}}
+            onAnimationFinish={()=>isFinish.current=true}
           />
         </View>
 
-        <Text style={styles.numHeart}>{heart.countHeart}</Text>
+        <Text style={styles.numHeart}>{count}</Text>
       </View>
 
     </View>
@@ -126,7 +145,7 @@ const styles = StyleSheet.create({
   commentContainer: {
     flex: 1,
     flexDirection: 'column',
-    paddingEnd: 15,
+    paddingHorizontal: 10,
   },
   commenter: {
     color: themes.SECONDCOLOR,

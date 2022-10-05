@@ -8,19 +8,18 @@ import ParenComment from './ParenComment'
 import { MaterialIcons } from '@expo/vector-icons'; 
 import themes from '../../values/themes'
 import { closeCS } from '../../redux/slices/CommentSectionSlice'
-import getComments from '../../services/GetComments'
+import { getComments } from '../../../backend/services/GetComments'
 
 const CommentSection = () => {
   const dispatch = useDispatch();
   const { isOpen, data } = useSelector(state => state.commentSection);
+  const ac = new AbortController();
 
   const botSheet = useRef(null);
   const [fetch, setFetch] = useState();
-  const ac = new AbortController();
 
   const close = () => {
     dispatch(closeCS());
-    ac.abort();
     setFetch();
   }
 
@@ -29,23 +28,24 @@ const CommentSection = () => {
       botSheet.current.expand();
       getComments(data, null, ac).then((rs)=>{
         setFetch(rs);
-        console.log('rs', rs)
       })
     }
 
-    return ac.abort();
+    return () => {
+      ac.abort();
+    }
   }, [isOpen])
 
   const renderItem = ({item}) => {
     return (
-      <ParenComment pid={item}/>
+      <ParenComment data={item}/>
     )
   }
 
   return (
     <BottomSheet
       ref={botSheet}
-      snapPoints={['75%']}
+      snapPoints={['70%']}
       index={-1}
       handleHeight={40}
       enablePanDownToClose={true}

@@ -3,6 +3,7 @@ import Main from './routes/Main'
 
 import store from "./redux/store"
 
+
 export default function App() {
   return (
     <Provider store={store}>
