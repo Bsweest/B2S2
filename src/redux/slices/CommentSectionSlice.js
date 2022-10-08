@@ -4,16 +4,16 @@ const commentSectionSlice = createSlice({
     name: 'commentSection',
     initialState: {
         isOpen: false,
-        data: null,
+        fetchID: null,
     },
     reducers: {
         openCS: (state, action) => {
             state.isOpen = true;
-            state.data = action.payload;
+            state.fetchID = action.payload;
         },
         closeCS: (state) => {
             state.isOpen = false;
-            state.data = null;
+            state.fetchID = null;
         }
     }
 })

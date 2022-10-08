@@ -12,22 +12,22 @@ import { getComments } from '../../../backend/services/GetComments'
 
 const CommentSection = () => {
   const dispatch = useDispatch();
-  const { isOpen, data } = useSelector(state => state.commentSection);
+  const { isOpen, fetchID } = useSelector(state => state.commentSection);
   const ac = new AbortController();
 
   const botSheet = useRef(null);
-  const [fetch, setFetch] = useState();
+  const [data, setData] = useState();
 
   const close = () => {
     dispatch(closeCS());
-    setFetch();
+    setData();
   }
 
   useEffect(() => {
     if(isOpen){
       botSheet.current.expand();
-      getComments(data, null, ac).then((rs)=>{
-        setFetch(rs);
+      getComments(fetchID, null, ac).then((rs)=>{
+        setData(rs);
       })
     }
 
@@ -55,7 +55,7 @@ const CommentSection = () => {
     >
       <BottomSheetView style={styles.container}>
         <BottomSheetFlatList
-          data={fetch}
+          data={data}
           keyExtractor={(item)=>item.id}
           renderItem={renderItem}
           nestedScrollEnabled

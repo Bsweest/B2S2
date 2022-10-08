@@ -1,31 +1,17 @@
 import { supabase } from "../../backend/supabase";
 
 const getComments = async (ssid, pid, ac) => {
-    if(!pid) {
-        const { data } = await supabase.from('comments')
-            .select()
-            .eq('ssid', ssid)
-            .is('parent_id', null)
-            .abortSignal(ac.signal);
+    const { data, error } = await supabase.rpc('get_comments', {
+        ss_id: ssid,
+        p_id: pid
+    })
+    .abortSignal(ac.signal);
 
-        return data;
-    }
-
-    else {
-        const { data } = await supabase.from('comments')
-            .select()
-            .match({
-                ssid: ssid,
-                parent_id: pid,
-            })
-            .abortSignal(ac.signal);
-
-        return data;
-    }
+    return data;
 } 
 
 const isHeartComment = async (clientID , cid) => {
-    const { data } = await supabase.rpc('is_heart_comment', {
+    const { data, error } = await supabase.rpc('is_heart_comment', {
         client: clientID,
         comment_id: cid
     })
@@ -33,8 +19,16 @@ const isHeartComment = async (clientID , cid) => {
     return data;
 }
 
-const getCountComment = async (pid) => {
-    const { data, count, error } = await supabase.from('comments')
+const getCountChildComment = async (pid) => {
+    const { count, error } = await supabase.from('comments')
         .select('*', { count: 'exact' })
-        .eq('parent_id', pid)
+        .eq('parent_id', pid);
+
+    return count;
+}
+
+export {
+    getComments,
+    isHeartComment,
+    getCountChildComment
 }

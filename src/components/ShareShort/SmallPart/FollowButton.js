@@ -1,12 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { StyleSheet, Pressable } from 'react-native';
 
 import { createMotionAnimatedComponent } from '@legendapp/motion';
-
 import Svg, {
   Circle,
   Path,
 } from "react-native-svg";
+
+import { isFollowedOP } from '../../../../backend/services/FollowServices';
 
 const MotionPath = createMotionAnimatedComponent(Path);
 const MotionCircle = createMotionAnimatedComponent(Circle);
@@ -26,40 +27,54 @@ const followed = {
   strokeWidth: 3,
 }
 
-const FollowButton = () => {
-  const [isFollow, setIsFollow] = useState(false);
+const temp = '6e25bebf-aaaa-4e98-89c2-6f11211f9539';
+
+const FollowButton = ({ opID }) => {
+  const [isFollow, setIsFollow] = useState();
   const [svgProps, setSvgProps] = useState(notFollow);
   const [radius, setRadius] = useState(24);
-  const isFinish = useRef(false);
+
+  const isPressed = useRef(false);
   
   const update = ()=>{
-    if(!isFinish.current) return;
+    isPressed.current = true;
     setIsFollow(prev=> !prev);
   }
 
   useEffect(() => {
-    if(isFollow) {
-      isFinish.current = false;
-      setSvgProps(followed);
-      setRadius(30);
+    isFollowedOP(temp, opID).then((rs)=>{
+      setIsFollow(rs);
+    })
+  
+    return () => {
+      
+    }
+  }, [])
+  
 
+  useEffect(() => {
+    if(isFollow) {
+      setSvgProps(followed);
+      if (isPressed.current) {}
+
+      setRadius(28);
       const timer = setTimeout(() => {
-        isFinish.current = false;
         setRadius(24);
-      }, 1000);
+      }, 700);
 
       return () => clearTimeout(timer);
     }
 
     else {
       setSvgProps(notFollow);
+      if (isPressed.current) {}
     }
 
   }, [isFollow])
   
 
   return (
-    <Pressable onPress={update}>
+    <Pressable onPress={update} unstable_pressDelay={1400}>
       <MotionSvg
         viewBox="0 0 64 64"
         fill="none"
@@ -73,9 +88,8 @@ const FollowButton = () => {
         }}
         transition={{
           type: 'tween',
-          duration: 1000,
+          duration: 700,
         }}
-        onAnimationComplete={()=>isFinish.current=true}
       >
         <MotionCircle
           cx={32}

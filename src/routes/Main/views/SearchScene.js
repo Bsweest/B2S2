@@ -44,9 +44,6 @@ export default function SearchScene() {
 }
 
 const styles = StyleSheet.create({
-  tabBar: {
-    display: 'none',
-  },
   container: {
     flex: 1,
   },

@@ -9,4 +9,12 @@ const shortServices = async(clientID , ssid) => {
    return data;
 }
 
+export const getCountAllComment = async (ssid) => {
+   const { count, error } = await supabase.from('comments')
+      .select('*', { count: 'exact' })
+      .eq('ssid', ssid);
+
+    return count;
+}
+
 export default shortServices;

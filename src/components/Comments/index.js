@@ -13,12 +13,12 @@ const Comment = ({isParent, data}) => {
   const { id, created_at, ssid, uid, content, count_heart, parent_id } = data;
 
   const lottie = useRef(null);
-  const [like, setLike] = useState();
-  const [count, setCount] = useState(count_heart);
+  const isFinish = useRef(false);
+  const isPressed = useRef(false);
   const haveFetch = useRef(false);
 
-  const firstLoad = useRef(true);
-  const isFinish = useRef(false);
+  const [like, setLike] = useState();
+  const [count, setCount] = useState(count_heart);
 
   useEffect(() => {
     isHeartComment(temp, id).then((rs)=>{
@@ -28,34 +28,24 @@ const Comment = ({isParent, data}) => {
   
     return () => {}
   }, [])
-  
 
-  useEffect(() => {
-    if(!haveFetch) return;
-
-    if(like){
+  useEffect(()=>{
+    if(like) {
       isFinish.current = false;
       lottie.current.play(40, 80);
-      
-      if(!firstLoad.current) {
-        setCount(prev => (prev+1));
-      }
+      if(isPressed.current) setCount(prev => (prev+1));
     }
-    else{
+    else {
       isFinish.current = false;
       lottie.current.play(40, 0);
-
-      if(!firstLoad.current) {
-        setCount(prev => (prev-1));
-      }
+      if(isPressed.current) setCount(prev => (prev-1));
     }
-
-    firstLoad.current = false;
   }, [like])
 
   const updateHeart = () => {
     if(!isFinish.current) return;
-    setLike(!like);
+    isPressed.current = true;
+    setLike(prev => !prev);
   }
 
   const reply = () => {
@@ -106,6 +96,7 @@ const Comment = ({isParent, data}) => {
 
       <View style={styles.heartContainer}>
         <Pressable
+          disabled={!haveFetch.current}
           onPress={updateHeart}
           style={styles.pressable}
         />

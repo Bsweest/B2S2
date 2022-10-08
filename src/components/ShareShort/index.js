@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Viewport } from '@skele/components'
 import { useIsFocused } from '@react-navigation/native'
 import { useDispatch } from 'react-redux'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import Constants from 'expo-constants';
 
 import { Video } from 'expo-av'
 import { TapGestureHandler } from 'react-native-gesture-handler'
@@ -30,18 +30,24 @@ const ViewportAwareVideo = Viewport.Aware(Video);
 const temp = '6e25bebf-aaaa-4e98-89c2-6f11211f9539';
 
 const ShortVideo = ({ item, navigation, modal }) => {
-  const { id, created_at, uri, caption, music } = item;
+  const { id, created_at, op_id, uri, caption, music } = item;
 
   const dispatch = useDispatch();
-  const insets = useSafeAreaInsets();
+  const topInset = Constants.statusBarHeight;
 
-  //state for parent component
+  //state for top component
   const [status, setStatus] = useState(false);
   const inUse = useIsFocused();
   const doubleTap = useRef(null);
 
-  //state for video information
-  const [heart, setHeart] = useState(null);
+  //state for small part
+  const [heart, setHeart] = useState({
+    isHeart: false,
+    countHeart: 0,
+  });
+  const isPressedHeart = useRef(false);
+
+  //fetch state
   const [fetch, setFetch] = useState(false);
 
   useEffect(() => {
@@ -68,13 +74,14 @@ const ShortVideo = ({ item, navigation, modal }) => {
   }
 
   const updateLike = () => {
+    isPressedHeart.current = true;
     setHeart(prev => ({...prev, isHeart: !prev.isHeart}));
   }
 
   return (
     <View 
       style={[styles.container, {
-        height: feedItemHeight - insets.top - 45
+        height: feedItemHeight - topInset - 45
       }]}
     >
 
@@ -100,7 +107,7 @@ const ShortVideo = ({ item, navigation, modal }) => {
         >
           <View 
             style={[styles.touch, {
-              height: feedItemHeight - insets.top - 45
+              height: feedItemHeight - topInset - 45
             }]}
           />
         </TapGestureHandler>
@@ -133,21 +140,19 @@ const ShortVideo = ({ item, navigation, modal }) => {
         
         <View style={styles.rightContainer}>
           <ShareButton/>
-          {fetch ?
-            <BookmarkButton/>
-            : 
-            <></>
-          }
+
+          <BookmarkButton ssid={id}/>
+
           <OpenComment ssid={id} setStatus={setStatus}/>
-          {fetch ? 
-            <HeartButton 
-              heart={heart} 
-              setHeart={setHeart} 
-            />
-            : 
-            <></>
-          }
-          <OpenAvatar navigation={navigation} data={item}/>
+
+          <HeartButton 
+            heart={heart} 
+            setHeart={setHeart} 
+            isPressedHeart={isPressedHeart}
+            fetch={fetch}
+          />
+
+          <OpenAvatar navigation={navigation} opID={op_id}/>
         </View>
       </View>
       

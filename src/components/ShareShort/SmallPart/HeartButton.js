@@ -5,41 +5,38 @@ import LottieView from 'lottie-react-native'
 
 import styles from './styles' 
 
-export default function HeartButton({heart, setHeart}) {
+export default function HeartButton({heart, setHeart, isPressedHeart, fetch}) {
   const icon = useRef(null);
-  const firstLoad = useRef(true);
   const isFinish = useRef(false);
 
   useEffect(() => {
     if(heart.isHeart){
-      isFinish.current = false;
       icon.current.play(0, 25);
       
-      if(!firstLoad.current) {
-        setHeart(prev => ({...prev, countHeart: prev.countHeart+1}));
-      }
+      if(isPressedHeart.current) setHeart(prev => ({...prev, countHeart: prev.countHeart+1}));
     }
     else{
-      isFinish.current = false;
       icon.current.play(7, 0);
 
-      if(!firstLoad.current) {
-        setHeart(prev => ({...prev, countHeart: prev.countHeart-1}));
-      }
+      if(isPressedHeart.current) setHeart(prev => ({...prev, countHeart: prev.countHeart-1}));
     }
 
-    firstLoad.current = false;
   }, [heart.isHeart])
   
   const updateLike = () => {
     if(!isFinish.current) return;
+    isPressedHeart.current = true;
     setHeart(prev => ({...prev, isHeart: !prev.isHeart}));
   }
 
   return (
     <View style={styles.container}>
 
-      <Pressable onPress={updateLike} style={styles.pressable}/>
+      <Pressable 
+        onPress={updateLike} 
+        disabled={!fetch}
+        style={styles.pressable}
+      />
       
       <View style={styles.icon}>
         <LottieView

@@ -16,8 +16,8 @@ const ListShort = ({ data, navigation }) => {
   };
 
   return (
-    <>
-      <Viewport.Tracker style={styles.container}>
+    <View style={styles.container}>
+      <Viewport.Tracker>
         <FlashList
           data={data}
           ref={list}
@@ -28,7 +28,7 @@ const ListShort = ({ data, navigation }) => {
           decelerationRate={'normal'}
           />
       </Viewport.Tracker>
-    </>
+    </View>
   )
 }
 
