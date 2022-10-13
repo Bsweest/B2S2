@@ -1,9 +1,7 @@
 import { StyleSheet, View, Dimensions, Text } from 'react-native'
 import React, { useState, useRef, useEffect } from 'react'
-import { Viewport } from '@skele/components'
 import { useIsFocused } from '@react-navigation/native'
 import { useDispatch } from 'react-redux'
-import Constants from 'expo-constants';
 
 import { Video } from 'expo-av'
 import { TapGestureHandler } from 'react-native-gesture-handler'
@@ -20,141 +18,132 @@ import OpenAvatar from './SmallPart/OpenAvatar'
 import themes from '../../values/themes'
 import { closeCS } from '../../redux/slices/CommentSectionSlice'
 
+import { useQuery } from '@tanstack/react-query'
 import shortServices from '../../../backend/services/ShortService'
 
-const feedItemHeight = Dimensions.get('window').height;
-const feedItemWidth = Dimensions.get('window').width;
-
-const ViewportAwareVideo = Viewport.Aware(Video);
+const windowWidth = Dimensions.get('window').width;
 
 const temp = '6e25bebf-aaaa-4e98-89c2-6f11211f9539';
 
-const ShortVideo = ({ item, navigation, modal }) => {
+const ShortVideo = ({ item, navigation, shouldPlay, VIDEOHEIGHT }) => {
   const { id, created_at, op_id, uri, caption, music } = item;
 
   const dispatch = useDispatch();
-  const topInset = Constants.statusBarHeight;
 
   //state for top component
   const [status, setStatus] = useState(false);
   const inUse = useIsFocused();
-  const doubleTap = useRef(null);
+  const doubleTap = useRef();
 
-  //state for small part
-  const [heart, setHeart] = useState({
-    isHeart: false,
-    countHeart: 0,
-  });
+  // state heart button
+  const [heart, setHeart] = useState(false);
   const isPressedHeart = useRef(false);
 
-  //fetch state
-  const [fetch, setFetch] = useState(false);
+  //fetch data
+  const { data, isLoading, isSuccess, isError } = useQuery(
+    ['short_services', temp, id, op_id],
+    shortServices,
+  )
 
   useEffect(() => {
-    if(modal) playShort();
+    if(isSuccess) setHeart(data.hs);
 
-    shortServices(temp, id).then((rs)=>{
-      setHeart({
-        isHeart: rs.hs,
-        countHeart: rs.count_heart,
-      });
-      setFetch(true);
-    })
-  }, []);
+  }, [isSuccess]);
 
-  const changeShort = () => {
+  useEffect(() => {
+    shouldPlay ? setStatus(true) : setStatus(false)
+
+  }, [shouldPlay])
+
+  const changePlaying = () => {
     dispatch(closeCS());
     setStatus(!status);
-  }
-  const playShort = () => {
-    if(!status) setStatus(true);
-  }
-  const pauseShort = () => {
-    if(status) setStatus(false);
   }
 
   const updateLike = () => {
     isPressedHeart.current = true;
-    setHeart(prev => ({...prev, isHeart: !prev.isHeart}));
+    setHeart(prev => !prev);
   }
 
   return (
     <View 
       style={[styles.container, {
-        height: feedItemHeight - topInset - 45
+        height: VIDEOHEIGHT
       }]}
     >
-
-      <ViewportAwareVideo
-        style={styles.videoContainer}
-        resizeMode={'contain'}
-        shouldPlay={status && inUse}
-        isLooping
-        source={{uri: uri}}
-        onViewportEnter={playShort}
-        onViewportLeave={pauseShort}
-        preTriggerRatio={-1}
-      />
-
-      <TapGestureHandler
-        waitFor={doubleTap}
-        onActivated={changeShort}
-      >
-        <TapGestureHandler
-          ref={doubleTap}
-          numberOfTaps={2}
-          onActivated={updateLike}
-        >
-          <View 
-            style={[styles.touch, {
-              height: feedItemHeight - topInset - 45
-            }]}
+      {isSuccess ?
+        <>
+          <Video
+            style={styles.videoContainer}
+            resizeMode={'contain'}
+            shouldPlay={status && inUse}
+            isLooping
+            source={{uri: uri}}
           />
-        </TapGestureHandler>
-      </TapGestureHandler>
-    
-      <View style={styles.overlay}>
-        <View style={styles.leftContainer}>
-          <View style={styles.musicContainer}>
-            <Ionicons name='md-musical-notes-sharp' size={22} style={styles.musicIcon}/>
-            <TextTicker
-              style={styles.musicTick}
-              duration={6000}
-              loop
-              bounce={false}
-              repeatSpacer={50}
-            >
-              music hiphop for life letgo mot hai ba bon
-            </TextTicker>
-          </View> 
-          <ReadMore 
-            style={styles.caption}
-            numberOfLines={2}
-            seeLessStyle={styles.readMore}
-            seeMoreStyle={styles.readMore}
+
+          <TapGestureHandler
+            waitFor={doubleTap}
+            onActivated={changePlaying}
           >
-            {caption}
-          </ReadMore>
-          <Text style={styles.originalPoster}>@OP</Text>
-        </View>
+            <TapGestureHandler
+              ref={doubleTap}
+              numberOfTaps={2}
+              onActivated={updateLike}
+            >
+              <View 
+                style={[styles.touch, {
+                  height: VIDEOHEIGHT
+                }]}
+              />
+            </TapGestureHandler>
+          </TapGestureHandler>
         
-        <View style={styles.rightContainer}>
-          <ShareButton/>
+          <View style={styles.overlay}>
+            <View style={styles.leftContainer}>
+              <View style={styles.musicContainer}>
+                <Ionicons name='md-musical-notes-sharp' size={22} style={styles.musicIcon}/>
+                <TextTicker
+                  style={styles.musicTick}
+                  duration={6000}
+                  loop
+                  bounce={false}
+                  repeatSpacer={50}
+                >
+                  music hiphop for life letgo mot hai ba bon
+                </TextTicker>
+              </View> 
+              <ReadMore 
+                style={styles.caption}
+                numberOfLines={2}
+                seeLessStyle={styles.readMore}
+                seeMoreStyle={styles.readMore}
+              >
+                {caption}
+              </ReadMore>
+              <Text style={styles.originalPoster}>@OP</Text>
+            </View>
+            
+            <View style={styles.rightContainer}>
+              <ShareButton ssid={id}/>
 
-          <BookmarkButton ssid={id}/>
+              <BookmarkButton ssid={id} isBM={fetch.bm}/>
 
-          <OpenComment ssid={id} setStatus={setStatus}/>
+              <OpenComment ssid={id} numCM={fetch.count_comment} setStatus={setStatus}/>
 
-          <HeartButton 
-            heart={heart} 
-            setHeart={setHeart} 
-            isPressedHeart={isPressedHeart}
-            fetch={fetch}
-          />
+              <HeartButton 
+                heart={heart}
+                count_heart={fetch.count_heart} 
+                isPressedHeart={isPressedHeart}
+                updateLike={updateLike}
+              />
 
-          <OpenAvatar navigation={navigation} opID={op_id}/>
-        </View>
-      </View>
+              <OpenAvatar navigation={navigation} opID={op_id} isFL={fetch.fl}/>
+            </View>
+          </View>
+        </>
+      :
+        <></>
+      }
       
     </View>
   ) 
@@ -162,7 +151,7 @@ const ShortVideo = ({ item, navigation, modal }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: feedItemWidth,
+    width: windowWidth,
     backgroundColor: themes.BACKGROUND, 
   },
   videoContainer: {
@@ -170,14 +159,14 @@ const styles = StyleSheet.create({
     zIndex: 1
   },
   touch:{
-    width: feedItemWidth,
+    width: windowWidth,
     position: 'absolute',
     flex: 1,
     zIndex: 2,
     bottom: 0,
   },
   overlay: {
-    width: feedItemWidth,
+    width: windowWidth,
     position: 'absolute',
     flex: 1,
     zIndex: 3,

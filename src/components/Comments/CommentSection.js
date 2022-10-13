@@ -1,5 +1,5 @@
 import { StyleSheet, TextInput } from 'react-native'
-import { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect } from 'react'
 import BottomSheet, {BottomSheetFlatList, BottomSheetView} from '@gorhom/bottom-sheet'
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -7,6 +7,8 @@ import ParenComment from './ParenComment'
 
 import { MaterialIcons } from '@expo/vector-icons'; 
 import themes from '../../values/themes'
+
+import { useQuery } from '@tanstack/react-query'
 import { closeCS } from '../../redux/slices/CommentSectionSlice'
 import { getComments } from '../../../backend/services/GetComments'
 
@@ -16,7 +18,10 @@ const CommentSection = () => {
   const ac = new AbortController();
 
   const botSheet = useRef(null);
-  const [data, setData] = useState();
+  const { data, isLoading, isSuccess, isError } = useQuery(
+    ['comment_section', fetchID, null, ac],
+    getComments
+  )
 
   const close = () => {
     dispatch(closeCS());
@@ -24,16 +29,9 @@ const CommentSection = () => {
   }
 
   useEffect(() => {
-    if(isOpen){
-      botSheet.current.expand();
-      getComments(fetchID, null, ac).then((rs)=>{
-        setData(rs);
-      })
-    }
-
-    return () => {
-      ac.abort();
-    }
+    if(isOpen) botSheet.current.expand();
+    
+    return () => ac.abort();
   }, [isOpen])
 
   const renderItem = ({item}) => {

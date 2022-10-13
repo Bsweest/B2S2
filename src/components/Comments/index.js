@@ -1,9 +1,10 @@
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native'
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useMemo } from 'react'
 import LottieView from 'lottie-react-native'
 
 import ReadMore from '@fawazahmed/react-native-read-more'
 import { isHeartComment } from '../../../backend/services/GetComments'
+import RelativeTime from '../../hooks/RelativeTime'
 
 import themes from '../../values/themes'
 
@@ -11,6 +12,8 @@ const temp = '6e25bebf-aaaa-4e98-89c2-6f11211f9539';
 
 const Comment = ({isParent, data}) => {
   const { id, created_at, ssid, uid, content, count_heart, parent_id } = data;
+
+  const relativeTime = useMemo(() => RelativeTime(created_at), [created_at]);
 
   const lottie = useRef(null);
   const isFinish = useRef(false);
@@ -83,7 +86,7 @@ const Comment = ({isParent, data}) => {
 
         <View style={styles.commentInfo}>
           <Text style={styles.infoTime}>
-            {created_at}
+            {relativeTime}
           </Text>
           <Pressable onPress={reply} >
             <Text style={styles.reply}>
@@ -156,7 +159,7 @@ const styles = StyleSheet.create({
   commentInfo: {
     flexDirection: 'row',
     marginTop: 5,
-    justifyContent: 'flex-end',
+    // justifyContent: 'flex-end',
   },
   infoTime: {
     color: themes.SECONDCOLOR,

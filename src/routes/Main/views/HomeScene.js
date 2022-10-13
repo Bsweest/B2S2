@@ -2,9 +2,10 @@ import { View, StyleSheet } from 'react-native';
 
 import ListShort from '../../../components/ShareShort/ListShort'
 import ShareProfile from '../../../components/UserProfile/ShareProfile';
-import { useEffect, useState } from 'react';
+import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+import { useQuery } from '@tanstack/react-query';
 import getExplore from '../../../../backend/services/GetNewFeed'
 
 const HomeStack = createNativeStackNavigator();
@@ -26,18 +27,14 @@ export default function HomeScene() {
 }
 
 const NewFeed = ({ navigation }) => {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    getExplore().then((rs) => {
-      setData(rs);
-    })
-  }, [])
-  
+  const { data, isSuccess, isLoading, isError } = useQuery(
+    ['explore_feed'],
+    getExplore
+  );
 
   return (
     <View style={styles.container}>
-      {data ?
+      {isSuccess ?
         <ListShort data={data} navigation={navigation}/>
         :
         <></>

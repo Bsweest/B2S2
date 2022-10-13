@@ -4,7 +4,7 @@ import { openShareProfile } from '../../../redux/slices/ShareProfileSlice';
 
 import FollowButton from './FollowButton'
 
-const OpenAvatar = ({ navigation, opID }) => {
+const OpenAvatar = ({ navigation, opID, isFL }) => {
   const dispatch = useDispatch();
 
   const open = () => {
@@ -20,7 +20,7 @@ const OpenAvatar = ({ navigation, opID }) => {
           source={require('../../../../tests/ninon.jpg')}
         /> 
       </Pressable>
-      <FollowButton opID={opID}/>
+      <FollowButton isFL={isFL}/>
     </View>
   )
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Pressable } from 'react-native';
 
 import { createMotionAnimatedComponent } from '@legendapp/motion';
@@ -6,8 +6,6 @@ import Svg, {
   Circle,
   Path,
 } from "react-native-svg";
-
-import { isFollowedOP } from '../../../../backend/services/FollowServices';
 
 const MotionPath = createMotionAnimatedComponent(Path);
 const MotionCircle = createMotionAnimatedComponent(Circle);
@@ -27,10 +25,8 @@ const followed = {
   strokeWidth: 3,
 }
 
-const temp = '6e25bebf-aaaa-4e98-89c2-6f11211f9539';
-
-const FollowButton = ({ opID }) => {
-  const [isFollow, setIsFollow] = useState();
+const FollowButton = ({ isFL }) => {
+  const [isFollow, setIsFollow] = useState(isFL);
   const [svgProps, setSvgProps] = useState(notFollow);
   const [radius, setRadius] = useState(24);
 
@@ -40,16 +36,6 @@ const FollowButton = ({ opID }) => {
     isPressed.current = true;
     setIsFollow(prev=> !prev);
   }
-
-  useEffect(() => {
-    isFollowedOP(temp, opID).then((rs)=>{
-      setIsFollow(rs);
-    })
-  
-    return () => {
-      
-    }
-  }, [])
   
 
   useEffect(() => {

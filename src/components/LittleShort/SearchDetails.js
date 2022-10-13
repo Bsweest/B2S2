@@ -1,8 +1,8 @@
 import { StyleSheet, View, Pressable } from 'react-native'
 import React from 'react'
-import ShortVideo from '../ShareShort'
-import { useDispatch, useSelector } from 'react-redux';
+import ListShort from '../ShareShort/ListShort'
 
+import { useDispatch, useSelector } from 'react-redux';
 import { removeSearchDetails } from '../../redux/slices/SearchDetailsSlice';
 
 import { Ionicons } from '@expo/vector-icons'; 
@@ -19,7 +19,7 @@ const SearchDetails = ({ navigation }) => {
   
   return (
     <View style={styles.container}>
-      <ShortVideo style={styles.video} item={data} modal={true}/>
+      <ListShort style={styles.video} data={data} navigation={navigation}/>
 
       <Pressable style={styles.btnBack} onPress={goBack}>
         <Ionicons 
@@ -30,7 +30,6 @@ const SearchDetails = ({ navigation }) => {
     </View>
   )
 }
-
 
 const styles = StyleSheet.create({
   container: {
