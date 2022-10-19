@@ -1,91 +1,135 @@
 import { StyleSheet, Image, View, Pressable, Text } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Motion } from '@legendapp/motion'
 import { FlashList } from '@shopify/flash-list'
 
 import themes from '../../values/themes'
 import Library from './Library'
 
-const UserProfile = ({ navigation }) => {
-  const [follow, setFollow] = useState(false);
+import { useQuery } from '@tanstack/react-query'
+import getShareProfile, { getInteractNumbers, getShortsOfUser, isFollowingOP } from '../../../backend/services/ShareProfileServices'
 
-  const data=[0, 10, 2, 4, 5]
+import FormatInteractNumber from '../../hooks/NumBro';
 
+const UserProfile = ({ route, navigation }) => {
+  const { op_id } = route.params;
+  
+  const [numbers, setNumbers] = useState([0, 0, 0]);
+
+  const { data } = useQuery(
+    ['get_user_data', op_id],
+    () => getShareProfile(op_id)
+  )
+
+  const { data: isFL } = useQuery(
+    ['is_following', op_id],
+    () => isFollowingOP(op_id)
+  )
+
+  const { data: interactNumber, isSuccess: isNumbers } = useQuery(
+    ['get_interact_numbers', op_id],
+    () => getInteractNumbers(op_id)
+  )
+  const { data: userShorts, isSuccess:isShorts } = useQuery(
+    ['get_user_shorts', op_id],
+    () => getShortsOfUser(op_id)
+  )
+
+  useEffect(() => {
+    if(interactNumber) setNumbers(FormatInteractNumber(interactNumber));
+    return () => {}
+  }, [isNumbers])
+  
   const updateFollow = () => {
-    setFollow(prev => !prev);
+  
   }
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item, index }) => {
     return (
-      <Library item={item} navigation={navigation}/>
+      <Library data={item} navigation={navigation} index={index}/>
     )
   }
 
   const header = () => {
     return (
-      <View style={styles.topContainer}>
+      <>
+        {isShorts && isNumbers ?
+          <Motion.View style={styles.topContainer}>
+            <Image
+              style={styles.avatar}
+              source={data.avatar_url ? 
+                {uri: data.avatar_url}
+                :
+                require('../../assets/placeholder/user.png')
+              }
+            />
 
-        <Image
-          style={styles.avatar}
-          source={require('../../assets/placeholder/user.png')}
-        />
+            <Text style={styles.username}>
+              @{data.username}
+            </Text>
 
-        <Text style={styles.username}>
-          @Follower
-        </Text>
+            <View style={styles.statisticsContainer}>
+              <View style={styles.boxSide}>
+                <Text style={styles.number}>{numbers[2]}</Text>
+                <Text style={styles.note}>Following</Text>
+              </View>
 
-        <View style={styles.statisticsContainer}>
-          <View style={styles.boxSide}>
-            <Text style={styles.number}>100</Text>
-            <Text style={styles.note}>Following</Text>
-          </View>
-          <View style={styles.boxMain}>
-            <Text style={styles.number}>5.4M</Text>
-            <Text style={styles.note}>Followed</Text>
-          </View>
-          <View style={styles.boxSide}>
-            <Text style={styles.number}>10.4M</Text>
-            <Text style={styles.note}>Heart</Text>
-          </View>
-        </View>
+              <View style={styles.line}/>
 
-        <Motion.Pressable onPress={updateFollow}>
-          <Motion.View
-            style={styles.btnFollow}
-            animate={{
-              backgroundColor: follow ? themes.COLOR : '#EA4359',
-            }}
-            transition={{
-              type: 'tween',
-              duration: 1000,
-            }}
-          >
-            <Motion.Text
-             style={styles.textOfBtn}
-              animate={{
-                color: follow ? '#EA4359' : themes.COLOR,
-              }}
-            >
-              {follow ? 'Followed' : 'Follow'}
-            </Motion.Text>  
+              <View style={styles.boxMain}>
+                <Text style={styles.number}>{numbers[1]}</Text>
+                <Text style={styles.note}>Follower</Text>
+              </View>
+
+              <View style={styles.line}/>
+
+              <View style={styles.boxSide}>
+                <Text style={styles.number}>{numbers[0]}</Text>
+                <Text style={styles.note}>Hearts</Text>
+              </View>
+            </View>
+
+            <Pressable onPress={updateFollow}>
+              <Motion.View
+                style={styles.btnFollow}
+                animate={{
+                  backgroundColor: isFL ? themes.COLOR : '#EA4359',
+                }}
+                transition={{
+                  type: 'tween',
+                  duration: 1000,
+                }}
+              >
+                <Motion.Text
+                style={styles.textOfBtn}
+                  animate={{
+                    color: isFL ? '#EA4359' : themes.COLOR,
+                  }}
+                >
+                  {isFL ? 'Followed' : 'Follow'}
+                </Motion.Text>  
+              </Motion.View>
+            </Pressable>
+
+            <Text style={styles.bio}>
+              {data.bio}
+            </Text>
+
           </Motion.View>
-        </Motion.Pressable>
-
-        <Text style={styles.bio}>
-          Bio of Temporary
-        </Text>
-
-      </View>
+          :
+          <></>
+        }
+      </>
     )
   }
 
   return (
     <Motion.View style={styles.container}>
       <FlashList
-        data={data}
+        data={userShorts}
         estimatedItemSize={20}
         renderItem={renderItem}
-        keyExtractor={(item)=>item}
+        keyExtractor={(item)=>item.id}
         numColumns={3}
         ListHeaderComponent={header}
       />
@@ -110,25 +154,28 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   username: {
-    fontSize: themes.SIZE,
+    fontSize: themes.BIG,
     color: themes.ACTIVE,
   },
   statisticsContainer: {
     flexDirection: 'row',
-    marginVertical: 5,
+    alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 10,
   },
   boxMain: {
+    width: 80,
     alignItems: 'center',
-    paddingHorizontal: 10,
-    marginHorizontal: 10,
-    borderLeftWidth: 0.5,
-    borderRightWidth: 0.5,
-    borderColor: themes.ACTIVE,
   },
   boxSide: {
+    width: 80,
     alignItems: 'center',
+  },
+  line: {
+    height: '55%',
+    width: 1,
+    marginHorizontal: 10,
+    backgroundColor: themes.INACTIVE,
   },
   number: {
     color: themes.COLOR,
@@ -137,7 +184,7 @@ const styles = StyleSheet.create({
   },
   note: {
     color: themes.COLOR,
-    fontWeight: '300',
+    fontWeight: '600',
     fontSize: themes.SIZE,
   },
   btnFollow: {

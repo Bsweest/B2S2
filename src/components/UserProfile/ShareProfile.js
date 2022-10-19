@@ -2,24 +2,20 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { useSelector, useDispatch } from 'react-redux'
-import { closeShareProfile } from '../../redux/slices/ShareProfileSlice'
 import UserProfile from '.'
+import SearchDetails from '../SearchPages/SearchDetails';
 
 import themes from '../../values/themes'
 import { Ionicons } from '@expo/vector-icons'
-import SearchDetails from '../LittleShort/SearchDetails';
+
+import SearchState from '../../global/SearchState';
 
 const ProfileStack = createNativeStackNavigator();
 
-const ShareProfile = ({ navigation }) => {
-  const dispatch = useDispatch();
-
-  const { data } = useSelector(state => state.shareProfile);
-  const { topVisible } = useSelector(state => state.searchDetails);
+const ShareProfile = ({ route, navigation }) => {
+  const { op_id, displayname } = route.params;
 
   const goBack = () => {
-    dispatch(closeShareProfile());
     navigation.goBack();
   }
 
@@ -27,10 +23,10 @@ const ShareProfile = ({ navigation }) => {
     <View style={styles.container}>
       <View style={[
         styles.topBar, 
-        { display: topVisible ? 'flex' : 'none' } 
+        { display: SearchState.hideTop.get() ? 'none' : 'flex' } 
       ]}>
         <Text style={styles.nickname}>
-          NICKNAME
+          {displayname}
         </Text>
         <View style={styles.buttons}>
           <Pressable onPress={goBack}>
@@ -54,7 +50,11 @@ const ShareProfile = ({ navigation }) => {
           headerShown: false,
         }}
       >
-        <ProfileStack.Screen name='UserProfile' component={UserProfile}/>
+        <ProfileStack.Screen 
+          name='UserProfile' 
+          component={UserProfile}
+          initialParams={{op_id}}
+        />
         <ProfileStack.Screen name='UserShort' component={SearchDetails}/>
       </ProfileStack.Navigator>
     </View>

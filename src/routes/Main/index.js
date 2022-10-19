@@ -19,12 +19,12 @@ const BottomTab = createBottomTabNavigator();
 const iconsize = 25;
 
 const getTabBarStyleSearch = (route) => {
-  const routeName = getFocusedRouteNameFromRoute(route) ?? 'SearchResults';
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'SearchInput';
   switch (routeName) {
-    case 'SearchResults':
-      return (styles.navigator);
     case 'SearchDetails':
       return (styles.none);
+    default:
+      return (styles.navigator);
   }
 }
 

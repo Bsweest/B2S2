@@ -1,17 +1,19 @@
 import { StyleSheet, Pressable, View, Dimensions, Image } from 'react-native'
 import React from 'react'
-import { useDispatch } from 'react-redux';
-import { getSearchDetails } from '../../redux/slices/SearchDetailsSlice';
+import { openSearchDetail } from '../../global/SearchState';
 
 const itemWidth = Dimensions.get('window').width / 3;
 const itemHeight = Dimensions.get('window').width / 2;
 
-const Library = ({ item, navigation }) => {
-  const dispatch = useDispatch();
+const Library = ({ data, navigation, index }) => {
+  const { poster_uri, op_id } = data;
 
   const openVideoModal = () => {
-    dispatch(getSearchDetails(item));
-    navigation.navigate('UserShort');
+    openSearchDetail();
+    navigation.navigate('UserShort', {
+      op_id: op_id,
+      initialIndex: index
+    });
   }
     
   return (
@@ -19,7 +21,10 @@ const Library = ({ item, navigation }) => {
       <Pressable onPress={openVideoModal}>
         <Image
           resizeMode='cover'
-          source={require('../../../tests/Background.png')}
+          source={poster_uri ? 
+            {uri: poster_uri}
+            :
+            require('../../assets/placeholder/background.png')}
           style={styles.image}
         />
       </Pressable>

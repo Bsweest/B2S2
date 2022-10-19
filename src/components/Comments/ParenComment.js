@@ -7,22 +7,32 @@ import Comment from '.'
 import { useEffect } from 'react'
 import { getComments, getCountChildComment } from '../../../backend/services/GetComments'
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet'
+import { useQuery } from '@tanstack/react-query'
 
 const ParenComment = ({ data }) => {
+  const { id: pid, ssid: fetchID } = data
   const [openChildren, setOpenChildren] = useState(false);
-  const [children, setChildren] = useState();
-  const [countChildren, setCountChildren] = useState(0);
   const ac = new AbortController();
 
+  const { data: countChildren } = useQuery(
+    ['cnt_childcomment', pid],
+    () => getCountChildComment(pid),
+  );
+
+  const { data: children, isLoading, isSuccess, isError } = useQuery(
+    ['get_childcomment', fetchID, pid],
+    () => getComments(fetchID, pid, ac),
+    { enabled: openChildren }
+  );
+
   useEffect(() => {
-    getCountChildComment(data.id).then((rs)=>{
-      setCountChildren(rs);
-    })
+    
   
     return () => {
       ac.abort();
     }
   }, [])
+  
 
   const renderItem = ({ item }) => {
     return (
@@ -32,11 +42,6 @@ const ParenComment = ({ data }) => {
   
   const open = () => {
     setOpenChildren(prev => !prev);
-    if(openChildren){
-      getComments(data.ssid, data.id, ac).then((rs)=>{
-        setChildren(rs);
-      })
-    }
   }
 
   return (

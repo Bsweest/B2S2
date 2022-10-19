@@ -7,6 +7,9 @@ import Svg, {
   Path,
 } from "react-native-svg";
 
+import { useQuery } from '@tanstack/react-query';
+import { isFollowingOP } from '../../../../backend/services/ShareProfileServices';
+
 const MotionPath = createMotionAnimatedComponent(Path);
 const MotionCircle = createMotionAnimatedComponent(Circle);
 const MotionSvg = createMotionAnimatedComponent(Svg);
@@ -25,12 +28,16 @@ const followed = {
   strokeWidth: 3,
 }
 
-const FollowButton = ({ isFL }) => {
-  const [isFollow, setIsFollow] = useState(isFL);
+const FollowButton = ({ op_id }) => {
   const [svgProps, setSvgProps] = useState(notFollow);
   const [radius, setRadius] = useState(24);
 
   const isPressed = useRef(false);
+
+  const { data: isFL } = useQuery(
+    ['is_following', op_id],
+    () => isFollowingOP(op_id)
+  )
   
   const update = ()=>{
     isPressed.current = true;
@@ -39,7 +46,7 @@ const FollowButton = ({ isFL }) => {
   
 
   useEffect(() => {
-    if(isFollow) {
+    if(isFL) {
       setSvgProps(followed);
       if (isPressed.current) {}
 
@@ -56,7 +63,7 @@ const FollowButton = ({ isFL }) => {
       if (isPressed.current) {}
     }
 
-  }, [isFollow])
+  }, [isFL])
   
 
   return (

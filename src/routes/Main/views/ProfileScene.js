@@ -1,25 +1,27 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useSelector } from 'react-redux';
-
-import UserProfile from '../../../components/UserProfile';
 
 import themes from '../../../values/themes';
-import { Ionicons } from '@expo/vector-icons'
+
+import UserProfile from '../../../components/UserProfile';
 import SearchDetails from '../../../components/LittleShort/SearchDetails';
+
+import SearchState from '../../../global/SearchState';
 
 const ProfileStack = createNativeStackNavigator();
 
+import TempID from '../../../../tests/TempID';
+
 export default function ProfileScene() {
 
-  const { topVisible } = useSelector(state => state.searchDetails);
+  const op_id = TempID;
 
   return (
     <View style={styles.container}>
       <View style={[
         styles.topBar, 
-        { display: topVisible ? 'flex' : 'none' } 
+        { display: SearchState.hideTop.get() ? 'none' : 'flex' } 
       ]}>
         <Text style={styles.nickname}>
           CLIENTNAME
@@ -35,7 +37,11 @@ export default function ProfileScene() {
           headerShown: false,
         }}
       >
-        <ProfileStack.Screen name='OwnProfile' component={UserProfile}/>
+        <ProfileStack.Screen 
+          name='OwnProfile' 
+          component={UserProfile}
+          initialParams={{op_id}}
+        />
         <ProfileStack.Screen name='OwnShort' component={SearchDetails}/>
       </ProfileStack.Navigator>
     </View>

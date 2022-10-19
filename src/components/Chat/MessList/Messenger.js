@@ -2,16 +2,12 @@ import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
 import React, { useState } from 'react'
 
 import themes from '../../../values/themes'
-import { useDispatch } from 'react-redux'
-import { openMessages } from '../../../redux/slices/MessagesSlice'
 
 const Messenger = ({ item, navigation }) => {
-  const dispatch = useDispatch();
 
   const [read, setRead] = useState(true);
 
   const openChat = () => {
-    dispatch(openMessages(item));
     navigation.navigate('ChatScreen');
   }
 

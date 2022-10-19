@@ -1,7 +1,6 @@
-import { StyleSheet, TextInput } from 'react-native'
-import React, { useRef, useEffect } from 'react'
+import { BackHandler, StyleSheet, TextInput } from 'react-native'
+import React, { useRef, useEffect, useState } from 'react'
 import BottomSheet, {BottomSheetFlatList, BottomSheetView} from '@gorhom/bottom-sheet'
-import { useSelector, useDispatch } from 'react-redux'
 
 import ParenComment from './ParenComment'
 
@@ -9,30 +8,52 @@ import { MaterialIcons } from '@expo/vector-icons';
 import themes from '../../values/themes'
 
 import { useQuery } from '@tanstack/react-query'
-import { closeCS } from '../../redux/slices/CommentSectionSlice'
 import { getComments } from '../../../backend/services/GetComments'
 
+import { useSelector } from "@legendapp/state/react"
+import CommentSectionState, { closeCommentSection } from '../../global/CommentSectionState'
+
 const CommentSection = () => {
-  const dispatch = useDispatch();
-  const { isOpen, fetchID } = useSelector(state => state.commentSection);
-  const ac = new AbortController();
+  const fetchID = useSelector(() => CommentSectionState.fetchID.get());
+  const [isOpen, setIsOpen] = useState(false);
 
   const botSheet = useRef(null);
+  const ac = new AbortController();
+
   const { data, isLoading, isSuccess, isError } = useQuery(
-    ['comment_section', fetchID, null, ac],
-    getComments
+    ['comment_section', fetchID, null],
+    () => getComments(fetchID, null, ac),
+    { enabled: isOpen }
   )
 
   const close = () => {
-    dispatch(closeCS());
-    setData();
+    closeCommentSection();
   }
 
+  const dispose = CommentSectionState.isOpen.onChange(bool => {
+    if(bool) {
+      setIsOpen(bool);
+      botSheet.current.expand();
+    }
+  });
+
   useEffect(() => {
-    if(isOpen) botSheet.current.expand();
-    
-    return () => ac.abort();
-  }, [isOpen])
+    const backAction = () => {
+      botSheet.current.close()
+      return true;
+    };
+ 
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => {
+      ac.abort();
+      dispose();
+      backHandler.remove();
+    }
+  }, [])
 
   const renderItem = ({item}) => {
     return (

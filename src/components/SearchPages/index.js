@@ -1,8 +1,5 @@
 import { View, Text, StyleSheet, Dimensions, Image, Pressable } from 'react-native'
-import { useDispatch } from 'react-redux';
-
-import { getSearchDetails } from '../../redux/slices/SearchDetailsSlice';
-
+import { openSearchDetail } from '../../global/SearchState';
 import themes from '../../values/themes';
 
 const littleWidth = Dimensions.get('window').width * 44 / 100;
@@ -10,10 +7,8 @@ const littleHeight = Dimensions.get('window').width * 66 / 100;
 const allHeight = littleHeight + 100;
 
 const LittleShort = ({ navigation, item }) => {
-  const dispatch = useDispatch();
-
   const open = () => {
-    dispatch(getSearchDetails(item));
+    openSearchDetail();
     navigation.navigate('SearchDetails');
   }
 

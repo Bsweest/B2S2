@@ -10,6 +10,7 @@ const themes = {
     SIZE: 15,
     SMALL: 13,
     NOTE: 12,
+    HEADER: 20,
 }
 
 export default themes;

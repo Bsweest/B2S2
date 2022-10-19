@@ -1,6 +1,5 @@
 import { Image, StyleSheet, Text, View, Pressable } from 'react-native'
-import React, { useEffect, useState, useCallback } from 'react'
-import { useSelector } from 'react-redux';
+import { useEffect, useState, useCallback } from 'react'
 import { Bubble, Send, GiftedChat } from 'react-native-gifted-chat'
 
 import themes from '../../../values/themes';
@@ -8,7 +7,6 @@ import { FontAwesome, Ionicons } from '@expo/vector-icons'
 
 const ChatScreen = ({ navigation }) => {
   const [messages, setMessages] = useState();
-  const { data } = useSelector(state => state.messages);
 
   useEffect(() => {
     setMessages([

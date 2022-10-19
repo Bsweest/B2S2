@@ -1,8 +1,10 @@
 import { supabase } from "../../backend/supabase";
 
-const getComments = async (ssid, pid, ac) => {
+import TempID from "../../tests/TempID";
+
+const getComments = async (fetchID, pid, ac) => {
     const { data, error } = await supabase.rpc('get_comments', {
-        ss_id: ssid,
+        ss_id: fetchID,
         p_id: pid
     })
     .abortSignal(ac.signal);
@@ -10,9 +12,9 @@ const getComments = async (ssid, pid, ac) => {
     return data;
 } 
 
-const isHeartComment = async (clientID , cid) => {
+const isHeartComment = async (cid) => {
     const { data, error } = await supabase.rpc('is_heart_comment', {
-        client: clientID,
+        client: TempID,
         comment_id: cid
     })
 

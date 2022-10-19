@@ -1,15 +1,25 @@
 import { View, Image, StyleSheet, Pressable } from 'react-native'
-import { useDispatch } from 'react-redux'
-import { openShareProfile } from '../../../redux/slices/ShareProfileSlice';
-
 import FollowButton from './FollowButton'
 
-const OpenAvatar = ({ navigation, opID, isFL }) => {
-  const dispatch = useDispatch();
+import { useQuery } from '@tanstack/react-query'
+import getShareProfile from '../../../../backend/services/ShareProfileServices'
 
+const OpenAvatar = ({ navigation, op_id }) => {
+  const { data, isLoading, isError, isSuccess } = useQuery(
+    ['get_user_data', op_id],
+    () => getShareProfile(op_id),
+    {
+      placeholderData: {
+        avatar_url: '',
+      }
+    }
+  )
+  
   const open = () => {
-    dispatch(openShareProfile(opID));
-    navigation.navigate('ShareProfile');
+    navigation.navigate('ShareProfile', {
+      op_id: op_id,
+      displayname: data.displayname
+    });
   }
 
   return (
@@ -17,10 +27,14 @@ const OpenAvatar = ({ navigation, opID, isFL }) => {
       <Pressable onPress={open}>
         <Image 
           style={styles.avatarImg}
-          source={require('../../../../tests/ninon.jpg')}
+          source={data.avatar_url ? 
+            {uri: data.avatar_url}
+            :
+            require('../../../assets/placeholder/user.png')
+          }
         /> 
       </Pressable>
-      <FollowButton isFL={isFL}/>
+      <FollowButton op_id={op_id}/>
     </View>
   )
 }

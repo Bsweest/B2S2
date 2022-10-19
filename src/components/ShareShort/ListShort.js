@@ -3,14 +3,15 @@ import { FlashList } from '@shopify/flash-list'
 import { View } from 'react-native'
 
 import ShortVideo from '.'
-import { useState, useCallback } from 'react'
+import { useObservable } from "@legendapp/state/react"
 
 import Constants from 'expo-constants';
+import { useCallback } from 'react'
 
 const windowHeight = Dimensions.get('window').height;
 
-const ListShort = ({ data, navigation }) => {
-  const [focusedIndex, setFocusedIndex] = useState(0);
+const ListShort = ({ data, navigation, initialIndex }) => {
+  const focusedIndex = useObservable(0);
   const VIDEOHEIGHT = windowHeight - Constants.statusBarHeight - 45;
 
   const renderItem = ({ item, index }) => {
@@ -18,17 +19,18 @@ const ListShort = ({ data, navigation }) => {
       <ShortVideo 
         item={item} 
         navigation={navigation} 
-        shouldPlay={focusedIndex === index}
         VIDEOHEIGHT={VIDEOHEIGHT}
+        focusedIndex={focusedIndex}
+        index={index}
       />
     )
   };
 
-  const handleScroll = useCallback(({ nativeEvent: {contentOffset:{ y }}}) => {
+  const handleScroll = useCallback(({ nativeEvent: {contentOffset: { y }}}) => {
     const offset = Math.round(y / VIDEOHEIGHT);
   
-    if(offset!==focusedIndex) setFocusedIndex(offset);
-  }, [setFocusedIndex]);
+    if(offset!==focusedIndex.get()) focusedIndex.set(offset);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -39,6 +41,8 @@ const ListShort = ({ data, navigation }) => {
         keyExtractor={(item)=>item.id}
         renderItem={renderItem}
         pagingEnabled
+        estimatedFirstItemOffset={ (initialIndex + 1) * VIDEOHEIGHT }
+        initialScrollIndex={initialIndex}
         decelerationRate={'normal'}
         ListFooterComponent={footer}
       />

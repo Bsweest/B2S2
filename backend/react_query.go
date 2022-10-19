@@ -1,0 +1,6 @@
+HomeScene:                  'explore_feed'
+ShareShort:                 'short_services'
+OpenAvatar - UserProfile:   'get_user_data'
+FollowButton - UserProfile: 'is_following'
+UserProfile:                'get_interact_numbers'
+UserProfile:                'get_user_shorts'

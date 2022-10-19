@@ -1,20 +1,20 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import { useDispatch } from 'react-redux';
-import { useState } from 'react';
+import React, { useState } from 'react';
+
 
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-
 import styles from './styles'
-import { openCS } from '../../../redux/slices/CommentSectionSlice';
 
-export default function OpenComment({ssid, numCM, setStatus}) {
-  const dispatch = useDispatch();
+import CommentSectionState from '../../../global/CommentSectionState';
 
+export default function OpenComment({ ssid, numCM }) {
   const [countComment, setCountComment] = useState(numCM);
 
   const open = () => {
-    setStatus(false);
-    dispatch(openCS(ssid));
+    CommentSectionState.set({
+      isOpen: true,
+      fetchID: ssid
+    })
   }
 
   return (

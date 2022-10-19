@@ -31,11 +31,11 @@ const NewFeed = ({ navigation }) => {
     ['explore_feed'],
     getExplore
   );
-
+  
   return (
     <View style={styles.container}>
-      {isSuccess ?
-        <ListShort data={data} navigation={navigation}/>
+      {data ?
+        <ListShort data={data} navigation={navigation} initialIndex={0}/>
         :
         <></>
       }

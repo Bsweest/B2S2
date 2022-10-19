@@ -1,7 +1,6 @@
 import { StyleSheet, View, Dimensions, Text } from 'react-native'
 import React, { useState, useRef, useEffect } from 'react'
 import { useIsFocused } from '@react-navigation/native'
-import { useDispatch } from 'react-redux'
 
 import { Video } from 'expo-av'
 import { TapGestureHandler } from 'react-native-gesture-handler'
@@ -16,20 +15,17 @@ import ShareButton from './SmallPart/ShareButton'
 import OpenAvatar from './SmallPart/OpenAvatar'
 
 import themes from '../../values/themes'
-import { closeCS } from '../../redux/slices/CommentSectionSlice'
 
 import { useQuery } from '@tanstack/react-query'
 import shortServices from '../../../backend/services/ShortService'
+import { useSelector } from '@legendapp/state/react'
 
 const windowWidth = Dimensions.get('window').width;
 
-const temp = '6e25bebf-aaaa-4e98-89c2-6f11211f9539';
+const ShortVideo = ({ item, navigation, VIDEOHEIGHT, focusedIndex, index }) => {
+  const { id: ssid, created_at, op_id, uri, caption, music } = item;
 
-const ShortVideo = ({ item, navigation, shouldPlay, VIDEOHEIGHT }) => {
-  const { id, created_at, op_id, uri, caption, music } = item;
-
-  const dispatch = useDispatch();
-
+  const shouldPlay = useSelector(() => index === focusedIndex.get());
   //state for top component
   const [status, setStatus] = useState(false);
   const inUse = useIsFocused();
@@ -41,22 +37,19 @@ const ShortVideo = ({ item, navigation, shouldPlay, VIDEOHEIGHT }) => {
 
   //fetch data
   const { data, isLoading, isSuccess, isError } = useQuery(
-    ['short_services', temp, id, op_id],
-    shortServices,
+    ['short_services', ssid, op_id],
+    () => shortServices(ssid, op_id)
   )
 
   useEffect(() => {
     if(isSuccess) setHeart(data.hs);
-
   }, [isSuccess]);
 
   useEffect(() => {
-    shouldPlay ? setStatus(true) : setStatus(false)
-
+    shouldPlay ? setStatus(true) : setStatus(false);
   }, [shouldPlay])
 
   const changePlaying = () => {
-    dispatch(closeCS());
     setStatus(!status);
   }
 
@@ -124,20 +117,20 @@ const ShortVideo = ({ item, navigation, shouldPlay, VIDEOHEIGHT }) => {
             </View>
             
             <View style={styles.rightContainer}>
-              <ShareButton ssid={id}/>
+              <ShareButton ssid={ssid}/>
 
-              <BookmarkButton ssid={id} isBM={fetch.bm}/>
+              <BookmarkButton ssid={ssid} isBM={data.bm}/>
 
-              <OpenComment ssid={id} numCM={fetch.count_comment} setStatus={setStatus}/>
+              <OpenComment ssid={ssid} numCM={data.count_comment}/>
 
               <HeartButton 
                 heart={heart}
-                count_heart={fetch.count_heart} 
+                count_heart={data.count_heart} 
                 isPressedHeart={isPressedHeart}
                 updateLike={updateLike}
               />
 
-              <OpenAvatar navigation={navigation} opID={op_id} isFL={fetch.fl}/>
+              <OpenAvatar navigation={navigation} op_id={op_id}/>
             </View>
           </View>
         </>

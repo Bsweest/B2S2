@@ -1,19 +1,27 @@
 import { View, StyleSheet, TextInput, Pressable } from 'react-native'
-import React, { useRef } from 'react'
+import { useRef } from 'react';
 
-import CombinedList from '../../../components/LittleShort/CombinedList'
 
-import themes from '../../../values/themes'
 import { MaterialIcons } from '@expo/vector-icons'; 
-import { useSelector } from 'react-redux'
+import themes from '../../../values/themes'
+
+import CombinedList from '../../../components/SearchPages/CombinedList'
+import SearchState from '../../../global/SearchState';
+import searchKeys from '../../../assets/persist_storage/SearchKeywords';
 
 export default function SearchScene() {
-  const { topVisible } = useSelector(state => state.searchDetails);
-
   const input = useRef(null);
 
   const cancel = () => {
     input.current.clear();
+  }
+
+  const letSearch = () => {
+    if(searchKeys.length === 7) searchKeys.pop();
+    searchKeys.unshift(key);
+  }
+  const onFocus = () => {
+    
   }
 
   return (
@@ -21,7 +29,7 @@ export default function SearchScene() {
 
       <View style={[
         styles.searchContainer, 
-        { display: topVisible ? 'flex' : 'none' } 
+        { display: SearchState.hideTop.get() ? 'none' : 'flex' }
       ]}>
         <View style={styles.inputContainer}>
           <TextInput
@@ -29,7 +37,8 @@ export default function SearchScene() {
             style={styles.input}
             placeholder='Search Short...'
             placeholderTextColor={themes.SECONDCOLOR}
-            numberOfLines={1}
+            multiline={false}
+            onSubmitEditing={letSearch}
           />
           <Pressable style={styles.cancel} onPress={cancel}>
             <MaterialIcons name="cancel" size={24} color={themes.SECONDCOLOR} />
@@ -52,7 +61,7 @@ const styles = StyleSheet.create({
     zIndex: 0,
   },
   searchContainer: {
-    height: 50,
+    height: 45,
     flexDirection: 'row',
     alignItems: 'center',
     zIndex: 10,

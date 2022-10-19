@@ -3,34 +3,39 @@ import { useRef, useState, useEffect, useMemo } from 'react'
 import LottieView from 'lottie-react-native'
 
 import ReadMore from '@fawazahmed/react-native-read-more'
-import { isHeartComment } from '../../../backend/services/GetComments'
 import RelativeTime from '../../hooks/RelativeTime'
-
 import themes from '../../values/themes'
 
-const temp = '6e25bebf-aaaa-4e98-89c2-6f11211f9539';
+import { useQuery } from '@tanstack/react-query'
+import { isHeartComment } from '../../../backend/services/GetComments'
+
+const clientID = '6e25bebf-aaaa-4e98-89c2-6f11211f9539';
 
 const Comment = ({isParent, data}) => {
-  const { id, created_at, ssid, uid, content, count_heart, parent_id } = data;
+  const { id: cid, created_at, ssid, uid, content, count_heart, parent_id } = data;
 
   const relativeTime = useMemo(() => RelativeTime(created_at), [created_at]);
 
   const lottie = useRef(null);
   const isFinish = useRef(false);
   const isPressed = useRef(false);
-  const haveFetch = useRef(false);
 
-  const [like, setLike] = useState();
+  const [like, setLike] = useState(false);
   const [count, setCount] = useState(count_heart);
 
+  const { data: islike, isSuccess, isLoading, isError } = useQuery(
+    ['comment_services', cid],
+    () => isHeartComment(cid),
+  );
+
   useEffect(() => {
-    isHeartComment(temp, id).then((rs)=>{
-      setLike(rs);
-      haveFetch.current = true;
-    })
+    if(islike) setLike(islike);
   
-    return () => {}
-  }, [])
+    return () => {
+      
+    }
+  }, [islike])
+  
 
   useEffect(()=>{
     if(like) {
@@ -99,7 +104,7 @@ const Comment = ({isParent, data}) => {
 
       <View style={styles.heartContainer}>
         <Pressable
-          disabled={!haveFetch.current}
+          disabled={!isSuccess}
           onPress={updateHeart}
           style={styles.pressable}
         />
