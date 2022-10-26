@@ -4,10 +4,11 @@ import { Motion } from '@legendapp/motion'
 import { FlashList } from '@shopify/flash-list'
 
 import themes from '../../values/themes'
+import { Ionicons } from '@expo/vector-icons'; 
 import Library from './Library'
 
 import { useQuery } from '@tanstack/react-query'
-import getShareProfile, { getInteractNumbers, getShortsOfUser, isFollowingOP } from '../../../backend/services/ShareProfileServices'
+import getUserProfile, { getInteractNumbers, getShortsOfUser, isFollowingOP } from '../../../backend/services/ShareProfileServices'
 
 import FormatInteractNumber from '../../hooks/NumBro';
 
@@ -18,7 +19,7 @@ const UserProfile = ({ route, navigation }) => {
 
   const { data } = useQuery(
     ['get_user_data', op_id],
-    () => getShareProfile(op_id)
+    () => getUserProfile(op_id)
   )
 
   const { data: isFL } = useQuery(
@@ -26,11 +27,11 @@ const UserProfile = ({ route, navigation }) => {
     () => isFollowingOP(op_id)
   )
 
-  const { data: interactNumber, isSuccess: isNumbers } = useQuery(
+  const { data: interactNumber, isSuccess: doneNumbers } = useQuery(
     ['get_interact_numbers', op_id],
     () => getInteractNumbers(op_id)
   )
-  const { data: userShorts, isSuccess:isShorts } = useQuery(
+  const { data: userShorts, isSuccess:doneShorts } = useQuery(
     ['get_user_shorts', op_id],
     () => getShortsOfUser(op_id)
   )
@@ -38,7 +39,7 @@ const UserProfile = ({ route, navigation }) => {
   useEffect(() => {
     if(interactNumber) setNumbers(FormatInteractNumber(interactNumber));
     return () => {}
-  }, [isNumbers])
+  }, [doneNumbers])
   
   const updateFollow = () => {
   
@@ -50,10 +51,14 @@ const UserProfile = ({ route, navigation }) => {
     )
   }
 
+  const goBack = () => {
+    navigation.goBack();
+  }
+
   const header = () => {
     return (
       <>
-        {isShorts && isNumbers ?
+        {doneShorts && doneNumbers ?
           <Motion.View style={styles.topContainer}>
             <Image
               style={styles.avatar}
@@ -124,7 +129,28 @@ const UserProfile = ({ route, navigation }) => {
   }
 
   return (
-    <Motion.View style={styles.container}>
+    <View style={styles.container}>
+
+      <View style={styles.topBar}>
+        <Text style={styles.nickname}>
+          {data.displayname}
+        </Text>
+        <View style={styles.buttons}>
+          <Pressable onPress={goBack}>
+            <Ionicons name="ios-arrow-back"
+              size={30} color="white"
+              style={styles.btnAll}
+            />
+          </Pressable>
+          <Pressable>
+            <Ionicons name="chatbubbles-sharp" 
+              size={25} color="white"
+              style={styles.btnAll}
+            />
+          </Pressable>
+        </View>
+      </View>
+
       <FlashList
         data={userShorts}
         estimatedItemSize={20}
@@ -133,7 +159,8 @@ const UserProfile = ({ route, navigation }) => {
         numColumns={3}
         ListHeaderComponent={header}
       />
-    </Motion.View>
+
+    </View>
   )
 }
 
@@ -146,6 +173,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 0.5,
     borderBottomColor: 'white',
+    marginBottom: 0.5,
   },
   avatar: {
     width: 100,
@@ -202,6 +230,27 @@ const styles = StyleSheet.create({
     color: themes.COLOR,
     fontSize: themes.SIZE,
     margin: 15,
+  },
+  topBar: {
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  nickname: {
+    fontWeight: 'bold',
+    fontSize: themes.BIG,
+    color: themes.COLOR,
+  },
+  buttons: {
+    position: 'absolute',
+    width: '100%',
+    height: 50,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  btnAll: {
+    marginHorizontal: 10,
   },
 })
 

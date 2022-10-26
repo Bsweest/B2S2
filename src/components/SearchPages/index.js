@@ -1,15 +1,34 @@
+import { useQuery } from '@tanstack/react-query';
 import { View, Text, StyleSheet, Dimensions, Image, Pressable } from 'react-native'
-import { openSearchDetail } from '../../global/SearchState';
+import getUserProfile from '../../../backend/services/ShareProfileServices';
 import themes from '../../values/themes';
+
+import { FontAwesome5 } from '@expo/vector-icons'; 
+import shortServices from '../../../backend/services/ShortService';
 
 const littleWidth = Dimensions.get('window').width * 44 / 100;
 const littleHeight = Dimensions.get('window').width * 66 / 100;
 const allHeight = littleHeight + 100;
 
-const LittleShort = ({ navigation, item }) => {
+const LittleShort = ({ navigation, item, ts }) => {
+  const { id:ssid, op_id} = item;
+
+  const { data, isLoading, isError, isSuccess } = useQuery(
+    ['get_user_data', op_id],
+    () => getUserProfile(op_id),
+    {
+      placeholderData: {
+        avatar_url: '',
+      }
+    }
+  )
+  const { data: services } = useQuery(
+    ['short_services', ssid, op_id],
+    () => shortServices(ssid, op_id)
+  )
+
   const open = () => {
-    openSearchDetail();
-    navigation.navigate('SearchDetails');
+    navigation.navigate('SearchDetails', { text_search: ts });
   }
 
   return (
@@ -18,7 +37,11 @@ const LittleShort = ({ navigation, item }) => {
       <Pressable onPress={open}>
         <Image
           style={styles.poster}
-          source={require('../../../tests/Background.png')}
+          source={item.poster_uri ? 
+            { uri: item.poster_uri }
+            :
+            require('../../assets/placeholder/background.png')
+          }
           resizeMode='cover'
         />
       </Pressable>
@@ -26,17 +49,25 @@ const LittleShort = ({ navigation, item }) => {
       <Text style={styles.caption}
         numberOfLines={2}
       >
-        #SupaHot Test Data Ley Lospim Neifs To 2 Line 
+        {item.caption} 
       </Text>
 
       <View style={styles.originalPoster}>
         <Image
           style={styles.avatar}
-          source={require('../../assets/placeholder/user.png')}
+          source={data.avatar_url ? 
+            {uri: data.avatar_url}
+            :
+            require('../../assets/placeholder/user.png')
+          }
           resizeMode='cover'
         />
         <Text style={styles.opname} numberOfLines={1}>
-          Name
+          {data.displayname}
+        </Text>
+        <FontAwesome5 name="heart" size={18} color="grey" />
+        <Text style={styles.countHeart}>
+          {services.count_heart}
         </Text>
       </View>
     </View>
@@ -67,14 +98,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width:  24,
+    height: 24,
+    borderRadius: 12,
     marginHorizontal: 5,
   },
   opname: {
+    flex: 1,
     color: themes.SECONDCOLOR,
-    fontSize: themes.SIZE,
+    fontSize: themes.SMALL,
+  },
+  countHeart: {
+    width: 50,
+    fontSize: themes.SMALL,
+    color: themes.ACTIVE,
+    marginLeft: 5,
   }
 })
 

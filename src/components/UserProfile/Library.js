@@ -1,6 +1,5 @@
 import { StyleSheet, Pressable, View, Dimensions, Image } from 'react-native'
 import React from 'react'
-import { openSearchDetail } from '../../global/SearchState';
 
 const itemWidth = Dimensions.get('window').width / 3;
 const itemHeight = Dimensions.get('window').width / 2;
@@ -9,7 +8,6 @@ const Library = ({ data, navigation, index }) => {
   const { poster_uri, op_id } = data;
 
   const openVideoModal = () => {
-    openSearchDetail();
     navigation.navigate('UserShort', {
       op_id: op_id,
       initialIndex: index

@@ -4,34 +4,49 @@ import { Bubble, Send, GiftedChat } from 'react-native-gifted-chat'
 
 import themes from '../../../values/themes';
 import { FontAwesome, Ionicons } from '@expo/vector-icons'
+import { useQuery } from '@tanstack/react-query';
 
-const ChatScreen = ({ navigation }) => {
+import ClientProfile from '../../../global/ClientProfile'
+import { getInfiniteMessages } from '../../../../backend/services/ChatServices';
+import getUserProfile from '../../../../backend/services/ShareProfileServices';
+
+const ChatScreen = ({ route, navigation }) => {
+  const { room_id, op_id } = route.params;
+  const clientData = ClientProfile.peek();
+
   const [messages, setMessages] = useState();
 
+  const { data: messData } = useQuery(
+    ['get_user_data', op_id],
+    () => getUserProfile(op_id)
+  )
+
+  const { data, isLoading, isError, isSuccess } = useQuery(
+    ['get_chatroom', room_id],
+    () => getInfiniteMessages(room_id)
+  )
+  const client = {
+    _id: clientData.id,
+    name: clientData.displayname,
+    avatar: clientData.avatar_url,
+  }
+  const mess = {
+    _id: messData.id,
+    name: messData.displayname,
+    avatar: messData.avatar_url,
+  }
+
   useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello developer',
-        createdAt: new Date(),
-        user: {
-          _id: 'user1',
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
-        },
-      },
-      {
-        _id: 2,
-        text: 'Hello world',
-        createdAt: new Date(),
-        user: {
-          _id: 'user2',
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
-        },
-      },
-    ]);
-  }, [])
+    if(!data) return;
+    const convert = data.map(({ id, created_at, sender, content, read_status }) => ({
+      _id: id,
+      text: content,
+      createdAt: created_at,
+      user: sender === client._id ? client : mess,
+    }))
+
+    setMessages(convert);
+  }, [data])
   
   const onSend = useCallback((messages = []) => {
     setMessages((previousMessages) =>
@@ -104,7 +119,7 @@ const ChatScreen = ({ navigation }) => {
       <GiftedChat
         messages={messages}
         onSend={messages => onSend(messages)}
-        user={{_id: 'user1'}}
+        user={{_id: TempID}}
         alwaysShowSend
         renderBubble={renderBubble}
         scrollToBottom

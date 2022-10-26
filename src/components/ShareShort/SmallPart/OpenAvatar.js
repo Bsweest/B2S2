@@ -2,12 +2,12 @@ import { View, Image, StyleSheet, Pressable } from 'react-native'
 import FollowButton from './FollowButton'
 
 import { useQuery } from '@tanstack/react-query'
-import getShareProfile from '../../../../backend/services/ShareProfileServices'
+import getUserProfile from '../../../../backend/services/ShareProfileServices'
 
 const OpenAvatar = ({ navigation, op_id }) => {
   const { data, isLoading, isError, isSuccess } = useQuery(
     ['get_user_data', op_id],
-    () => getShareProfile(op_id),
+    () => getUserProfile(op_id),
     {
       placeholderData: {
         avatar_url: '',
@@ -17,8 +17,7 @@ const OpenAvatar = ({ navigation, op_id }) => {
   
   const open = () => {
     navigation.navigate('ShareProfile', {
-      op_id: op_id,
-      displayname: data.displayname
+      op_id: op_id
     });
   }
 

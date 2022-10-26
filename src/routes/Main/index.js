@@ -3,6 +3,7 @@ import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-naviga
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaView } from "react-native-safe-area-context"
+import { useEffect } from "react"
 
 import HomeScene from './views/HomeScene'
 import AddScene from './views/AddScene'
@@ -11,6 +12,7 @@ import ProfileScene from './views/ProfileScene'
 import SearchScene from './views/SearchScene'
 
 import CommentSection from '../../components/Comments/CommentSection'
+import ClientProfile from "../../global/ClientProfile"
 
 import Ionicons from '@expo/vector-icons/Ionicons'
 import themes from "../../values/themes"
@@ -18,47 +20,24 @@ import themes from "../../values/themes"
 const BottomTab = createBottomTabNavigator();
 const iconsize = 25;
 
-const getTabBarStyleSearch = (route) => {
-  const routeName = getFocusedRouteNameFromRoute(route) ?? 'SearchInput';
-  switch (routeName) {
-    case 'SearchDetails':
-      return (styles.none);
-    default:
-      return (styles.navigator);
-  }
-}
-
-const getTabBarStyleInbox = (route) => {
-  const routeName = getFocusedRouteNameFromRoute(route) ?? 'MessList';
-  switch (routeName) {
-    case 'MessList':
-      return (styles.navigator);
-    case 'ChatScreen':
-      return (styles.none);
-  }
-}
-
-const getTabBarStyleHome = (route) => {
-  const routeName = getFocusedRouteNameFromRoute(route) ?? 'NewFeed';
-  switch (routeName) {
-    case 'NewFeed':
-      return (styles.navigator);
-    case 'ShareProfile':
-      return (styles.none);
-  }
-}
-
-const getTabBarStyleProfile = (route) => {
-  const routeName = getFocusedRouteNameFromRoute(route) ?? 'OwnProfile';
-  switch (routeName) {
-    case 'OwnProfile':
-      return (styles.navigator);
-    case 'OwnShort':
-      return (styles.none);
-  }
-}
+import TempID from "../../../tests/TempID"
+import getUserProfile from "../../../backend/services/ShareProfileServices"
+import { useQuery } from "@tanstack/react-query"
 
 export default function Main() {
+  const op_id = TempID;
+
+  const { data } = useQuery(
+      ['get_user_data', op_id],
+      () => getUserProfile(op_id),
+  )
+    
+  useEffect(()=>{
+    if(data){
+      ClientProfile.set(data);
+    }
+  }, [data])
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -175,3 +154,43 @@ const styles = StyleSheet.create({
     height: 44,
   }
 });
+
+const getTabBarStyleSearch = (route) => {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'SearchTrend';
+  switch (routeName) {
+    case 'SearchDetails':
+      return (styles.none);
+    default:
+      return (styles.navigator);
+  }
+}
+
+const getTabBarStyleInbox = (route) => {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'MessList';
+  switch (routeName) {
+    case 'MessList':
+      return (styles.navigator);
+    case 'ChatScreen':
+      return (styles.none);
+  }
+}
+
+const getTabBarStyleHome = (route) => {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'NewFeed';
+  switch (routeName) {
+    case 'NewFeed':
+      return (styles.navigator);
+    case 'ShareProfile':
+      return (styles.none);
+  }
+}
+
+const getTabBarStyleProfile = (route) => {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'OwnProfile';
+  switch (routeName) {
+    case 'OwnProfile':
+      return (styles.navigator);
+    case 'OwnShort':
+      return (styles.none);
+  }
+}

@@ -2,7 +2,7 @@ import { supabase } from "../supabase"
 
 import TempID from "../../tests/TempID";
 
-const getShareProfile = async( op_id ) => {
+const getUserProfile = async( op_id ) => {
     const { data, error } = await supabase.from('profiles')
         .select()
         .eq('id', op_id)
@@ -39,4 +39,4 @@ const isFollowingOP = async( op_id ) => {
 
 export { getShortsOfUser, getInteractNumbers, isFollowingOP }
 
-export default getShareProfile;
+export default getUserProfile;

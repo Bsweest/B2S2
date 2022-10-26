@@ -1,53 +1,28 @@
-import { View, StyleSheet, TextInput, Pressable } from 'react-native'
-import { useRef } from 'react';
-
-
-import { MaterialIcons } from '@expo/vector-icons'; 
+import { View, StyleSheet } from 'react-native'
 import themes from '../../../values/themes'
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import CombinedList from '../../../components/SearchPages/CombinedList'
-import SearchState from '../../../global/SearchState';
-import searchKeys from '../../../assets/persist_storage/SearchKeywords';
+import SearchTrend from '../../../components/SearchPages/SearchTrend';
+import SearchList from '../../../components/SearchPages/SearchList'
+import SearchDetails from '../../../components/SearchPages/SearchDetails'
+import SearchInput from '../../../components/SearchPages/SearchInput'
+
+const NavStack = createNativeStackNavigator();
 
 export default function SearchScene() {
-  const input = useRef(null);
-
-  const cancel = () => {
-    input.current.clear();
-  }
-
-  const letSearch = () => {
-    if(searchKeys.length === 7) searchKeys.pop();
-    searchKeys.unshift(key);
-  }
-  const onFocus = () => {
-    
-  }
-
   return (
     <View style={styles.container}>
-
-      <View style={[
-        styles.searchContainer, 
-        { display: SearchState.hideTop.get() ? 'none' : 'flex' }
-      ]}>
-        <View style={styles.inputContainer}>
-          <TextInput
-            ref={input}
-            style={styles.input}
-            placeholder='Search Short...'
-            placeholderTextColor={themes.SECONDCOLOR}
-            multiline={false}
-            onSubmitEditing={letSearch}
-          />
-          <Pressable style={styles.cancel} onPress={cancel}>
-            <MaterialIcons name="cancel" size={24} color={themes.SECONDCOLOR} />
-          </Pressable>
-        </View>
-      </View>
-      
-      <CombinedList style={styles.result}/>
-
+      <NavStack.Navigator 
+        initialRouteName='SearchTrend'
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <NavStack.Screen name='SearchTrend' component={SearchTrend}/>
+        <NavStack.Screen name='SearchInput' component={SearchInput}/>
+        <NavStack.Screen name='SearchResults' component={SearchList}/>
+        <NavStack.Screen name='SearchDetails' component={SearchDetails}/>
+      </NavStack.Navigator>
     </View>
   )
 }
@@ -72,7 +47,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flex: 1,
-    borderRadius: 15,
+    borderRadius: 8,
     paddingVertical: 3,
     paddingHorizontal: 10,
     marginRight: 15,
@@ -84,6 +59,7 @@ const styles = StyleSheet.create({
   },
   input: {
     fontSize: themes.SIZE,
+    color: themes.COLOR
   },
   cancel: {
     width: 30,

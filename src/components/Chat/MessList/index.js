@@ -1,43 +1,30 @@
-import { StyleSheet, View, TextInput, Pressable } from 'react-native'
-import React, { useRef } from 'react'
+import { StyleSheet, View } from 'react-native'
+import React from 'react'
 import { FlashList } from '@shopify/flash-list'
 
 import Messenger from './Messenger'
 
 import themes from '../../../values/themes'
-import { MaterialIcons } from '@expo/vector-icons'; 
+import InputBar from '../../InputBar'
+import { useQuery } from '@tanstack/react-query'
+import { getChatRooms } from '../../../../backend/services/ChatServices'
 
 const MessList = ({ navigation }) => {
-  const data = [1, 2, 3, 5 , 4];
-  const input = useRef(null);
-
-  const cancel = () => {
-    input.current.clear();
-  }
+  const { data, isSuccess, isFetch } = useQuery(
+    ['mess_list'],
+    getChatRooms
+  )
 
   const renderItem = ({ item }) => {
     return (
-      <Messenger item={item} navigation={navigation}/>
+      <Messenger passID={item} navigation={navigation}/>
     )
   }
 
   return (
     <View style={styles.container}>
       
-      <View style={styles.searchContainer}>
-        <View style={styles.inputContainer}>
-          <TextInput
-            ref={input}
-            style={styles.input}
-            placeholder='Search Friend...'
-            placeholderTextColor={themes.SECONDCOLOR}
-            numberOfLines={1}
-          />
-          <Pressable style={styles.cancel} onPress={cancel}>
-            <MaterialIcons name="cancel" size={24} color={themes.SECONDCOLOR} />
-          </Pressable>
-        </View>
-      </View>
+      <InputBar auto={false} init={true} placeholder='Search Friend...'/>
 
       <FlashList
         data={data}
@@ -55,7 +42,7 @@ const styles = StyleSheet.create({
     backgroundColor: themes.BACKGROUND,
   },
   searchContainer: {
-    height: 50,
+    height: 45,
     flexDirection: 'row',
     alignItems: 'center',
     zIndex: 10,
@@ -66,7 +53,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flex: 1,
-    borderRadius: 15,
+    borderRadius: 8,
     paddingVertical: 3,
     paddingHorizontal: 10,
     marginRight: 15,

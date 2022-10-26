@@ -2,34 +2,65 @@ import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
 import React, { useState } from 'react'
 
 import themes from '../../../values/themes'
+import { useQuery } from '@tanstack/react-query';
+import getUserProfile from '../../../../backend/services/ShareProfileServices';
+import { getLastMessage } from '../../../../backend/services/ChatServices';
 
-const Messenger = ({ item, navigation }) => {
+import TempID from '../../../../tests/TempID';
 
-  const [read, setRead] = useState(true);
+const Messenger = ({ passID, navigation }) => {
+  const { room_id, parti_id: op_id } = passID;
+
+  const { data, isLoading, isError, isSuccess } = useQuery(
+    ['get_user_data', op_id],
+    () => getUserProfile(op_id),
+    {
+      placeholderData: {
+        avatar_url: '',
+      }
+    }
+  )
+  const { data: lastMessage } = useQuery(
+    ['get_last_message', room_id],
+    () => getLastMessage(room_id),
+    {
+      placeholderData: {
+        content: '',
+        read_status: true,
+      }
+    }
+  )
 
   const openChat = () => {
-    navigation.navigate('ChatScreen');
+    navigation.navigate('ChatScreen', {
+      room_id: room_id,
+      op_id: op_id
+    });
   }
 
   return (
     <Pressable onPress={openChat}>
       <View style={styles.container}>
         <Image
-          source={require('../../../assets/placeholder/user.png')}
+          source={data.avatar_url ? 
+            {uri: data.avatar_url}
+            :
+            require('../../../assets/placeholder/user.png')
+          }
           style={styles.avatar}
         />
         <View style={styles.messageContainer}>
           <Text style={[styles.messenger, {
-            fontWeight: read ? 'normal' : 'bold',
-            color: read ? themes.SECONDCOLOR : themes.COLOR, 
+            fontWeight: lastMessage.read_status ? 'normal' : 'bold',
+            color: lastMessage.read_status ? themes.SECONDCOLOR : themes.COLOR, 
           }]}>
-              Messenger
+              {data.displayname}
           </Text>
           <Text style={[styles.lastMessage, {
-            fontWeight: read ? 'normal' : 'bold',
-            color: read ? themes.SECONDCOLOR : themes.COLOR, 
+            fontWeight: lastMessage.read_status ? 'normal' : 'bold',
+            color: lastMessage.read_status ? themes.SECONDCOLOR : themes.COLOR, 
           }]}>
-              lastMessage
+              {lastMessage.sender === TempID ? 'You: ':''}{lastMessage.content}
           </Text>
         </View>
       </View>

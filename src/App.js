@@ -18,6 +18,7 @@ enableLegendStateReact()
 export default function App() {
   numbro.setLanguage('en-US')
 
+
   return (
     <QueryClientProvider client={queryClient}>
         <Main/>

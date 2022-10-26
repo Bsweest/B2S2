@@ -8,11 +8,12 @@ import themes from '../../values/themes'
 
 import { useQuery } from '@tanstack/react-query'
 import { isHeartComment } from '../../../backend/services/GetComments'
+import getUserProfile from '../../../backend/services/ShareProfileServices'
 
 const clientID = '6e25bebf-aaaa-4e98-89c2-6f11211f9539';
 
 const Comment = ({isParent, data}) => {
-  const { id: cid, created_at, ssid, uid, content, count_heart, parent_id } = data;
+  const { id: cid, created_at, ssid, uid: op_id, content, count_heart, parent_id } = data;
 
   const relativeTime = useMemo(() => RelativeTime(created_at), [created_at]);
 
@@ -27,6 +28,15 @@ const Comment = ({isParent, data}) => {
     ['comment_services', cid],
     () => isHeartComment(cid),
   );
+  const { data: commenter } = useQuery(
+    ['get_user_data', op_id],
+    () => getUserProfile(op_id),
+    {
+      placeholderData: {
+        avatar_url: '',
+      }
+    }
+  )
 
   useEffect(() => {
     if(islike) setLike(islike);
@@ -72,13 +82,17 @@ const Comment = ({isParent, data}) => {
             width: isParent ? 40 : 30,
             borderRadius: isParent ? 20 : 15,
           }]}
-          source={require('../../assets/placeholder/user.png')}
+          source={commenter.avatar_url ? 
+            {uri: commenter.avatar_url}
+            :
+            require('../../assets/placeholder/user.png')
+          }
         /> 
       </View>
 
       <View style={styles.commentContainer}>
         
-        <Text style={styles.commenter}>Nguoi Dung</Text>
+        <Text style={styles.commenter}>{commenter.displayname}</Text>
         
         <ReadMore 
           style={styles.content}

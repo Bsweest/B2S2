@@ -41,7 +41,6 @@ const FollowButton = ({ op_id }) => {
   
   const update = ()=>{
     isPressed.current = true;
-    setIsFollow(prev=> !prev);
   }
   
 

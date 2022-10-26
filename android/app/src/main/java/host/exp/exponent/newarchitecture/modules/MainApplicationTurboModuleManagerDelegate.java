@@ -1,4 +1,4 @@
-package com.b2s2.newarchitecture.modules;
+package host.exp.exponent.newarchitecture.modules;
 
 import com.facebook.jni.HybridData;
 import com.facebook.react.ReactPackage;

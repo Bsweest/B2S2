@@ -1,4 +1,4 @@
-import { supabase } from "../../backend/supabase";
+import { supabase } from "../supabase"
 
 const getExplore = async () => {
     const { data } = await supabase.from('shareshorts').select();

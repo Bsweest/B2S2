@@ -1,4 +1,4 @@
-package com.b2s2;
+package host.exp.exponent;
 
 import android.os.Build;
 import android.os.Bundle;

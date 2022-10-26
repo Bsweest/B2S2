@@ -5,6 +5,14 @@
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "android": {
+      "package": "host.exp.exponent"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a8578fc1-6929-442c-94a9-62c78f35f370"
+      }
+    }
   }
 }

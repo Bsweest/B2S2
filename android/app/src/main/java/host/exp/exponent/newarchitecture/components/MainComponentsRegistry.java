@@ -1,4 +1,4 @@
-package com.b2s2.newarchitecture.components;
+package host.exp.exponent.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;
