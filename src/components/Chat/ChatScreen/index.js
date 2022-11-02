@@ -9,12 +9,15 @@ import { useQuery } from '@tanstack/react-query';
 import ClientProfile from '../../../global/ClientProfile'
 import { getInfiniteMessages } from '../../../../backend/services/ChatServices';
 import getUserProfile from '../../../../backend/services/ShareProfileServices';
+import moment from 'moment';
+import mutateChat from '../../../../backend/mutation/ChatMutation';
 
 const ChatScreen = ({ route, navigation }) => {
   const { room_id, op_id } = route.params;
-  const clientData = ClientProfile.peek();
+  const clientData = ClientProfile.get();
 
   const [messages, setMessages] = useState();
+  const [isClicked, setIsClicked] = useState(false);
 
   const { data: messData } = useQuery(
     ['get_user_data', op_id],
@@ -25,6 +28,8 @@ const ChatScreen = ({ route, navigation }) => {
     ['get_chatroom', room_id],
     () => getInfiniteMessages(room_id)
   )
+  const { mutate, isLoading:addChat } = mutateChat(); 
+
   const client = {
     _id: clientData.id,
     name: clientData.displayname,
@@ -47,8 +52,13 @@ const ChatScreen = ({ route, navigation }) => {
 
     setMessages(convert);
   }, [data])
+
+  const onClick = () => {
+    setIsClicked((prev) => !prev);
+  }
   
   const onSend = useCallback((messages = []) => {
+    mutate({ content: messages[0].text, room_id: room_id })
     setMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages),
     );
@@ -56,26 +66,37 @@ const ChatScreen = ({ route, navigation }) => {
 
   const renderBubble = (props) => {
     return (
-      <Bubble
-        {...props}
-        style={styles.bubble}
-        wrapperStyle={{
-          left: {
-            backgroundColor: themes.CONSTRACT,
-          },
-          right: {
-            backgroundColor: '#A334FA',
-          }
-        }}
-        textStyle={{
-          left: {
-            color: themes.ACTIVE
-          },
-          right: {
-            color: themes.ACTIVE
-          }
-        }}
-      />
+      <View style = {{ 
+        alignItems: props.currentMessage.user._id === client._id ? 'flex-end' : 'flex-start' 
+      }}>
+        <Bubble
+          {...props}
+          style={styles.bubble}
+          wrapperStyle={{
+            left: {
+              backgroundColor: themes.CONSTRACT,
+            },
+            right: {
+              backgroundColor: '#A334FA',
+            }
+          }}
+          textStyle={{
+            left: {
+              color: themes.ACTIVE
+            },
+            right: {
+              color: themes.ACTIVE
+            }
+          }}
+        />
+        
+        {isClicked &&
+        <Text style={styles.time}>
+          {moment(props.currentMessage.createdAt).format("LT")}
+        </Text>}
+
+      </View>
+      
     )
   }
 
@@ -109,10 +130,13 @@ const ChatScreen = ({ route, navigation }) => {
         </Pressable>
         <Image
           style={styles.avatar}
-          source={require('../../../assets/placeholder/user.png')}
+          source={messData.avatar_url ? 
+            {uri: messData.avatar_url}
+            :
+            require('../../../assets/placeholder/user.png')}
         />
         <Text style={styles.name}>
-          Messenger
+          {messData.displayname}
         </Text>
       </View>
 
@@ -125,6 +149,8 @@ const ChatScreen = ({ route, navigation }) => {
         scrollToBottom
         scrollToBottomComponent={scrollToBottomComponent}
         renderSend={renderSend}
+        renderTime={()=>{}}
+        onPress={onClick}
       />
     </View>
   )

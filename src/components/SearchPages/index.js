@@ -23,8 +23,8 @@ const LittleShort = ({ navigation, item, ts }) => {
     }
   )
   const { data: services } = useQuery(
-    ['short_services', ssid, op_id],
-    () => shortServices(ssid, op_id)
+    ['short_services', ssid],
+    () => shortServices(ssid)
   )
 
   const open = () => {

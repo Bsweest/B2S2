@@ -17,8 +17,9 @@ import OpenAvatar from './SmallPart/OpenAvatar'
 import themes from '../../values/themes'
 
 import { useQuery } from '@tanstack/react-query'
+import { useObservable, useSelector } from '@legendapp/state/react'
 import shortServices from '../../../backend/services/ShortService'
-import { useSelector } from '@legendapp/state/react'
+import mutateHeart from '../../../backend/mutation/HeartServices'
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -28,34 +29,39 @@ const ShortVideo = ({ item, navigation, VIDEOHEIGHT, focusedIndex, index }) => {
   const shouldPlay = useSelector(() => index === focusedIndex.get());
   //state for top component
   const [status, setStatus] = useState(false);
-  const inUse = useIsFocused();
+  const isDoneHeart = useObservable(true);
   const doubleTap = useRef();
+  
+  const inUse = useIsFocused();
 
-  // state heart button
-  const [heart, setHeart] = useState(false);
-  const isPressedHeart = useRef(false);
+  const { mutate, isLoading } = mutateHeart(ssid);
 
   //fetch data
-  const { data, isLoading, isSuccess, isError } = useQuery(
-    ['short_services', ssid, op_id],
-    () => shortServices(ssid, op_id)
+  const { data, isSuccess, isError } = useQuery(
+    ['short_services', ssid],
+    () => shortServices(ssid)
   )
-
-  useEffect(() => {
-    if(isSuccess) setHeart(data.hs);
-  }, [isSuccess]);
 
   useEffect(() => {
     shouldPlay ? setStatus(true) : setStatus(false);
   }, [shouldPlay])
+
+  useEffect(() => {
+    if(!inUse) {
+      if(status) setStatus(false);
+    }
+    else{
+      if(shouldPlay) setStatus(true);
+    }
+  }, [inUse])
 
   const changePlaying = () => {
     setStatus(!status);
   }
 
   const updateLike = () => {
-    isPressedHeart.current = true;
-    setHeart(prev => !prev);
+    if(isLoading || !isDoneHeart.get()) return;
+    mutate({ssid: ssid, bool: !data.hs});
   }
 
   return (
@@ -69,7 +75,7 @@ const ShortVideo = ({ item, navigation, VIDEOHEIGHT, focusedIndex, index }) => {
           <Video
             style={styles.videoContainer}
             resizeMode={'contain'}
-            shouldPlay={status && inUse}
+            shouldPlay={status}
             isLooping
             source={{uri: uri}}
           />
@@ -124,10 +130,10 @@ const ShortVideo = ({ item, navigation, VIDEOHEIGHT, focusedIndex, index }) => {
               <OpenComment ssid={ssid} numCM={data.count_comment}/>
 
               <HeartButton 
-                heart={heart}
+                heart={data.hs}
                 count_heart={data.count_heart} 
-                isPressedHeart={isPressedHeart}
                 updateLike={updateLike}
+                isDone={isDoneHeart}
               />
 
               <OpenAvatar navigation={navigation} op_id={op_id}/>

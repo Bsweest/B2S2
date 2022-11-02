@@ -4,13 +4,14 @@ import { Motion } from '@legendapp/motion'
 import { FlashList } from '@shopify/flash-list'
 
 import themes from '../../values/themes'
-import { Ionicons } from '@expo/vector-icons'; 
 import Library from './Library'
 
 import { useQuery } from '@tanstack/react-query'
 import getUserProfile, { getInteractNumbers, getShortsOfUser, isFollowingOP } from '../../../backend/services/ShareProfileServices'
 
 import FormatInteractNumber from '../../hooks/NumBro';
+import TopBarShare from '../SearchPages/TopBar/TopBarShare'
+import mutateFollow from '../../../backend/mutation/FollowServices'
 
 const UserProfile = ({ route, navigation }) => {
   const { op_id } = route.params;
@@ -40,9 +41,11 @@ const UserProfile = ({ route, navigation }) => {
     if(interactNumber) setNumbers(FormatInteractNumber(interactNumber));
     return () => {}
   }, [doneNumbers])
-  
+
+  const { mutate, isLoading } = mutateFollow(op_id);
+
   const updateFollow = () => {
-  
+    mutate({op_id: op_id, bool: !isFL})
   }
 
   const renderItem = ({ item, index }) => {
@@ -59,7 +62,7 @@ const UserProfile = ({ route, navigation }) => {
     return (
       <>
         {doneShorts && doneNumbers ?
-          <Motion.View style={styles.topContainer}>
+          <View style={styles.topContainer}>
             <Image
               style={styles.avatar}
               source={data.avatar_url ? 
@@ -120,7 +123,7 @@ const UserProfile = ({ route, navigation }) => {
               {data.bio}
             </Text>
 
-          </Motion.View>
+          </View>
           :
           <></>
         }
@@ -131,25 +134,7 @@ const UserProfile = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
 
-      <View style={styles.topBar}>
-        <Text style={styles.nickname}>
-          {data.displayname}
-        </Text>
-        <View style={styles.buttons}>
-          <Pressable onPress={goBack}>
-            <Ionicons name="ios-arrow-back"
-              size={30} color="white"
-              style={styles.btnAll}
-            />
-          </Pressable>
-          <Pressable>
-            <Ionicons name="chatbubbles-sharp" 
-              size={25} color="white"
-              style={styles.btnAll}
-            />
-          </Pressable>
-        </View>
-      </View>
+      <TopBarShare displayname={data.displayname} goBack={goBack}/>
 
       <FlashList
         data={userShorts}
@@ -230,27 +215,6 @@ const styles = StyleSheet.create({
     color: themes.COLOR,
     fontSize: themes.SIZE,
     margin: 15,
-  },
-  topBar: {
-    height: 50,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  nickname: {
-    fontWeight: 'bold',
-    fontSize: themes.BIG,
-    color: themes.COLOR,
-  },
-  buttons: {
-    position: 'absolute',
-    width: '100%',
-    height: 50,
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  btnAll: {
-    marginHorizontal: 10,
   },
 })
 

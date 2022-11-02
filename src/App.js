@@ -1,4 +1,5 @@
 import Main from './routes/Main'
+import Toast from 'react-native-toast-message';
 
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 import { ObservablePersistMMKV } from '@legendapp/state/mmkv'
@@ -18,10 +19,12 @@ enableLegendStateReact()
 export default function App() {
   numbro.setLanguage('en-US')
 
-
   return (
-    <QueryClientProvider client={queryClient}>
-        <Main/>
-    </QueryClientProvider>
+    <>
+      <QueryClientProvider client={queryClient}>
+          <Main/>
+      </QueryClientProvider>
+      <Toast/>
+    </>
   )
 }

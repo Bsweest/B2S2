@@ -9,6 +9,7 @@ import Svg, {
 
 import { useQuery } from '@tanstack/react-query';
 import { isFollowingOP } from '../../../../backend/services/ShareProfileServices';
+import mutateFollow from '../../../../backend/mutation/FollowServices'
 
 const MotionPath = createMotionAnimatedComponent(Path);
 const MotionCircle = createMotionAnimatedComponent(Circle);
@@ -32,25 +33,26 @@ const FollowButton = ({ op_id }) => {
   const [svgProps, setSvgProps] = useState(notFollow);
   const [radius, setRadius] = useState(24);
 
-  const isPressed = useRef(false);
+  const isFinish = useRef(true);
 
   const { data: isFL } = useQuery(
     ['is_following', op_id],
     () => isFollowingOP(op_id)
   )
+  const { mutate, isLoading } = mutateFollow(op_id);
   
   const update = ()=>{
-    isPressed.current = true;
+    if(!isLoading && isFinish.current) mutate({op_id: op_id, bool: !isFL})
   }
-  
 
   useEffect(() => {
     if(isFL) {
+      isFinish.current = false;
       setSvgProps(followed);
-      if (isPressed.current) {}
 
       setRadius(28);
       const timer = setTimeout(() => {
+        isFinish.current = false;
         setRadius(24);
       }, 700);
 
@@ -58,12 +60,12 @@ const FollowButton = ({ op_id }) => {
     }
 
     else {
+      isFinish.current = false;
       setSvgProps(notFollow);
-      if (isPressed.current) {}
     }
-
   }, [isFL])
   
+  const onAnimationComplete = () => isFinish.current = true;
 
   return (
     <Pressable onPress={update} unstable_pressDelay={1400}>
@@ -82,6 +84,7 @@ const FollowButton = ({ op_id }) => {
           type: 'tween',
           duration: 700,
         }}
+        onAnimationComplete={onAnimationComplete}
       >
         <MotionCircle
           cx={32}

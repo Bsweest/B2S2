@@ -21,10 +21,12 @@ const BottomTab = createBottomTabNavigator();
 const iconsize = 25;
 
 import TempID from "../../../tests/TempID"
+import { clientID } from "../../global/ClientProfile"
 import getUserProfile from "../../../backend/services/ShareProfileServices"
 import { useQuery } from "@tanstack/react-query"
 
 export default function Main() {
+  clientID.set(TempID);
   const op_id = TempID;
 
   const { data } = useQuery(
@@ -190,7 +192,7 @@ const getTabBarStyleProfile = (route) => {
   switch (routeName) {
     case 'OwnProfile':
       return (styles.navigator);
-    case 'OwnShort':
+    case 'UserShort':
       return (styles.none);
   }
 }

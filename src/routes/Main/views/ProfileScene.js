@@ -27,7 +27,7 @@ export default function ProfileScene() {
           component={UserProfile}
           initialParams={{op_id}}
         />
-        <ProfileStack.Screen name='OwnShort' component={SearchDetails}/>
+        <ProfileStack.Screen name='UserShort' component={SearchDetails}/>
       </ProfileStack.Navigator>
     </View>
   )

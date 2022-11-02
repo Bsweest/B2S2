@@ -3,33 +3,29 @@ import { useEffect, useRef, useState } from 'react'
 import LottieView from 'lottie-react-native'
 
 import styles from './styles'
+import mutateBookmark from '../../../../backend/mutation/BookmarkServices';
 
 export default function BookmarkButton({ ssid, isBM }) {
   const icon = useRef(null);
-  const [isMark, setIsMark] = useState(isBM);
-
   const isFinish = useRef(false);
-  const isPressed = useRef(false);
+
+  const { mutate, isLoading } = mutateBookmark(ssid);
 
   useEffect(() => {
-    if(isMark){
+    if(isBM){
       isFinish.current=false;
       icon.current.play(0, 90);
-
-      if(isPressed) {}
     }
     else{
       isFinish.current=false;
       icon.current.play(90, 155);
-
-      if(isPressed) {}
     }
-  }, [isMark])
+  }, [isBM])
   
   const updateMark = () => {
-    if(!isFinish.current) return;
-    isPressed.current = true;
-    setIsMark(!isMark);
+    if(!isFinish.current || isLoading ) return;
+    
+    mutate({ssid: ssid, bool: !isBM});
   }
 
   return (

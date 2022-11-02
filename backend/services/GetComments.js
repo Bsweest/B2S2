@@ -12,10 +12,10 @@ const getComments = async (fetchID, pid, ac) => {
     return data;
 } 
 
-const isHeartComment = async (cid) => {
+const isHeartComment = async (cmid) => {
     const { data, error } = await supabase.rpc('is_heart_comment', {
         client: TempID,
-        comment_id: cid
+        comment_id: cmid
     })
 
     return data;

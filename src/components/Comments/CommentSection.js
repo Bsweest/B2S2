@@ -1,41 +1,42 @@
-import { BackHandler, StyleSheet, TextInput } from 'react-native'
+import { BackHandler, StyleSheet, TextInput, Text, Pressable, Keyboard } from 'react-native'
 import React, { useRef, useEffect, useState } from 'react'
-import BottomSheet, {BottomSheetFlatList, BottomSheetView} from '@gorhom/bottom-sheet'
+import BottomSheet, { 
+  BottomSheetFlatList, 
+  BottomSheetView, 
+} from '@gorhom/bottom-sheet'
+import Toast from 'react-native-toast-message'
 
 import ParenComment from './ParenComment'
 
-import { MaterialIcons } from '@expo/vector-icons'; 
+import { Octicons } from '@expo/vector-icons'
+import { MaterialIcons } from '@expo/vector-icons'
 import themes from '../../values/themes'
 
 import { useQuery } from '@tanstack/react-query'
 import { getComments } from '../../../backend/services/GetComments'
 
-import { useSelector } from "@legendapp/state/react"
+import { useObservable, useSelector } from "@legendapp/state/react"
 import CommentSectionState, { closeCommentSection } from '../../global/CommentSectionState'
+import addCommentMutation from '../../../backend/mutation/CommentMutation'
 
 const CommentSection = () => {
-  const fetchID = useSelector(() => CommentSectionState.fetchID.get());
-  const [isOpen, setIsOpen] = useState(false);
+  const { isOpen, fetchID } = useSelector(() => CommentSectionState.get());
+
+  const [content, setContent] = useState('');
+
+  const replyData = useObservable({ com_id: null, rep_name: null });
+  const hidden = useSelector(()=>!replyData.com_id.get());
 
   const botSheet = useRef(null);
   const ac = new AbortController();
 
-  const { data, isLoading, isSuccess, isError } = useQuery(
+  const { data, isLoading, isError } = useQuery(
     ['comment_section', fetchID, null],
     () => getComments(fetchID, null, ac),
     { enabled: isOpen }
   )
 
-  const close = () => {
-    closeCommentSection();
-  }
-
-  const dispose = CommentSectionState.isOpen.onChange(bool => {
-    if(bool) {
-      setIsOpen(bool);
-      botSheet.current.expand();
-    }
-  });
+  const { mutate, isLoading: doingAdd, status } = addCommentMutation();
 
   useEffect(() => {
     const backAction = () => {
@@ -55,9 +56,56 @@ const CommentSection = () => {
     }
   }, [])
 
-  const renderItem = ({item}) => {
+  useEffect(() => {
+    switch(status) {
+      case 'error':
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Unable to post the comments.'
+        });
+        return;
+      case 'success':
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: replyData.rep_name.get() ? 
+          `Reply user ${replyData.rep_name.get()} success` : `Your Comment have been posted.` 
+        });
+        notReply();
+        return;
+    }
+  }, [status])
+
+  const postComment = () => {
+    mutate({ 
+      content:content,  
+      p_id: replyData.com_id.get(),
+      ssid: fetchID,
+    });
+  }
+
+  const notReply = () => {
+    replyData.set({ com_id: null, rep_name: null });
+    setContent('');
+    Keyboard.dismiss();
+  }
+
+  const dispose = CommentSectionState.isOpen.onChange(bool => {
+    if(bool) botSheet.current.expand();
+  });
+
+  const close = (index) => {
+    if(index===-1) {
+      console.log('close');
+      Keyboard.dismiss();
+      closeCommentSection();
+    }
+  }
+  
+  const renderItem = ({ item }) => {
     return (
-      <ParenComment data={item}/>
+      <ParenComment data={item} replyData={replyData}/>
     )
   }
 
@@ -68,36 +116,57 @@ const CommentSection = () => {
       index={-1}
       handleHeight={40}
       enablePanDownToClose={true}
-      onClose={close}
+      onChange={close}
       backgroundStyle={styles.sheet}
       handleStyle={styles.handle}
     >
       <BottomSheetView style={styles.container}>
-        <BottomSheetFlatList
-          data={data}
-          keyExtractor={(item)=>item.id}
-          renderItem={renderItem}
-          nestedScrollEnabled
-          style={styles.flatlist}
-        />
-
-        <BottomSheetView style={styles.addComment}>
-          <TextInput 
-            style={styles.input}
-            placeholder='Add Comment...'
-            multiline={true}
-            placeholderTextColor={themes.SECONDCOLOR}
+        <BottomSheetView style={styles.flatlist}>
+          <BottomSheetFlatList
+            data={data}
+            keyExtractor={(item) => item.id}
+            renderItem={renderItem}
+            nestedScrollEnabled
           />
-          <BottomSheetView style={styles.icon}>
-            <MaterialIcons
-              name='tag-faces'
-              size={26}
-              color={themes.ACTIVE}
+        </BottomSheetView>
+
+        <BottomSheetView style={styles.bottomContainer}>
+          {hidden ?
+            <></>
+            : 
+            <BottomSheetView style={styles.replyBox}>
+              <Text style={styles.staticText}>
+                replying
+              </Text>
+              <Text style={styles.replyData}>
+                {replyData.rep_name}
+              </Text>
+              <Pressable onPress={notReply}>
+                <Octicons name="x-circle-fill" size={12} color={themes.CONSTRACT} />
+              </Pressable>
+            </BottomSheetView>
+          }
+          <BottomSheetView style={styles.addComment}>
+            <TextInput 
+              style={styles.input}
+              placeholder='Add Comment...'
+              multiline={true}
+              placeholderTextColor={themes.SECONDCOLOR}
+              onChangeText={setContent}
+              value={content}
             />
+            <Pressable onPress={postComment}>
+              <BottomSheetView style={styles.icon}>
+                <MaterialIcons
+                  name='send'
+                  size={26}
+                  color={themes.BLUE}
+                />
+              </BottomSheetView>
+            </Pressable>
           </BottomSheetView>
         </BottomSheetView>
       </BottomSheetView>
-
     </BottomSheet>
   )
 }
@@ -123,28 +192,52 @@ const styles = StyleSheet.create({
   flatlist: {
     flex: 1,
   },
-  addComment: {
+  bottomContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
     borderTopWidth: 1,
-    flexDirection: 'row',
+    borderTopColor: themes.CONSTRACT,
     paddingLeft: 15,
+  },
+  replyBox: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingLeft: 5,
+  },
+  staticText: {
+    color: themes.INACTIVE,
+    fontSize: themes.NOTE,
+  },
+  replyData: {
+    color: themes.SECONDCOLOR,
+    fontSize: themes.SMALL,
+    marginHorizontal: 3,
+  },
+  addComment: {
+    flexDirection: 'row',
+    alignItems: 'flex-end'
   },
   input: {
     flex: 1,
     color: themes.COLOR,
     fontSize: themes.SIZE,
-    alignItems: 'center',
     marginTop: 5,
     marginBottom: 3,
-    borderRadius: 12,
-    paddingVertical: 3,
     paddingLeft: 10,
+    paddingVertical: 3,
+    borderRadius: 12,
     backgroundColor: themes.CONSTRACT,
     borderTopColor: themes.ACTIVE,
+    maxHeight: 100,
   },
   icon: {
     width: 50,
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 7,
   }
 })
 

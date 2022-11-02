@@ -1,6 +1,7 @@
-import { View, Text, StyleSheet, Image, Pressable } from 'react-native'
-import { useRef, useState, useEffect, useMemo } from 'react'
+import { Text, StyleSheet, Image, Pressable } from 'react-native'
+import { useRef, useEffect, useMemo } from 'react'
 import LottieView from 'lottie-react-native'
+import { BottomSheetView } from '@gorhom/bottom-sheet'
 
 import ReadMore from '@fawazahmed/react-native-read-more'
 import RelativeTime from '../../hooks/RelativeTime'
@@ -9,24 +10,22 @@ import themes from '../../values/themes'
 import { useQuery } from '@tanstack/react-query'
 import { isHeartComment } from '../../../backend/services/GetComments'
 import getUserProfile from '../../../backend/services/ShareProfileServices'
+import { mutateHeartComment } from '../../../backend/mutation/HeartServices'
+import { useObservable } from '@legendapp/state/react'
 
-const clientID = '6e25bebf-aaaa-4e98-89c2-6f11211f9539';
-
-const Comment = ({isParent, data}) => {
-  const { id: cid, created_at, ssid, uid: op_id, content, count_heart, parent_id } = data;
+const Comment = ({ isParent, data, replyData }) => {
+  const { id: cmid, created_at, ssid, uid: op_id, content, count_heart, parent_id } = data;
 
   const relativeTime = useMemo(() => RelativeTime(created_at), [created_at]);
 
   const lottie = useRef(null);
   const isFinish = useRef(false);
   const isPressed = useRef(false);
+  const count= useObservable(count_heart);
 
-  const [like, setLike] = useState(false);
-  const [count, setCount] = useState(count_heart);
-
-  const { data: islike, isSuccess, isLoading, isError } = useQuery(
-    ['comment_services', cid],
-    () => isHeartComment(cid),
+  const { data: isLike, isSuccess, isLoading, isError } = useQuery(
+    ['comment_services', cmid],
+    () => isHeartComment(cmid),
   );
   const { data: commenter } = useQuery(
     ['get_user_data', op_id],
@@ -37,43 +36,35 @@ const Comment = ({isParent, data}) => {
       }
     }
   )
-
-  useEffect(() => {
-    if(islike) setLike(islike);
-  
-    return () => {
-      
-    }
-  }, [islike])
-  
+  const { mutate } = mutateHeartComment();
 
   useEffect(()=>{
-    if(like) {
+    if(isLike) {
       isFinish.current = false;
       lottie.current.play(40, 80);
-      if(isPressed.current) setCount(prev => (prev+1));
+      if(isPressed.current) count.set(prev => ++prev);
     }
     else {
       isFinish.current = false;
       lottie.current.play(40, 0);
-      if(isPressed.current) setCount(prev => (prev-1));
+      if(isPressed.current) count.set(prev => --prev);
     }
-  }, [like])
+  }, [isLike])
 
   const updateHeart = () => {
     if(!isFinish.current) return;
     isPressed.current = true;
-    setLike(prev => !prev);
+    mutate({ cmid: cmid, bool: !isLike });
   }
 
   const reply = () => {
-    
+    replyData.set({ com_id: cmid, rep_name: commenter.displayname })
   }
 
   return (
-    <View style={styles.container}>
+    <BottomSheetView style={styles.container}>
 
-      <View style={[styles.avatarContainer, {
+      <BottomSheetView style={[styles.avatarContainer, {
         width: isParent ? 50 : 40,
       }]}>
         <Image 
@@ -88,9 +79,9 @@ const Comment = ({isParent, data}) => {
             require('../../assets/placeholder/user.png')
           }
         /> 
-      </View>
+      </BottomSheetView>
 
-      <View style={styles.commentContainer}>
+      <BottomSheetView style={styles.commentContainer}>
         
         <Text style={styles.commenter}>{commenter.displayname}</Text>
         
@@ -103,7 +94,7 @@ const Comment = ({isParent, data}) => {
           {content}
         </ReadMore>
 
-        <View style={styles.commentInfo}>
+        <BottomSheetView style={styles.commentInfo}>
           <Text style={styles.infoTime}>
             {relativeTime}
           </Text>
@@ -112,18 +103,18 @@ const Comment = ({isParent, data}) => {
               Reply
             </Text>
           </Pressable>
-        </View>
+        </BottomSheetView>
         
-      </View>
+      </BottomSheetView>
 
-      <View style={styles.heartContainer}>
+      <BottomSheetView style={styles.heartContainer}>
         <Pressable
           disabled={!isSuccess}
           onPress={updateHeart}
           style={styles.pressable}
         />
 
-        <View style={styles.icon}>
+        <BottomSheetView style={styles.icon}>
           <LottieView
             ref={lottie}
             source={require('../../assets/comment_heart.json')}
@@ -134,12 +125,12 @@ const Comment = ({isParent, data}) => {
             style={styles.heartLottie}
             onAnimationFinish={()=>isFinish.current=true}
           />
-        </View>
+        </BottomSheetView>
 
         <Text style={styles.numHeart}>{count}</Text>
-      </View>
+      </BottomSheetView>
 
-    </View>
+    </BottomSheetView>
   )
 }
 
