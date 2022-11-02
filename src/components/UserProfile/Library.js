@@ -1,5 +1,5 @@
-import { StyleSheet, Pressable, View, Dimensions, Image } from 'react-native'
-import React from 'react'
+import React from 'react';
+import { Dimensions, Image, Pressable, StyleSheet, View } from 'react-native';
 
 const itemWidth = Dimensions.get('window').width / 3;
 const itemHeight = Dimensions.get('window').width / 2;
@@ -10,27 +10,28 @@ const Library = ({ data, navigation, index }) => {
   const openVideoModal = () => {
     navigation.navigate('UserShort', {
       op_id: op_id,
-      initialIndex: index
+      initialIndex: index,
     });
-  }
-    
+  };
+
   return (
     <View style={styles.container}>
       <Pressable onPress={openVideoModal}>
         <Image
-          resizeMode='cover'
-          source={poster_uri ? 
-            {uri: poster_uri}
-            :
-            require('../../assets/placeholder/background.png')}
+          resizeMode="cover"
+          source={
+            poster_uri
+              ? { uri: poster_uri }
+              : require('../../assets/placeholder/background.png')
+          }
           style={styles.image}
         />
       </Pressable>
     </View>
-  )
-}
+  );
+};
 
-export default Library
+export default Library;
 
 const styles = StyleSheet.create({
   container: {
@@ -40,5 +41,5 @@ const styles = StyleSheet.create({
   image: {
     width: itemWidth - 2,
     height: itemHeight - 3,
-  }
-})
+  },
+});

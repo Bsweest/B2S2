@@ -1,35 +1,34 @@
-import { supabase } from "../supabase"
+import TempID from '../../tests/TempID';
+import { supabase } from '../supabase';
 
-import TempID from "../../tests/TempID"
+const getChatRooms = async () => {
+  const { data, error } = await supabase.rpc('get_chatrooms', {
+    client: TempID,
+  });
 
-const getChatRooms = async() => {
-    const { data, error } = await supabase.rpc('get_chatrooms', {
-        client: TempID
-    })
+  return data;
+};
 
-    return data;
-}
+const getLastMessage = async (room_id) => {
+  const { data, error } = await supabase
+    .from('messages')
+    .select()
+    .eq('room_id', room_id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
 
-const getLastMessage = async(room_id) => {
-    const { data, error } = await supabase
-        .from('messages')
-        .select()
-        .eq('room_id', room_id)
-        .order('created_at', { ascending: false })
-        .limit(1).single();
+  return data;
+};
 
-    return data;
-}
+const getInfiniteMessages = async (room_id) => {
+  const { data, error } = await supabase
+    .from('messages')
+    .select()
+    .eq('room_id', room_id)
+    .order('created_at', { ascending: false });
 
-const getInfiniteMessages = async(room_id) => {
-    const { data, error } = await supabase
-        .from('messages')
-        .select()
-        .eq('room_id', room_id)
-        .order('created_at', { ascending: false });
+  return data;
+};
 
-    return data;
-}
-
-
-export { getChatRooms, getLastMessage, getInfiniteMessages }
+export { getChatRooms, getLastMessage, getInfiniteMessages };

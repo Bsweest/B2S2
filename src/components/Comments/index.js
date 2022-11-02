@@ -1,91 +1,105 @@
-import { Text, StyleSheet, Image, Pressable } from 'react-native'
-import { useRef, useEffect, useMemo } from 'react'
-import LottieView from 'lottie-react-native'
-import { BottomSheetView } from '@gorhom/bottom-sheet'
+import ReadMore from '@fawazahmed/react-native-read-more';
+import { BottomSheetView } from '@gorhom/bottom-sheet';
+import { useObservable } from '@legendapp/state/react';
+import { useQuery } from '@tanstack/react-query';
+import LottieView from 'lottie-react-native';
+import { useEffect, useMemo, useRef } from 'react';
+import { Image, Pressable, StyleSheet, Text } from 'react-native';
 
-import ReadMore from '@fawazahmed/react-native-read-more'
-import RelativeTime from '../../hooks/RelativeTime'
-import themes from '../../values/themes'
-
-import { useQuery } from '@tanstack/react-query'
-import { isHeartComment } from '../../../backend/services/GetComments'
-import getUserProfile from '../../../backend/services/ShareProfileServices'
-import { mutateHeartComment } from '../../../backend/mutation/HeartServices'
-import { useObservable } from '@legendapp/state/react'
+import { mutateHeartComment } from '../../../backend/mutation/HeartServices';
+import { isHeartComment } from '../../../backend/services/GetComments';
+import getUserProfile from '../../../backend/services/ShareProfileServices';
+import RelativeTime from '../../hooks/RelativeTime';
+import themes from '../../values/themes';
 
 const Comment = ({ isParent, data, replyData }) => {
-  const { id: cmid, created_at, ssid, uid: op_id, content, count_heart, parent_id } = data;
+  const {
+    id: cmid,
+    created_at,
+    ssid,
+    uid: op_id,
+    content,
+    count_heart,
+    parent_id,
+  } = data;
 
   const relativeTime = useMemo(() => RelativeTime(created_at), [created_at]);
 
   const lottie = useRef(null);
   const isFinish = useRef(false);
   const isPressed = useRef(false);
-  const count= useObservable(count_heart);
+  const count = useObservable(count_heart);
 
-  const { data: isLike, isSuccess, isLoading, isError } = useQuery(
-    ['comment_services', cmid],
-    () => isHeartComment(cmid),
-  );
+  const {
+    data: isLike,
+    isSuccess,
+    isLoading,
+    isError,
+  } = useQuery(['comment_services', cmid], () => isHeartComment(cmid));
   const { data: commenter } = useQuery(
     ['get_user_data', op_id],
     () => getUserProfile(op_id),
     {
       placeholderData: {
         avatar_url: '',
-      }
-    }
-  )
+      },
+    },
+  );
   const { mutate } = mutateHeartComment();
 
-  useEffect(()=>{
-    if(isLike) {
+  useEffect(() => {
+    if (isLike) {
       isFinish.current = false;
       lottie.current.play(40, 80);
-      if(isPressed.current) count.set(prev => ++prev);
-    }
-    else {
+      if (isPressed.current) count.set((prev) => ++prev);
+    } else {
       isFinish.current = false;
       lottie.current.play(40, 0);
-      if(isPressed.current) count.set(prev => --prev);
+      if (isPressed.current) count.set((prev) => --prev);
     }
-  }, [isLike])
+  }, [isLike]);
 
   const updateHeart = () => {
-    if(!isFinish.current) return;
+    if (!isFinish.current) return;
     isPressed.current = true;
     mutate({ cmid: cmid, bool: !isLike });
-  }
+  };
 
   const reply = () => {
-    replyData.set({ com_id: cmid, rep_name: commenter.displayname })
-  }
+    replyData.set({ com_id: cmid, rep_name: commenter.displayname });
+  };
 
   return (
     <BottomSheetView style={styles.container}>
-
-      <BottomSheetView style={[styles.avatarContainer, {
-        width: isParent ? 50 : 40,
-      }]}>
-        <Image 
-          style={[styles.avatar, {
-            height: isParent ? 40 : 30,
-            width: isParent ? 40 : 30,
-            borderRadius: isParent ? 20 : 15,
-          }]}
-          source={commenter.avatar_url ? 
-            {uri: commenter.avatar_url}
-            :
-            require('../../assets/placeholder/user.png')
+      <BottomSheetView
+        style={[
+          styles.avatarContainer,
+          {
+            width: isParent ? 50 : 40,
+          },
+        ]}
+      >
+        <Image
+          style={[
+            styles.avatar,
+            {
+              height: isParent ? 40 : 30,
+              width: isParent ? 40 : 30,
+              borderRadius: isParent ? 20 : 15,
+            },
+          ]}
+          source={
+            commenter.avatar_url
+              ? { uri: commenter.avatar_url }
+              : require('../../assets/placeholder/user.png')
           }
-        /> 
+        />
       </BottomSheetView>
 
       <BottomSheetView style={styles.commentContainer}>
-        
         <Text style={styles.commenter}>{commenter.displayname}</Text>
-        
-        <ReadMore 
+
+        <ReadMore
           style={styles.content}
           numberOfLines={2}
           seeLessStyle={styles.readMore}
@@ -95,16 +109,11 @@ const Comment = ({ isParent, data, replyData }) => {
         </ReadMore>
 
         <BottomSheetView style={styles.commentInfo}>
-          <Text style={styles.infoTime}>
-            {relativeTime}
-          </Text>
-          <Pressable onPress={reply} >
-            <Text style={styles.reply}>
-              Reply
-            </Text>
+          <Text style={styles.infoTime}>{relativeTime}</Text>
+          <Pressable onPress={reply}>
+            <Text style={styles.reply}>Reply</Text>
           </Pressable>
         </BottomSheetView>
-        
       </BottomSheetView>
 
       <BottomSheetView style={styles.heartContainer}>
@@ -121,18 +130,17 @@ const Comment = ({ isParent, data, replyData }) => {
             autoPlay={false}
             loop={false}
             speed={2}
-            resizeMode='cover'
+            resizeMode="cover"
             style={styles.heartLottie}
-            onAnimationFinish={()=>isFinish.current=true}
+            onAnimationFinish={() => (isFinish.current = true)}
           />
         </BottomSheetView>
 
         <Text style={styles.numHeart}>{count}</Text>
       </BottomSheetView>
-
     </BottomSheetView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -179,9 +187,9 @@ const styles = StyleSheet.create({
   reply: {
     color: themes.SECONDCOLOR,
     fontSize: themes.SMALL,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
-  
+
   heartContainer: {
     width: 70,
     alignItems: 'center',
@@ -192,7 +200,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   pressable: {
     width: 30,
@@ -209,7 +217,7 @@ const styles = StyleSheet.create({
   numHeart: {
     color: themes.SECONDCOLOR,
     fontSize: themes.SIZE,
-  }
-})
+  },
+});
 
-export default Comment
+export default Comment;

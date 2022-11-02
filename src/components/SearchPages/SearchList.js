@@ -1,13 +1,12 @@
-import { useEffect } from 'react'
-import { View, StyleSheet } from 'react-native'
-import { FlashList } from '@shopify/flash-list'
+import { FlashList } from '@shopify/flash-list';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import themes from '../../values/themes'
-import LittleShort from '.'
-import InputBar from '../InputBar'
-
-import { useQuery } from '@tanstack/react-query'
-import { captionSearch } from '../../../backend/services/FullTextSearh'
+import LittleShort from '.';
+import { captionSearch } from '../../../backend/services/FullTextSearh';
+import themes from '../../values/themes';
+import InputBar from '../InputBar';
 
 const SearchList = ({ route, navigation }) => {
   const { s_key: text_search } = route.params;
@@ -16,29 +15,29 @@ const SearchList = ({ route, navigation }) => {
 
   const { data, error, isSuccess } = useQuery(
     ['search_caption', text_search],
-    () => captionSearch(text_search, ac)
-  )
+    () => captionSearch(text_search, ac),
+  );
 
-  useEffect(() => {  
+  useEffect(() => {
     return () => {
       ac.abort();
-    }
-  }, [])
+    };
+  }, []);
 
   const renderItem = ({ item }) => {
-    return (
-      <LittleShort navigation={navigation} item={item} ts={text_search}/>
-    )
-  }
+    return <LittleShort navigation={navigation} item={item} ts={text_search} />;
+  };
   const goBack = () => {
     navigation.goBack();
-  }
+  };
 
   return (
     <View style={styles.container}>
-      <InputBar 
-        auto={false} prev={goBack} 
-        init={false} placeholder={text_search}
+      <InputBar
+        auto={false}
+        prev={goBack}
+        init={false}
+        placeholder={text_search}
       />
 
       <View style={styles.body}>
@@ -46,14 +45,14 @@ const SearchList = ({ route, navigation }) => {
           data={data}
           estimatedItemSize={6}
           renderItem={renderItem}
-          keyExtractor={(item)=>item}
+          keyExtractor={(item) => item}
           numColumns={2}
           automaticallyAdjustContentInsets={false}
         />
       </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -64,7 +63,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: '2%',
     marginTop: 5,
-  }
-})
+  },
+});
 
-export default SearchList
+export default SearchList;

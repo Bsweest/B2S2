@@ -1,6 +1,5 @@
-import moment from "moment/moment";
+import moment from 'moment/moment';
 
 export default RelativeTime = (timestamp) => {
-     return moment(timestamp).fromNow();
-}
-
+  return moment(timestamp).fromNow();
+};

@@ -1,42 +1,43 @@
-import { supabase } from "../supabase"
+import TempID from '../../tests/TempID';
+import { supabase } from '../supabase';
 
-import TempID from "../../tests/TempID";
+const getUserProfile = async (op_id) => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select()
+    .eq('id', op_id)
+    .limit(1)
+    .single();
 
-const getUserProfile = async( op_id ) => {
-    const { data, error } = await supabase.from('profiles')
-        .select()
-        .eq('id', op_id)
-        .limit(1).single();
+  return data;
+};
 
-    return data;
-}
+const getInteractNumbers = async (op_id) => {
+  const { data, error } = await supabase.rpc('get_interact_number', {
+    opid: op_id,
+  });
 
-const getInteractNumbers = async( op_id ) => {
-    const { data, error } = await supabase.rpc('get_interact_number', {
-        opid: op_id
-    });
+  return data;
+};
 
-    return data;
-}
+const getShortsOfUser = async (op_id) => {
+  const { data, error } = await supabase
+    .from('shareshorts')
+    .select()
+    .eq('op_id', op_id);
 
-const getShortsOfUser = async( op_id ) => {
-    const { data, error } = await supabase
-        .from('shareshorts')
-        .select()
-        .eq('op_id', op_id);
+  return data;
+};
 
-    return data;
-}
+const isFollowingOP = async (op_id) => {
+  const { data, error } = await supabase.rpc('is_following', {
+    client: TempID,
+    op_id: op_id,
+  });
 
-const isFollowingOP = async( op_id ) => {
-    const { data, error } = await supabase.rpc('is_following', {
-        client: TempID,
-        op_id: op_id
-    });
+  return data;
+};
 
-    return data;
-}
-
-export { getShortsOfUser, getInteractNumbers, isFollowingOP }
+export { getShortsOfUser, getInteractNumbers, isFollowingOP };
 
 export default getUserProfile;

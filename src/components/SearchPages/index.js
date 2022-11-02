@@ -1,17 +1,24 @@
+import { FontAwesome5 } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
-import { View, Text, StyleSheet, Dimensions, Image, Pressable } from 'react-native'
+import {
+  Dimensions,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+
 import getUserProfile from '../../../backend/services/ShareProfileServices';
+import shortServices from '../../../backend/services/ShortService';
 import themes from '../../values/themes';
 
-import { FontAwesome5 } from '@expo/vector-icons'; 
-import shortServices from '../../../backend/services/ShortService';
-
-const littleWidth = Dimensions.get('window').width * 44 / 100;
-const littleHeight = Dimensions.get('window').width * 66 / 100;
+const littleWidth = (Dimensions.get('window').width * 44) / 100;
+const littleHeight = (Dimensions.get('window').width * 66) / 100;
 const allHeight = littleHeight + 100;
 
 const LittleShort = ({ navigation, item, ts }) => {
-  const { id:ssid, op_id} = item;
+  const { id: ssid, op_id } = item;
 
   const { data, isLoading, isError, isSuccess } = useQuery(
     ['get_user_data', op_id],
@@ -19,60 +26,54 @@ const LittleShort = ({ navigation, item, ts }) => {
     {
       placeholderData: {
         avatar_url: '',
-      }
-    }
-  )
-  const { data: services } = useQuery(
-    ['short_services', ssid],
-    () => shortServices(ssid)
-  )
+      },
+    },
+  );
+  const { data: services } = useQuery(['short_services', ssid], () =>
+    shortServices(ssid),
+  );
 
   const open = () => {
     navigation.navigate('SearchDetails', { text_search: ts });
-  }
+  };
 
   return (
     <View style={styles.container}>
-
       <Pressable onPress={open}>
         <Image
           style={styles.poster}
-          source={item.poster_uri ? 
-            { uri: item.poster_uri }
-            :
-            require('../../assets/placeholder/background.png')
+          source={
+            item.poster_uri
+              ? { uri: item.poster_uri }
+              : require('../../assets/placeholder/background.png')
           }
-          resizeMode='cover'
+          resizeMode="cover"
         />
       </Pressable>
 
-      <Text style={styles.caption}
-        numberOfLines={2}
-      >
-        {item.caption} 
+      <Text style={styles.caption} numberOfLines={2}>
+        {item.caption}
       </Text>
 
       <View style={styles.originalPoster}>
         <Image
           style={styles.avatar}
-          source={data.avatar_url ? 
-            {uri: data.avatar_url}
-            :
-            require('../../assets/placeholder/user.png')
+          source={
+            data.avatar_url
+              ? { uri: data.avatar_url }
+              : require('../../assets/placeholder/user.png')
           }
-          resizeMode='cover'
+          resizeMode="cover"
         />
         <Text style={styles.opname} numberOfLines={1}>
           {data.displayname}
         </Text>
         <FontAwesome5 name="heart" size={18} color="grey" />
-        <Text style={styles.countHeart}>
-          {services.count_heart}
-        </Text>
+        <Text style={styles.countHeart}>{services.count_heart}</Text>
       </View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatar: {
-    width:  24,
+    width: 24,
     height: 24,
     borderRadius: 12,
     marginHorizontal: 5,
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
     fontSize: themes.SMALL,
     color: themes.ACTIVE,
     marginLeft: 5,
-  }
-})
+  },
+});
 
-export default LittleShort
+export default LittleShort;

@@ -1,41 +1,43 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native'
-import themes from '../../../values/themes'
+import { Ionicons } from '@expo/vector-icons';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Ionicons } from '@expo/vector-icons'; 
+import themes from '../../../values/themes';
 
 const TopBarShare = ({ displayname, goBack }) => {
   return (
     <View style={styles.topBar}>
-      <Text style={styles.nickname}>
-        {displayname}
-      </Text>
+      <Text style={styles.nickname}>{displayname}</Text>
 
       <View style={styles.buttons}>
         <Pressable onPress={goBack}>
-          <Ionicons name="ios-arrow-back"
-            size={30} color="white"
+          <Ionicons
+            name="ios-arrow-back"
+            size={30}
+            color="white"
             style={styles.btnAll}
           />
         </Pressable>
 
         <Pressable>
-          <Ionicons name="chatbubbles-sharp" 
-            size={25} color="white"
+          <Ionicons
+            name="chatbubbles-sharp"
+            size={25}
+            color="white"
             style={styles.btnAll}
           />
         </Pressable>
       </View>
     </View>
-  )
-}
+  );
+};
 
-export default TopBarShare
+export default TopBarShare;
 
 const styles = StyleSheet.create({
   topBar: {
     height: 50,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   nickname: {
     fontWeight: 'bold',
@@ -53,4 +55,4 @@ const styles = StyleSheet.create({
   btnAll: {
     marginHorizontal: 10,
   },
-})
+});

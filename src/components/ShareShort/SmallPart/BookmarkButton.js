@@ -1,9 +1,9 @@
-import { View, Pressable } from 'react-native'
-import { useEffect, useRef, useState } from 'react'
-import LottieView from 'lottie-react-native'
+import LottieView from 'lottie-react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Pressable, View } from 'react-native';
 
-import styles from './styles'
 import mutateBookmark from '../../../../backend/mutation/BookmarkServices';
+import styles from './styles';
 
 export default function BookmarkButton({ ssid, isBM }) {
   const icon = useRef(null);
@@ -12,21 +12,20 @@ export default function BookmarkButton({ ssid, isBM }) {
   const { mutate, isLoading } = mutateBookmark(ssid);
 
   useEffect(() => {
-    if(isBM){
-      isFinish.current=false;
+    if (isBM) {
+      isFinish.current = false;
       icon.current.play(0, 90);
-    }
-    else{
-      isFinish.current=false;
+    } else {
+      isFinish.current = false;
       icon.current.play(90, 155);
     }
-  }, [isBM])
-  
+  }, [isBM]);
+
   const updateMark = () => {
-    if(!isFinish.current || isLoading ) return;
-    
-    mutate({ssid: ssid, bool: !isBM});
-  }
+    if (!isFinish.current || isLoading) return;
+
+    mutate({ ssid: ssid, bool: !isBM });
+  };
 
   return (
     <View style={styles.container}>
@@ -38,11 +37,13 @@ export default function BookmarkButton({ ssid, isBM }) {
             style={styles.bmLottie}
             autoPlay={false}
             loop={false}
-            resizeMode='cover'
-            onAnimationFinish={()=>{isFinish.current=true;}}
+            resizeMode="cover"
+            onAnimationFinish={() => {
+              isFinish.current = true;
+            }}
           />
         </View>
       </Pressable>
     </View>
-  )
+  );
 }

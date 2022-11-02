@@ -1,40 +1,33 @@
-import { StyleSheet, View } from 'react-native'
-import React from 'react'
-import { FlashList } from '@shopify/flash-list'
+import { FlashList } from '@shopify/flash-list';
+import { useQuery } from '@tanstack/react-query';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import Messenger from './Messenger'
-
-import themes from '../../../values/themes'
-import InputBar from '../../InputBar'
-import { useQuery } from '@tanstack/react-query'
-import { getChatRooms } from '../../../../backend/services/ChatServices'
+import { getChatRooms } from '../../../../backend/services/ChatServices';
+import themes from '../../../values/themes';
+import InputBar from '../../InputBar';
+import Messenger from './Messenger';
 
 const MessList = ({ navigation }) => {
-  const { data, isSuccess, isFetch } = useQuery(
-    ['mess_list'],
-    getChatRooms
-  )
+  const { data, isSuccess, isFetch } = useQuery(['mess_list'], getChatRooms);
 
   const renderItem = ({ item }) => {
-    return (
-      <Messenger passID={item} navigation={navigation}/>
-    )
-  }
+    return <Messenger passID={item} navigation={navigation} />;
+  };
 
   return (
     <View style={styles.container}>
-      
-      <InputBar auto={false} init={true} placeholder='Search Friend...'/>
+      <InputBar auto={false} init={true} placeholder="Search Friend..." />
 
       <FlashList
         data={data}
         estimatedItemSize={20}
         renderItem={renderItem}
-        keyExtractor={(item)=>item}
+        keyExtractor={(item) => item}
       />
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -69,7 +62,7 @@ const styles = StyleSheet.create({
   cancel: {
     width: 30,
     alignItems: 'center',
-  }
-})
+  },
+});
 
-export default MessList
+export default MessList;

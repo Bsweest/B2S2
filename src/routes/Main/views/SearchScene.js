@@ -1,30 +1,30 @@
-import { View, StyleSheet } from 'react-native'
-import themes from '../../../values/themes'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StyleSheet, View } from 'react-native';
 
+import SearchDetails from '../../../components/SearchPages/SearchDetails';
+import SearchInput from '../../../components/SearchPages/SearchInput';
+import SearchList from '../../../components/SearchPages/SearchList';
 import SearchTrend from '../../../components/SearchPages/SearchTrend';
-import SearchList from '../../../components/SearchPages/SearchList'
-import SearchDetails from '../../../components/SearchPages/SearchDetails'
-import SearchInput from '../../../components/SearchPages/SearchInput'
+import themes from '../../../values/themes';
 
 const NavStack = createNativeStackNavigator();
 
 export default function SearchScene() {
   return (
     <View style={styles.container}>
-      <NavStack.Navigator 
-        initialRouteName='SearchTrend'
+      <NavStack.Navigator
+        initialRouteName="SearchTrend"
         screenOptions={{
           headerShown: false,
         }}
       >
-        <NavStack.Screen name='SearchTrend' component={SearchTrend}/>
-        <NavStack.Screen name='SearchInput' component={SearchInput}/>
-        <NavStack.Screen name='SearchResults' component={SearchList}/>
-        <NavStack.Screen name='SearchDetails' component={SearchDetails}/>
+        <NavStack.Screen name="SearchTrend" component={SearchTrend} />
+        <NavStack.Screen name="SearchInput" component={SearchInput} />
+        <NavStack.Screen name="SearchResults" component={SearchList} />
+        <NavStack.Screen name="SearchDetails" component={SearchDetails} />
       </NavStack.Navigator>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -59,10 +59,10 @@ const styles = StyleSheet.create({
   },
   input: {
     fontSize: themes.SIZE,
-    color: themes.COLOR
+    color: themes.COLOR,
   },
   cancel: {
     width: 30,
     alignItems: 'center',
-  }
-})
+  },
+});

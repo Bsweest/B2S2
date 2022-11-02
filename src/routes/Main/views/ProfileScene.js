@@ -1,15 +1,13 @@
-import { StyleSheet, View } from 'react-native'
-import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-import themes from '../../../values/themes';
-
-import UserProfile from '../../../components/UserProfile';
-import SearchDetails from '../../../components/SearchPages/SearchDetails'
-
-const ProfileStack = createNativeStackNavigator();
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 
 import TempID from '../../../../tests/TempID';
+import SearchDetails from '../../../components/SearchPages/SearchDetails';
+import UserProfile from '../../../components/UserProfile';
+import themes from '../../../values/themes';
+
+const ProfileStack = createNativeStackNavigator();
 
 export default function ProfileScene() {
   const op_id = TempID;
@@ -17,25 +15,25 @@ export default function ProfileScene() {
   return (
     <View style={styles.container}>
       <ProfileStack.Navigator
-        initialRouteName='OwnProfile'
+        initialRouteName="OwnProfile"
         screenOptions={{
           headerShown: false,
         }}
       >
-        <ProfileStack.Screen 
-          name='OwnProfile' 
+        <ProfileStack.Screen
+          name="OwnProfile"
           component={UserProfile}
-          initialParams={{op_id}}
+          initialParams={{ op_id }}
         />
-        <ProfileStack.Screen name='UserShort' component={SearchDetails}/>
+        <ProfileStack.Screen name="UserShort" component={SearchDetails} />
       </ProfileStack.Navigator>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: themes.BACKGROUND,
-  }
-})
+  },
+});

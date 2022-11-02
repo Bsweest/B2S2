@@ -1,12 +1,11 @@
-import { StyleSheet, Dimensions } from 'react-native'
-import { FlashList } from '@shopify/flash-list'
-import { View } from 'react-native'
-
-import ShortVideo from '.'
-import { useObservable } from "@legendapp/state/react"
-
+import { useObservable } from '@legendapp/state/react';
+import { FlashList } from '@shopify/flash-list';
 import Constants from 'expo-constants';
-import { useCallback } from 'react'
+import { useCallback } from 'react';
+import { Dimensions, StyleSheet } from 'react-native';
+import { View } from 'react-native';
+
+import ShortVideo from '.';
 
 const windowHeight = Dimensions.get('window').height;
 
@@ -16,21 +15,28 @@ const ListShort = ({ data, navigation, initialIndex }) => {
 
   const renderItem = ({ item, index }) => {
     return (
-      <ShortVideo 
-        item={item} 
-        navigation={navigation} 
+      <ShortVideo
+        item={item}
+        navigation={navigation}
         VIDEOHEIGHT={VIDEOHEIGHT}
         focusedIndex={focusedIndex}
         index={index}
       />
-    )
+    );
   };
 
-  const handleScroll = useCallback(({ nativeEvent: {contentOffset: { y }}}) => {
-    const offset = Math.round(y / VIDEOHEIGHT);
-  
-    if(offset!==focusedIndex.get()) focusedIndex.set(offset);
-  }, []);
+  const handleScroll = useCallback(
+    ({
+      nativeEvent: {
+        contentOffset: { y },
+      },
+    }) => {
+      const offset = Math.round(y / VIDEOHEIGHT);
+
+      if (offset !== focusedIndex.get()) focusedIndex.set(offset);
+    },
+    [],
+  );
 
   return (
     <View style={styles.container}>
@@ -38,23 +44,21 @@ const ListShort = ({ data, navigation, initialIndex }) => {
         data={data}
         onScroll={handleScroll}
         estimatedItemSize={100}
-        keyExtractor={(item)=>item.id}
+        keyExtractor={(item) => item.id}
         renderItem={renderItem}
         pagingEnabled
-        estimatedFirstItemOffset={ (initialIndex + 1) * VIDEOHEIGHT }
+        estimatedFirstItemOffset={(initialIndex + 1) * VIDEOHEIGHT}
         initialScrollIndex={initialIndex}
         decelerationRate={'normal'}
         ListFooterComponent={footer}
       />
     </View>
-  )
-}
+  );
+};
 
 const footer = () => {
-  <View style={styles.footer}>
-
-  </View>
-}
+  <View style={styles.footer}></View>;
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -62,8 +66,8 @@ const styles = StyleSheet.create({
   },
   footer: {
     height: 50,
-    backgroundColor: 'black'
-  }
-})
+    backgroundColor: 'black',
+  },
+});
 
-export default ListShort
+export default ListShort;

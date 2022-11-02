@@ -1,9 +1,9 @@
-import { supabase } from "../supabase"
+import { supabase } from '../supabase';
 
 const getExplore = async () => {
-    const { data } = await supabase.from('shareshorts').select();
+  const { data } = await supabase.from('shareshorts').select();
 
-    return data;
-} 
+  return data;
+};
 
-export default getExplore
+export default getExplore;

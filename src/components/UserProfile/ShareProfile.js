@@ -1,11 +1,10 @@
-import { StyleSheet, View } from 'react-native'
-import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import UserProfile from '.'
+import UserProfile from '.';
+import themes from '../../values/themes';
 import SearchDetails from '../SearchPages/SearchDetails';
-
-import themes from '../../values/themes'
 
 const ProfileStack = createNativeStackNavigator();
 
@@ -15,27 +14,27 @@ const ShareProfile = ({ route }) => {
   return (
     <View style={styles.container}>
       <ProfileStack.Navigator
-        initialRouteName='UserProfile'
+        initialRouteName="UserProfile"
         screenOptions={{
           headerShown: false,
         }}
       >
         <ProfileStack.Screen
-          name='UserProfile' 
+          name="UserProfile"
           component={UserProfile}
-          initialParams={{op_id}}
+          initialParams={{ op_id }}
         />
-        <ProfileStack.Screen name='UserShort' component={SearchDetails}/>
+        <ProfileStack.Screen name="UserShort" component={SearchDetails} />
       </ProfileStack.Navigator>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: themes.BACKGROUND,
-  }
-})
+  },
+});
 
-export default ShareProfile
+export default ShareProfile;

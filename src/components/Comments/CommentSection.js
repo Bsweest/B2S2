@@ -1,23 +1,29 @@
-import { BackHandler, StyleSheet, TextInput, Text, Pressable, Keyboard } from 'react-native'
-import React, { useRef, useEffect, useState } from 'react'
-import BottomSheet, { 
-  BottomSheetFlatList, 
-  BottomSheetView, 
-} from '@gorhom/bottom-sheet'
-import Toast from 'react-native-toast-message'
+import { Octicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+import BottomSheet, {
+  BottomSheetFlatList,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet';
+import { useObservable, useSelector } from '@legendapp/state/react';
+import { useQuery } from '@tanstack/react-query';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  BackHandler,
+  Keyboard,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+} from 'react-native';
+import Toast from 'react-native-toast-message';
 
-import ParenComment from './ParenComment'
-
-import { Octicons } from '@expo/vector-icons'
-import { MaterialIcons } from '@expo/vector-icons'
-import themes from '../../values/themes'
-
-import { useQuery } from '@tanstack/react-query'
-import { getComments } from '../../../backend/services/GetComments'
-
-import { useObservable, useSelector } from "@legendapp/state/react"
-import CommentSectionState, { closeCommentSection } from '../../global/CommentSectionState'
-import addCommentMutation from '../../../backend/mutation/CommentMutation'
+import addCommentMutation from '../../../backend/mutation/CommentMutation';
+import { getComments } from '../../../backend/services/GetComments';
+import CommentSectionState, {
+  closeCommentSection,
+} from '../../global/CommentSectionState';
+import themes from '../../values/themes';
+import ParenComment from './ParenComment';
 
 const CommentSection = () => {
   const { isOpen, fetchID } = useSelector(() => CommentSectionState.get());
@@ -25,7 +31,7 @@ const CommentSection = () => {
   const [content, setContent] = useState('');
 
   const replyData = useObservable({ com_id: null, rep_name: null });
-  const hidden = useSelector(()=>!replyData.com_id.get());
+  const hidden = useSelector(() => !replyData.com_id.get());
 
   const botSheet = useRef(null);
   const ac = new AbortController();
@@ -33,81 +39,80 @@ const CommentSection = () => {
   const { data, isLoading, isError } = useQuery(
     ['comment_section', fetchID, null],
     () => getComments(fetchID, null, ac),
-    { enabled: isOpen }
-  )
+    { enabled: isOpen },
+  );
 
   const { mutate, isLoading: doingAdd, status } = addCommentMutation();
 
   useEffect(() => {
     const backAction = () => {
-      botSheet.current.close()
+      botSheet.current.close();
       return true;
     };
- 
+
     const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
+      'hardwareBackPress',
+      backAction,
     );
 
     return () => {
       ac.abort();
       dispose();
       backHandler.remove();
-    }
-  }, [])
+    };
+  }, []);
 
   useEffect(() => {
-    switch(status) {
+    switch (status) {
       case 'error':
         Toast.show({
           type: 'error',
           text1: 'Error',
-          text2: 'Unable to post the comments.'
+          text2: 'Unable to post the comments.',
         });
         return;
       case 'success':
         Toast.show({
           type: 'success',
           text1: 'Success',
-          text2: replyData.rep_name.get() ? 
-          `Reply user ${replyData.rep_name.get()} success` : `Your Comment have been posted.` 
+          text2: replyData.rep_name.get()
+            ? `Reply user ${replyData.rep_name.get()} success`
+            : `Your Comment have been posted.`,
         });
         notReply();
         return;
     }
-  }, [status])
+  }, [status]);
 
   const postComment = () => {
-    mutate({ 
-      content:content,  
+    mutate({
+      content: content,
       p_id: replyData.com_id.get(),
       ssid: fetchID,
     });
-  }
+  };
 
   const notReply = () => {
     replyData.set({ com_id: null, rep_name: null });
     setContent('');
     Keyboard.dismiss();
-  }
+  };
 
-  const dispose = CommentSectionState.isOpen.onChange(bool => {
-    if(bool) botSheet.current.expand();
+  const dispose = CommentSectionState.isOpen.onChange((bool) => {
+    if (bool) botSheet.current.expand();
   });
 
   const close = (index) => {
-    if(index===-1) {
+    if (index === -1) {
       console.log('close');
       Keyboard.dismiss();
       closeCommentSection();
     }
-  }
-  
+  };
+
   const renderItem = ({ item }) => {
-    return (
-      <ParenComment data={item} replyData={replyData}/>
-    )
-  }
+    return <ParenComment data={item} replyData={replyData} />;
+  };
 
   return (
     <BottomSheet
@@ -131,25 +136,25 @@ const CommentSection = () => {
         </BottomSheetView>
 
         <BottomSheetView style={styles.bottomContainer}>
-          {hidden ?
+          {hidden ? (
             <></>
-            : 
+          ) : (
             <BottomSheetView style={styles.replyBox}>
-              <Text style={styles.staticText}>
-                replying
-              </Text>
-              <Text style={styles.replyData}>
-                {replyData.rep_name}
-              </Text>
+              <Text style={styles.staticText}>replying</Text>
+              <Text style={styles.replyData}>{replyData.rep_name}</Text>
               <Pressable onPress={notReply}>
-                <Octicons name="x-circle-fill" size={12} color={themes.CONSTRACT} />
+                <Octicons
+                  name="x-circle-fill"
+                  size={12}
+                  color={themes.CONSTRACT}
+                />
               </Pressable>
             </BottomSheetView>
-          }
+          )}
           <BottomSheetView style={styles.addComment}>
-            <TextInput 
+            <TextInput
               style={styles.input}
-              placeholder='Add Comment...'
+              placeholder="Add Comment..."
               multiline={true}
               placeholderTextColor={themes.SECONDCOLOR}
               onChangeText={setContent}
@@ -157,19 +162,15 @@ const CommentSection = () => {
             />
             <Pressable onPress={postComment}>
               <BottomSheetView style={styles.icon}>
-                <MaterialIcons
-                  name='send'
-                  size={26}
-                  color={themes.BLUE}
-                />
+                <MaterialIcons name="send" size={26} color={themes.BLUE} />
               </BottomSheetView>
             </Pressable>
           </BottomSheetView>
         </BottomSheetView>
       </BottomSheetView>
     </BottomSheet>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   sheet: {
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
   },
   addComment: {
     flexDirection: 'row',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   input: {
     flex: 1,
@@ -238,7 +239,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 7,
-  }
-})
+  },
+});
 
-export default CommentSection
+export default CommentSection;

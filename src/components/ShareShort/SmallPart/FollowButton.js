@@ -1,15 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
-import { StyleSheet, Pressable } from 'react-native';
-
 import { createMotionAnimatedComponent } from '@legendapp/motion';
-import Svg, {
-  Circle,
-  Path,
-} from "react-native-svg";
-
 import { useQuery } from '@tanstack/react-query';
+import { useEffect, useRef, useState } from 'react';
+import { Pressable, StyleSheet } from 'react-native';
+import Svg, { Circle, Path } from 'react-native-svg';
+
+import mutateFollow from '../../../../backend/mutation/FollowServices';
 import { isFollowingOP } from '../../../../backend/services/ShareProfileServices';
-import mutateFollow from '../../../../backend/mutation/FollowServices'
 
 const MotionPath = createMotionAnimatedComponent(Path);
 const MotionCircle = createMotionAnimatedComponent(Circle);
@@ -27,7 +23,7 @@ const followed = {
   color: '#3DCA76',
   background: '#FBFBFB',
   strokeWidth: 3,
-}
+};
 
 const FollowButton = ({ op_id }) => {
   const [svgProps, setSvgProps] = useState(notFollow);
@@ -35,18 +31,17 @@ const FollowButton = ({ op_id }) => {
 
   const isFinish = useRef(true);
 
-  const { data: isFL } = useQuery(
-    ['is_following', op_id],
-    () => isFollowingOP(op_id)
-  )
+  const { data: isFL } = useQuery(['is_following', op_id], () =>
+    isFollowingOP(op_id),
+  );
   const { mutate, isLoading } = mutateFollow(op_id);
-  
-  const update = ()=>{
-    if(!isLoading && isFinish.current) mutate({op_id: op_id, bool: !isFL})
-  }
+
+  const update = () => {
+    if (!isLoading && isFinish.current) mutate({ op_id: op_id, bool: !isFL });
+  };
 
   useEffect(() => {
-    if(isFL) {
+    if (isFL) {
       isFinish.current = false;
       setSvgProps(followed);
 
@@ -57,15 +52,13 @@ const FollowButton = ({ op_id }) => {
       }, 700);
 
       return () => clearTimeout(timer);
-    }
-
-    else {
+    } else {
       isFinish.current = false;
       setSvgProps(notFollow);
     }
-  }, [isFL])
-  
-  const onAnimationComplete = () => isFinish.current = true;
+  }, [isFL]);
+
+  const onAnimationComplete = () => (isFinish.current = true);
 
   return (
     <Pressable onPress={update} unstable_pressDelay={1400}>
@@ -77,8 +70,8 @@ const FollowButton = ({ op_id }) => {
         animateProps={{
           width: radius,
           height: radius,
-          left: -radius/2,
-          bottom: -radius/2,
+          left: -radius / 2,
+          bottom: -radius / 2,
         }}
         transition={{
           type: 'tween',
@@ -105,12 +98,12 @@ const FollowButton = ({ op_id }) => {
       </MotionSvg>
     </Pressable>
   );
-}
+};
 
 const styles = StyleSheet.create({
   followButton: {
     position: 'absolute',
   },
-})
+});
 
 export default FollowButton;

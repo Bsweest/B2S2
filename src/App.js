@@ -1,30 +1,30 @@
-import Main from './routes/Main'
+import { ObservablePersistMMKV } from '@legendapp/state/mmkv';
+import { configureObservablePersistence } from '@legendapp/state/persist';
+import { enableLegendStateReact } from '@legendapp/state/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import numbro from 'numbro';
 import Toast from 'react-native-toast-message';
 
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
-import { ObservablePersistMMKV } from '@legendapp/state/mmkv'
-import { configureObservablePersistence } from '@legendapp/state/persist'
-import { enableLegendStateReact } from "@legendapp/state/react"
-import numbro from 'numbro'
+import Main from './routes/Main';
 
 // Global configuration
 configureObservablePersistence({
   // Use react-native-mmkv in React Native
-  persistLocal: ObservablePersistMMKV
-})
+  persistLocal: ObservablePersistMMKV,
+});
 
 const queryClient = new QueryClient();
-enableLegendStateReact()
+enableLegendStateReact();
 
 export default function App() {
-  numbro.setLanguage('en-US')
+  numbro.setLanguage('en-US');
 
   return (
     <>
       <QueryClientProvider client={queryClient}>
-          <Main/>
+        <Main />
       </QueryClientProvider>
-      <Toast/>
+      <Toast />
     </>
-  )
+  );
 }

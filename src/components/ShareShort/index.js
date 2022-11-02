@@ -1,25 +1,22 @@
-import { StyleSheet, View, Dimensions, Text } from 'react-native'
-import React, { useState, useRef, useEffect } from 'react'
-import { useIsFocused } from '@react-navigation/native'
+import Ionicons from '@expo/vector-icons/Ionicons';
+import ReadMore from '@fawazahmed/react-native-read-more';
+import { useObservable, useSelector } from '@legendapp/state/react';
+import { useIsFocused } from '@react-navigation/native';
+import { useQuery } from '@tanstack/react-query';
+import { Video } from 'expo-av';
+import React, { useEffect, useRef, useState } from 'react';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { TapGestureHandler } from 'react-native-gesture-handler';
+import TextTicker from 'react-native-text-ticker';
 
-import { Video } from 'expo-av'
-import { TapGestureHandler } from 'react-native-gesture-handler'
-import Ionicons from '@expo/vector-icons/Ionicons'
-import TextTicker from 'react-native-text-ticker'
-import ReadMore from '@fawazahmed/react-native-read-more'
-
-import HeartButton from './SmallPart/HeartButton'
-import OpenComment from './SmallPart/OpenComment'
-import BookmarkButton from './SmallPart/BookmarkButton'
-import ShareButton from './SmallPart/ShareButton'
-import OpenAvatar from './SmallPart/OpenAvatar'
-
-import themes from '../../values/themes'
-
-import { useQuery } from '@tanstack/react-query'
-import { useObservable, useSelector } from '@legendapp/state/react'
-import shortServices from '../../../backend/services/ShortService'
-import mutateHeart from '../../../backend/mutation/HeartServices'
+import mutateHeart from '../../../backend/mutation/HeartServices';
+import shortServices from '../../../backend/services/ShortService';
+import themes from '../../values/themes';
+import BookmarkButton from './SmallPart/BookmarkButton';
+import HeartButton from './SmallPart/HeartButton';
+import OpenAvatar from './SmallPart/OpenAvatar';
+import OpenComment from './SmallPart/OpenComment';
+import ShareButton from './SmallPart/ShareButton';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -31,76 +28,81 @@ const ShortVideo = ({ item, navigation, VIDEOHEIGHT, focusedIndex, index }) => {
   const [status, setStatus] = useState(false);
   const isDoneHeart = useObservable(true);
   const doubleTap = useRef();
-  
+
   const inUse = useIsFocused();
 
   const { mutate, isLoading } = mutateHeart(ssid);
 
   //fetch data
-  const { data, isSuccess, isError } = useQuery(
-    ['short_services', ssid],
-    () => shortServices(ssid)
-  )
+  const { data, isSuccess, isError } = useQuery(['short_services', ssid], () =>
+    shortServices(ssid),
+  );
 
   useEffect(() => {
     shouldPlay ? setStatus(true) : setStatus(false);
-  }, [shouldPlay])
+  }, [shouldPlay]);
 
   useEffect(() => {
-    if(!inUse) {
-      if(status) setStatus(false);
+    if (!inUse) {
+      if (status) setStatus(false);
+    } else {
+      if (shouldPlay) setStatus(true);
     }
-    else{
-      if(shouldPlay) setStatus(true);
-    }
-  }, [inUse])
+  }, [inUse]);
 
   const changePlaying = () => {
     setStatus(!status);
-  }
+  };
 
   const updateLike = () => {
-    if(isLoading || !isDoneHeart.get()) return;
-    mutate({ssid: ssid, bool: !data.hs});
-  }
+    if (isLoading || !isDoneHeart.get()) return;
+    mutate({ ssid: ssid, bool: !data.hs });
+  };
 
   return (
-    <View 
-      style={[styles.container, {
-        height: VIDEOHEIGHT
-      }]}
+    <View
+      style={[
+        styles.container,
+        {
+          height: VIDEOHEIGHT,
+        },
+      ]}
     >
-      {isSuccess ?
+      {isSuccess ? (
         <>
           <Video
             style={styles.videoContainer}
             resizeMode={'contain'}
             shouldPlay={status}
             isLooping
-            source={{uri: uri}}
+            source={{ uri: uri }}
           />
 
-          <TapGestureHandler
-            waitFor={doubleTap}
-            onActivated={changePlaying}
-          >
+          <TapGestureHandler waitFor={doubleTap} onActivated={changePlaying}>
             <TapGestureHandler
               ref={doubleTap}
               numberOfTaps={2}
               onActivated={updateLike}
             >
-              <View 
-                style={[styles.touch, {
-                  height: VIDEOHEIGHT
-                }]}
+              <View
+                style={[
+                  styles.touch,
+                  {
+                    height: VIDEOHEIGHT,
+                  },
+                ]}
               />
             </TapGestureHandler>
           </TapGestureHandler>
-        
+
           <View style={styles.overlay}>
             <View style={styles.leftContainer}>
               <View style={styles.musicContainer}>
-                <Ionicons name='md-musical-notes-sharp' size={22} style={styles.musicIcon}/>
+                <Ionicons
+                  name="md-musical-notes-sharp"
+                  size={22}
+                  style={styles.musicIcon}
+                />
                 <TextTicker
                   style={styles.musicTick}
                   duration={6000}
@@ -110,8 +112,8 @@ const ShortVideo = ({ item, navigation, VIDEOHEIGHT, focusedIndex, index }) => {
                 >
                   music hiphop for life letgo mot hai ba bon
                 </TextTicker>
-              </View> 
-              <ReadMore 
+              </View>
+              <ReadMore
                 style={styles.caption}
                 numberOfLines={2}
                 seeLessStyle={styles.readMore}
@@ -121,43 +123,42 @@ const ShortVideo = ({ item, navigation, VIDEOHEIGHT, focusedIndex, index }) => {
               </ReadMore>
               <Text style={styles.originalPoster}>@OP</Text>
             </View>
-            
+
             <View style={styles.rightContainer}>
-              <ShareButton ssid={ssid}/>
+              <ShareButton ssid={ssid} />
 
-              <BookmarkButton ssid={ssid} isBM={data.bm}/>
+              <BookmarkButton ssid={ssid} isBM={data.bm} />
 
-              <OpenComment ssid={ssid} numCM={data.count_comment}/>
+              <OpenComment ssid={ssid} numCM={data.count_comment} />
 
-              <HeartButton 
+              <HeartButton
                 heart={data.hs}
-                count_heart={data.count_heart} 
+                count_heart={data.count_heart}
                 updateLike={updateLike}
                 isDone={isDoneHeart}
               />
 
-              <OpenAvatar navigation={navigation} op_id={op_id}/>
+              <OpenAvatar navigation={navigation} op_id={op_id} />
             </View>
           </View>
         </>
-      :
+      ) : (
         <></>
-      }
-      
+      )}
     </View>
-  ) 
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     width: windowWidth,
-    backgroundColor: themes.BACKGROUND, 
+    backgroundColor: themes.BACKGROUND,
   },
   videoContainer: {
     flex: 1,
-    zIndex: 1
+    zIndex: 1,
   },
-  touch:{
+  touch: {
     width: windowWidth,
     position: 'absolute',
     flex: 1,
@@ -203,17 +204,17 @@ const styles = StyleSheet.create({
   },
   musicContainer: {
     justifyContent: 'center',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   musicIcon: {
     color: '#FBFBFB',
     fontWeight: 600,
     marginBottom: -5,
-  },  
+  },
   musicTick: {
     fontSize: themes.SIZE,
-    color: 'white'
-  }
-})
+    color: 'white',
+  },
+});
 
 export default ShortVideo;
