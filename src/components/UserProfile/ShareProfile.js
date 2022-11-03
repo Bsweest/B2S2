@@ -22,7 +22,7 @@ const ShareProfile = ({ route }) => {
         <ProfileStack.Screen
           name="UserProfile"
           component={UserProfile}
-          initialParams={{ op_id }}
+          initialParams={{ op_id, isScene: false }}
         />
         <ProfileStack.Screen name="UserShort" component={SearchDetails} />
       </ProfileStack.Navigator>

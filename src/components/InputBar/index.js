@@ -1,11 +1,11 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import themes from '../../values/themes';
 
-const InputBar = ({ next, prev, auto, init, placeholder }) => {
+const InputBar = ({ next, prev, auto, init, placeholder, searchFriend }) => {
   const input = useRef();
   const [value, setValue] = useState('');
 
@@ -13,8 +13,15 @@ const InputBar = ({ next, prev, auto, init, placeholder }) => {
     input.current.clear();
   };
   const letSearch = () => {
-    next(value);
+    if (value) next(value);
   };
+
+  useEffect(() => {
+    if (!searchFriend) return;
+    if (value) searchFriend(value);
+
+    // return () => clearTimeout(searchFriend);
+  }, [value]);
 
   return (
     <View style={styles.searchContainer}>
@@ -36,7 +43,7 @@ const InputBar = ({ next, prev, auto, init, placeholder }) => {
               placeholder={placeholder}
               placeholderTextColor={themes.SECONDCOLOR}
               multiline={false}
-              onChangeText={(v) => setValue(v)}
+              onChangeText={setValue}
               onSubmitEditing={letSearch}
               autoFocus={auto}
             />

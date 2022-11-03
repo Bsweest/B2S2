@@ -140,7 +140,7 @@ const ChatScreen = ({ route, navigation }) => {
       <GiftedChat
         messages={messages}
         onSend={(messages) => onSend(messages)}
-        user={{ _id: TempID }}
+        user={{ _id: clientData.id }}
         alwaysShowSend
         renderBubble={renderBubble}
         scrollToBottom

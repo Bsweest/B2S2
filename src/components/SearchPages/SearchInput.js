@@ -1,6 +1,5 @@
 import { observable } from '@legendapp/state';
 import { For } from '@legendapp/state/react';
-import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 // import searchKeys from '../../assets/persist_storage/SearchKeywords';
@@ -23,10 +22,6 @@ const searchKeys = observable([
 ]);
 
 const SearchInput = ({ navigation }) => {
-  const renderItem = (item) => {
-    return <Text style={styles.keys}>{item.history}</Text>;
-  };
-
   const goToResults = (value) => {
     navigation.navigate('SearchResults', {
       s_key: value,
@@ -34,6 +29,10 @@ const SearchInput = ({ navigation }) => {
   };
   const goBack = () => {
     navigation.goBack();
+  };
+
+  const renderItem = ({ item }) => {
+    return <Text style={styles.keys}>{item.history}</Text>;
   };
 
   return (

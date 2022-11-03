@@ -19,6 +19,7 @@ import Toast from 'react-native-toast-message';
 
 import addCommentMutation from '../../../backend/mutation/CommentMutation';
 import { getComments } from '../../../backend/services/GetComments';
+import ListenCommentSection from '../../../backend/services/RealTimeComment';
 import CommentSectionState, {
   closeCommentSection,
 } from '../../global/CommentSectionState';
@@ -44,6 +45,20 @@ const CommentSection = () => {
 
   const { mutate, isLoading: doingAdd, status } = addCommentMutation();
 
+  const onOpen = CommentSectionState.isOpen.onChange((bool) => {
+    if (bool) botSheet.current.expand();
+  });
+
+  ListenCommentSection();
+
+  const onClose = (index) => {
+    if (index === -1) {
+      Keyboard.dismiss();
+      ac.abort();
+      closeCommentSection();
+    }
+  };
+
   useEffect(() => {
     const backAction = () => {
       botSheet.current.close();
@@ -57,7 +72,7 @@ const CommentSection = () => {
 
     return () => {
       ac.abort();
-      dispose();
+      onOpen();
       backHandler.remove();
     };
   }, []);
@@ -98,20 +113,8 @@ const CommentSection = () => {
     Keyboard.dismiss();
   };
 
-  const dispose = CommentSectionState.isOpen.onChange((bool) => {
-    if (bool) botSheet.current.expand();
-  });
-
-  const close = (index) => {
-    if (index === -1) {
-      console.log('close');
-      Keyboard.dismiss();
-      closeCommentSection();
-    }
-  };
-
   const renderItem = ({ item }) => {
-    return <ParenComment data={item} replyData={replyData} />;
+    return <ParenComment data={item} replyData={replyData} ac={ac} />;
   };
 
   return (
@@ -121,7 +124,7 @@ const CommentSection = () => {
       index={-1}
       handleHeight={40}
       enablePanDownToClose={true}
-      onChange={close}
+      onChange={onClose}
       backgroundStyle={styles.sheet}
       handleStyle={styles.handle}
     >

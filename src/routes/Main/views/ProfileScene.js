@@ -2,15 +2,16 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import TempID from '../../../../tests/TempID';
 import SearchDetails from '../../../components/SearchPages/SearchDetails';
 import UserProfile from '../../../components/UserProfile';
+import { clientID } from '../../../global/ClientProfile';
 import themes from '../../../values/themes';
 
 const ProfileStack = createNativeStackNavigator();
 
 export default function ProfileScene() {
-  const op_id = TempID;
+  const client = clientID.get();
+  const op_id = client;
 
   return (
     <View style={styles.container}>
@@ -23,7 +24,7 @@ export default function ProfileScene() {
         <ProfileStack.Screen
           name="OwnProfile"
           component={UserProfile}
-          initialParams={{ op_id }}
+          initialParams={{ op_id, isScene: true }}
         />
         <ProfileStack.Screen name="UserShort" component={SearchDetails} />
       </ProfileStack.Navigator>

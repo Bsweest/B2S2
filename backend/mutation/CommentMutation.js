@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import { clientID } from '../../src/global/ClientProfile';
 import { supabase } from '../supabase';
@@ -15,29 +15,14 @@ const addComment = async (props) => {
       parent_id: p_id,
       ssid: ssid,
     })
+    .select()
     .single();
 
   return data;
 };
 
 const addCommentMutation = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation(addComment, {
-    onSuccess: (data, variables) => {
-      const pid = variables.p_id;
-      const fetchID = variables.ssid;
-      // queryClient.setQueryData(
-      //     ['comment_section', fetchID, pid],
-      //     old => ([...old, data])
-      // )
-      queryClient.invalidateQueries(['comment_section', fetchID, pid]);
-
-      if (pid) {
-        queryClient.setQueryData(['cnt_childcomment', pid], (old) => ++old);
-      }
-    },
-  });
+  return useMutation(addComment);
 };
 
 export default addCommentMutation;

@@ -11,10 +11,9 @@ import {
 } from '../../../backend/services/GetComments';
 import themes from '../../values/themes';
 
-const ParenComment = ({ data, replyData }) => {
+const ParenComment = ({ data, replyData, ac }) => {
   const { id: pid, ssid: fetchID } = data;
   const [openChildren, setOpenChildren] = useState(false);
-  const ac = new AbortController();
 
   const { data: countChildren } = useQuery(['cnt_childcomment', pid], () =>
     getCountChildComment(pid),
@@ -30,12 +29,6 @@ const ParenComment = ({ data, replyData }) => {
     () => getComments(fetchID, pid, ac),
     { enabled: openChildren },
   );
-
-  useEffect(() => {
-    return () => {
-      ac.abort();
-    };
-  }, []);
 
   const renderItem = ({ item }) => {
     return <Comment isParent={false} data={item} replyData={replyData} />;

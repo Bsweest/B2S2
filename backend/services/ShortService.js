@@ -1,9 +1,11 @@
 import { supabase } from '../../backend/supabase';
-import TempID from '../../tests/TempID';
+import { clientID } from '../../src/global/ClientProfile';
 
 const shortServices = async (ssid) => {
+  const client = clientID.get();
+
   const { data } = await supabase.rpc('short_services', {
-    client: TempID,
+    client: client,
     short_id: ssid,
   });
 

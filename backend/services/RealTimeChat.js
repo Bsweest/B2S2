@@ -2,6 +2,10 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { supabase } from '../supabase';
 
+export const changeReadStatus = async (id) => {
+  await supabase.from('messages').update({ read_status: true }).eq('id', id);
+};
+
 const ListenChatroom = (room_id) => {
   const queryClient = useQueryClient();
 
@@ -27,10 +31,6 @@ const ListenChatroom = (room_id) => {
       },
     )
     .subscribe();
-};
-
-export const changeReadStatus = async (id) => {
-  await supabase.from('messages').update({ read_status: true }).eq('id', id);
 };
 
 export default ListenChatroom;

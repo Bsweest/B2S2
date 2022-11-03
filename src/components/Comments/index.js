@@ -19,7 +19,7 @@ const Comment = ({ isParent, data, replyData }) => {
     ssid,
     uid: op_id,
     content,
-    count_heart,
+    count_heart = 0,
     parent_id,
   } = data;
 

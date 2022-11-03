@@ -1,9 +1,11 @@
-import TempID from '../../tests/TempID';
+import { clientID } from '../../src/global/ClientProfile';
 import { supabase } from '../supabase';
 
 const getChatRooms = async () => {
+  const client = clientID.get();
+
   const { data, error } = await supabase.rpc('get_chatrooms', {
-    client: TempID,
+    client: client,
   });
 
   return data;
@@ -31,4 +33,15 @@ const getInfiniteMessages = async (room_id) => {
   return data;
 };
 
-export { getChatRooms, getLastMessage, getInfiniteMessages };
+const createRoom = async (op_id) => {
+  const client = clientID.get();
+
+  const { data } = await supabase.from('chatrooms').insert().select().single();
+
+  await supabase.from('chat_parti').insert([
+    { room_id: data.id, parti_id: client },
+    { room_id: data.id, parti_id: op_id },
+  ]);
+};
+
+export { getChatRooms, getLastMessage, getInfiniteMessages, createRoom };

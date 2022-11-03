@@ -11,10 +11,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import getUserProfile from '../../../backend/services/ShareProfileServices';
-import TempID from '../../../tests/TempID';
 import CommentSection from '../../components/Comments/CommentSection';
 import ClientProfile from '../../global/ClientProfile';
-import { clientID } from '../../global/ClientProfile';
 import themes from '../../values/themes';
 import AddScene from './views/AddScene';
 import HomeScene from './views/HomeScene';
@@ -26,8 +24,7 @@ const BottomTab = createBottomTabNavigator();
 const iconsize = 25;
 
 export default function Main() {
-  clientID.set(TempID);
-  const op_id = TempID;
+  const op_id = '739fe296-3bfb-43d9-b1fb-12a280ab557a';
 
   const { data } = useQuery(['get_user_data', op_id], () =>
     getUserProfile(op_id),
@@ -181,10 +178,10 @@ const getTabBarStyleSearch = (route) => {
 const getTabBarStyleInbox = (route) => {
   const routeName = getFocusedRouteNameFromRoute(route) ?? 'MessList';
   switch (routeName) {
-    case 'MessList':
-      return styles.navigator;
     case 'ChatScreen':
       return styles.none;
+    default:
+      return styles.navigator;
   }
 };
 

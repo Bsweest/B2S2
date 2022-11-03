@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import ChatScreen from '../../../components/Chat/ChatScreen';
 import MessList from '../../../components/Chat/MessList';
+import SearchFriend from '../../../components/Chat/SearchFriend';
 
 const InboxStack = createNativeStackNavigator();
 
@@ -16,6 +17,7 @@ const InboxScene = () => {
         }}
       >
         <InboxStack.Screen name="MessList" component={MessList} />
+        <InboxStack.Screen name="SearchFriend" component={SearchFriend} />
         <InboxStack.Screen name="ChatScreen" component={ChatScreen} />
       </InboxStack.Navigator>
     </View>

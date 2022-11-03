@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 
 import { clientID } from '../../src/global/ClientProfile';
 import { supabase } from '../supabase';
@@ -14,21 +14,14 @@ const addChat = async (props) => {
       sender: sender,
       room_id: room_id,
     })
+    .select()
     .single();
 
   return data;
 };
 
-const mutateChat = (room_id) => {
-  const queryClient = useQueryClient();
-
-  return useMutation(addChat, {
-    // onSuccess: ( data ) => {
-    //     queryClient.setQueryData(['get_chatroom', room_id],
-    //         old => [ ...old, data ]
-    //     )
-    // }
-  });
+const mutateChat = () => {
+  return useMutation(addChat);
 };
 
 export default mutateChat;

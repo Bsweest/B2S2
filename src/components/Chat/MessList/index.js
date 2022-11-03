@@ -11,13 +11,22 @@ import Messenger from './Messenger';
 const MessList = ({ navigation }) => {
   const { data, isSuccess, isFetch } = useQuery(['mess_list'], getChatRooms);
 
+  const goToSearchInput = () => {
+    navigation.navigate('SearchFriend');
+  };
+
   const renderItem = ({ item }) => {
     return <Messenger passID={item} navigation={navigation} />;
   };
 
   return (
     <View style={styles.container}>
-      <InputBar auto={false} init={true} placeholder="Search Friend..." />
+      <InputBar
+        next={goToSearchInput}
+        auto={false}
+        init={true}
+        placeholder="Search Friend..."
+      />
 
       <FlashList
         data={data}

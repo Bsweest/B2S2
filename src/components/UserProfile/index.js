@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Motion } from '@legendapp/motion';
 import { FlashList } from '@shopify/flash-list';
 import { useQuery } from '@tanstack/react-query';
@@ -10,18 +11,27 @@ import getUserProfile, {
   getShortsOfUser,
   isFollowingOP,
 } from '../../../backend/services/ShareProfileServices';
+import { clientID } from '../../global/ClientProfile';
 import FormatInteractNumber from '../../hooks/NumBro';
 import themes from '../../values/themes';
-import TopBarShare from '../SearchPages/TopBar/TopBarShare';
 import Library from './Library';
+import TopBarClient from './TopBar/TopBarClient';
+import TopBarShare from './TopBar/TopBarShare';
 
 const UserProfile = ({ route, navigation }) => {
-  const { op_id } = route.params;
+  const { op_id, isScene } = route.params;
+  const isClient = op_id === clientID.get();
 
   const [numbers, setNumbers] = useState([0, 0, 0]);
 
-  const { data } = useQuery(['get_user_data', op_id], () =>
-    getUserProfile(op_id),
+  const { data } = useQuery(
+    ['get_user_data', op_id],
+    () => getUserProfile(op_id),
+    {
+      placeholderData: {
+        displayname: '',
+      },
+    },
   );
 
   const { data: isFL } = useQuery(['is_following', op_id], () =>
@@ -39,7 +49,6 @@ const UserProfile = ({ route, navigation }) => {
 
   useEffect(() => {
     if (interactNumber) setNumbers(FormatInteractNumber(interactNumber));
-    return () => {};
   }, [doneNumbers]);
 
   const { mutate, isLoading } = mutateFollow(op_id);
@@ -93,29 +102,51 @@ const UserProfile = ({ route, navigation }) => {
               </View>
             </View>
 
-            <Pressable onPress={updateFollow}>
-              <Motion.View
-                style={styles.btnFollow}
-                animate={{
-                  backgroundColor: isFL ? themes.COLOR : '#EA4359',
-                }}
-                transition={{
-                  type: 'tween',
-                  duration: 1000,
-                }}
-              >
-                <Motion.Text
-                  style={styles.textOfBtn}
+            {isClient ? (
+              <Pressable onPress={updateFollow}>
+                <View
+                  style={[
+                    styles.btnFollow,
+                    {
+                      backgroundColor: themes.COLOR,
+                    },
+                  ]}
+                >
+                  <Text style={styles.textOfBtn}>Setting</Text>
+                  <Ionicons
+                    name="settings"
+                    size={26}
+                    style={styles.settingIcon}
+                  />
+                </View>
+              </Pressable>
+            ) : (
+              <Motion.Pressable onPress={updateFollow}>
+                <Motion.View
+                  style={styles.btnFollow}
                   animate={{
-                    color: isFL ? '#EA4359' : themes.COLOR,
+                    backgroundColor: isFL ? themes.COLOR : '#EA4359',
+                  }}
+                  transition={{
+                    type: 'tween',
+                    duration: 1000,
                   }}
                 >
-                  {isFL ? 'Followed' : 'Follow'}
-                </Motion.Text>
-              </Motion.View>
-            </Pressable>
+                  <Motion.Text
+                    style={styles.textOfBtn}
+                    animate={{
+                      color: isFL ? '#EA4359' : themes.COLOR,
+                    }}
+                  >
+                    {isFL ? 'Followed' : 'Follow'}
+                  </Motion.Text>
+                </Motion.View>
+              </Motion.Pressable>
+            )}
 
-            <Text style={styles.bio}>{data.bio}</Text>
+            <Text style={styles.bio} numberOfLines={3}>
+              {data.bio}
+            </Text>
           </View>
         ) : (
           <></>
@@ -126,7 +157,15 @@ const UserProfile = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <TopBarShare displayname={data.displayname} goBack={goBack} />
+      {isClient ? (
+        <TopBarClient
+          displayname={data.displayname}
+          goBack={goBack}
+          isScene={isScene}
+        />
+      ) : (
+        <TopBarShare displayname={data.displayname} goBack={goBack} />
+      )}
 
       <FlashList
         data={userShorts}
@@ -197,6 +236,7 @@ const styles = StyleSheet.create({
     height: 45,
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
   },
   textOfBtn: {
     fontSize: themes.BIG,
@@ -206,6 +246,9 @@ const styles = StyleSheet.create({
     color: themes.COLOR,
     fontSize: themes.SIZE,
     margin: 15,
+  },
+  settingIcon: {
+    marginLeft: 2,
   },
 });
 

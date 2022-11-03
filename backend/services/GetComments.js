@@ -1,5 +1,5 @@
 import { supabase } from '../../backend/supabase';
-import TempID from '../../tests/TempID';
+import { clientID } from '../../src/global/ClientProfile';
 
 const getComments = async (fetchID, pid, ac) => {
   const { data, error } = await supabase
@@ -13,8 +13,10 @@ const getComments = async (fetchID, pid, ac) => {
 };
 
 const isHeartComment = async (cmid) => {
+  const client = clientID.get();
+
   const { data, error } = await supabase.rpc('is_heart_comment', {
-    client: TempID,
+    client: client,
     comment_id: cmid,
   });
 

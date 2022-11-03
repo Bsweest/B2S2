@@ -4,11 +4,12 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { getLastMessage } from '../../../../backend/services/ChatServices';
 import ListenChatroom from '../../../../backend/services/RealTimeChat';
 import getUserProfile from '../../../../backend/services/ShareProfileServices';
-import TempID from '../../../../tests/TempID';
+import { clientID } from '../../../global/ClientProfile';
 import themes from '../../../values/themes';
 
 const Messenger = ({ passID, navigation }) => {
   const { room_id, parti_id: op_id } = passID;
+  const client = clientID.get();
 
   const { data, isLoading, isError, isSuccess } = useQuery(
     ['get_user_data', op_id],
@@ -75,7 +76,7 @@ const Messenger = ({ passID, navigation }) => {
               },
             ]}
           >
-            {lastMessage.sender === TempID ? 'You: ' : ''}
+            {lastMessage.sender === client ? 'You: ' : ''}
             {lastMessage.content}
           </Text>
         </View>

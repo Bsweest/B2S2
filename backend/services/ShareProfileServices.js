@@ -1,4 +1,4 @@
-import TempID from '../../tests/TempID';
+import { clientID } from '../../src/global/ClientProfile';
 import { supabase } from '../supabase';
 
 const getUserProfile = async (op_id) => {
@@ -30,8 +30,10 @@ const getShortsOfUser = async (op_id) => {
 };
 
 const isFollowingOP = async (op_id) => {
+  const client = clientID.get();
+
   const { data, error } = await supabase.rpc('is_following', {
-    client: TempID,
+    client: client,
     op_id: op_id,
   });
 
