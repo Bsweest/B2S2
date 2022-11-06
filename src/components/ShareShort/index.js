@@ -1,8 +1,8 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import ReadMore from '@fawazahmed/react-native-read-more';
+import { when } from '@legendapp/state';
 import { useObservable, useSelector } from '@legendapp/state/react';
 import { useIsFocused } from '@react-navigation/native';
-import { useQuery } from '@tanstack/react-query';
 import { Video } from 'expo-av';
 import React, { useEffect, useRef, useState } from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
@@ -10,7 +10,7 @@ import { TapGestureHandler } from 'react-native-gesture-handler';
 import TextTicker from 'react-native-text-ticker';
 
 import mutateHeart from '../../../backend/mutation/HeartServices';
-import shortServices from '../../../backend/services/ShortService';
+import queryShortServices from '../../../backend/services/ShortService';
 import themes from '../../values/themes';
 import BookmarkButton from './SmallPart/BookmarkButton';
 import HeartButton from './SmallPart/HeartButton';
@@ -24,19 +24,17 @@ const ShortVideo = ({ item, navigation, VIDEOHEIGHT, focusedIndex, index }) => {
   const { id: ssid, created_at, op_id, uri, caption, music } = item;
 
   const shouldPlay = useSelector(() => index === focusedIndex.get());
+  const inUse = useIsFocused();
+
   //state for top component
   const [status, setStatus] = useState(false);
   const isDoneHeart = useObservable(true);
   const doubleTap = useRef();
 
-  const inUse = useIsFocused();
-
   const { mutate, isLoading } = mutateHeart(ssid);
 
   //fetch data
-  const { data, isSuccess, isError } = useQuery(['short_services', ssid], () =>
-    shortServices(ssid),
-  );
+  const { data, isSuccess, isError } = queryShortServices(ssid);
 
   useEffect(() => {
     shouldPlay ? setStatus(true) : setStatus(false);

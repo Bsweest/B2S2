@@ -1,15 +1,18 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Motion } from '@legendapp/motion';
 import { FlashList } from '@shopify/flash-list';
-import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 import mutateFollow from '../../../backend/mutation/FollowServices';
-import getUserProfile, {
-  getInteractNumbers,
-  getShortsOfUser,
-  isFollowingOP,
+import { createRoom } from '../../../backend/services/ChatServices';
+import { findRoomID } from '../../../backend/services/GetFriends';
+import queryUserData, {
+  queryCheckFollow,
+  queryCheckFollowBack,
+  queryInteractNumbers,
+  queryShortsOfuser,
 } from '../../../backend/services/ShareProfileServices';
 import { clientID } from '../../global/ClientProfile';
 import FormatInteractNumber from '../../hooks/NumBro';
@@ -24,28 +27,14 @@ const UserProfile = ({ route, navigation }) => {
 
   const [numbers, setNumbers] = useState([0, 0, 0]);
 
-  const { data } = useQuery(
-    ['get_user_data', op_id],
-    () => getUserProfile(op_id),
-    {
-      placeholderData: {
-        displayname: '',
-      },
-    },
-  );
+  const { data } = queryUserData(op_id);
 
-  const { data: isFL } = useQuery(['is_following', op_id], () =>
-    isFollowingOP(op_id),
-  );
+  const { data: isFL } = queryCheckFollow(op_id);
+  const { data: isFLBack } = queryCheckFollowBack(op_id);
 
-  const { data: interactNumber, isSuccess: doneNumbers } = useQuery(
-    ['get_interact_numbers', op_id],
-    () => getInteractNumbers(op_id),
-  );
-  const { data: userShorts, isSuccess: doneShorts } = useQuery(
-    ['get_user_shorts', op_id],
-    () => getShortsOfUser(op_id),
-  );
+  const { data: interactNumber, isSuccess: doneNumbers } =
+    queryInteractNumbers(op_id);
+  const { data: userShorts, isSuccess: doneShorts } = queryShortsOfuser(op_id);
 
   useEffect(() => {
     if (interactNumber) setNumbers(FormatInteractNumber(interactNumber));
@@ -63,6 +52,27 @@ const UserProfile = ({ route, navigation }) => {
 
   const goBack = () => {
     navigation.goBack();
+  };
+
+  const goToSetting = () => {
+    navigation.navigate('ProfileSetting');
+  };
+
+  const chat = async () => {
+    const room_id = await findRoomID(op_id);
+
+    if (room_id) {
+      navigation.navigate('ChatScreen', {
+        room_id: room_id,
+        op_id: op_id,
+      });
+    } else {
+      const newID = await createRoom(op_id);
+      navigation.navigate('ChatScreen', {
+        room_id: newID,
+        op_id: op_id,
+      });
+    }
   };
 
   const header = () => {
@@ -103,7 +113,7 @@ const UserProfile = ({ route, navigation }) => {
             </View>
 
             {isClient ? (
-              <Pressable onPress={updateFollow}>
+              <Pressable onPress={goToSetting}>
                 <View
                   style={[
                     styles.btnFollow,
@@ -138,7 +148,7 @@ const UserProfile = ({ route, navigation }) => {
                       color: isFL ? '#EA4359' : themes.COLOR,
                     }}
                   >
-                    {isFL ? 'Followed' : 'Follow'}
+                    {isFL ? 'Followed' : isFLBack ? 'Follow Back' : 'Follow'}
                   </Motion.Text>
                 </Motion.View>
               </Motion.Pressable>
@@ -164,7 +174,11 @@ const UserProfile = ({ route, navigation }) => {
           isScene={isScene}
         />
       ) : (
-        <TopBarShare displayname={data.displayname} goBack={goBack} />
+        <TopBarShare
+          displayname={data.displayname}
+          goBack={goBack}
+          chat={chat}
+        />
       )}
 
       <FlashList
@@ -218,7 +232,7 @@ const styles = StyleSheet.create({
     height: '55%',
     width: 1,
     marginHorizontal: 10,
-    backgroundColor: themes.INACTIVE,
+    backgroundColor: themes.SECONDCOLOR,
   },
   number: {
     color: themes.COLOR,

@@ -1,13 +1,13 @@
 import { Entypo } from '@expo/vector-icons';
 import { BottomSheetFlatList, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
 
 import Comment from '.';
 import {
   getComments,
-  getCountChildComment,
+  queryCountChildComment,
 } from '../../../backend/services/GetComments';
 import themes from '../../values/themes';
 
@@ -15,19 +15,15 @@ const ParenComment = ({ data, replyData, ac }) => {
   const { id: pid, ssid: fetchID } = data;
   const [openChildren, setOpenChildren] = useState(false);
 
-  const { data: countChildren } = useQuery(['cnt_childcomment', pid], () =>
-    getCountChildComment(pid),
-  );
+  const { data: countChildren } = queryCountChildComment(pid);
 
   const {
     data: children,
     isLoading,
     isSuccess,
     isError,
-  } = useQuery(
-    ['comment_section', fetchID, pid],
-    () => getComments(fetchID, pid, ac),
-    { enabled: openChildren },
+  } = useQuery(['comment_section', fetchID, pid], () =>
+    getComments(fetchID, pid, ac),
   );
 
   const renderItem = ({ item }) => {

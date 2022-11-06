@@ -1,14 +1,13 @@
 import ReadMore from '@fawazahmed/react-native-read-more';
 import { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useObservable } from '@legendapp/state/react';
-import { useQuery } from '@tanstack/react-query';
 import LottieView from 'lottie-react-native';
 import { useEffect, useMemo, useRef } from 'react';
 import { Image, Pressable, StyleSheet, Text } from 'react-native';
 
 import { mutateHeartComment } from '../../../backend/mutation/HeartServices';
-import { isHeartComment } from '../../../backend/services/GetComments';
-import getUserProfile from '../../../backend/services/ShareProfileServices';
+import { queryCheckHeartComment } from '../../../backend/services/GetComments';
+import queryUserData from '../../../backend/services/ShareProfileServices';
 import RelativeTime from '../../hooks/RelativeTime';
 import themes from '../../values/themes';
 
@@ -30,21 +29,15 @@ const Comment = ({ isParent, data, replyData }) => {
   const isPressed = useRef(false);
   const count = useObservable(count_heart);
 
+  const { data: commenter } = queryUserData(op_id);
+
   const {
     data: isLike,
     isSuccess,
     isLoading,
     isError,
-  } = useQuery(['comment_services', cmid], () => isHeartComment(cmid));
-  const { data: commenter } = useQuery(
-    ['get_user_data', op_id],
-    () => getUserProfile(op_id),
-    {
-      placeholderData: {
-        avatar_url: '',
-      },
-    },
-  );
+  } = queryCheckHeartComment(cmid);
+
   const { mutate } = mutateHeartComment();
 
   useEffect(() => {
@@ -54,7 +47,7 @@ const Comment = ({ isParent, data, replyData }) => {
       if (isPressed.current) count.set((prev) => ++prev);
     } else {
       isFinish.current = false;
-      lottie.current.play(40, 0);
+      lottie.current.play(0, 0);
       if (isPressed.current) count.set((prev) => --prev);
     }
   }, [isLike]);
@@ -66,7 +59,10 @@ const Comment = ({ isParent, data, replyData }) => {
   };
 
   const reply = () => {
-    replyData.set({ com_id: cmid, rep_name: commenter.displayname });
+    replyData.set({
+      com_id: parent_id ? parent_id : cmid,
+      rep_name: commenter.displayname,
+    });
   };
 
   return (

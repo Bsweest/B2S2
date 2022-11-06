@@ -1,9 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { getLastMessage } from '../../../../backend/services/ChatServices';
+import { queryLastMessage } from '../../../../backend/services/ChatServices';
 import ListenChatroom from '../../../../backend/services/RealTimeChat';
-import getUserProfile from '../../../../backend/services/ShareProfileServices';
+import queryUserData from '../../../../backend/services/ShareProfileServices';
 import { clientID } from '../../../global/ClientProfile';
 import themes from '../../../values/themes';
 
@@ -11,25 +10,8 @@ const Messenger = ({ passID, navigation }) => {
   const { room_id, parti_id: op_id } = passID;
   const client = clientID.get();
 
-  const { data, isLoading, isError, isSuccess } = useQuery(
-    ['get_user_data', op_id],
-    () => getUserProfile(op_id),
-    {
-      placeholderData: {
-        avatar_url: '',
-      },
-    },
-  );
-  const { data: lastMessage } = useQuery(
-    ['get_last_message', room_id],
-    () => getLastMessage(room_id),
-    {
-      placeholderData: {
-        content: '',
-        read_status: true,
-      },
-    },
-  );
+  const { data, isLoading, isError, isSuccess } = queryUserData(op_id);
+  const { data: lastMessage } = queryLastMessage(room_id);
 
   ListenChatroom(room_id);
 

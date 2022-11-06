@@ -1,7 +1,10 @@
+import { useQuery } from '@tanstack/react-query';
+
 import { clientID } from '../../src/global/ClientProfile';
 import { supabase } from '../supabase';
 
-export default GetFriends = async () => {
+//* Get all friend data
+const GetFriends = async () => {
   const client = clientID.get();
   const { data } = await supabase.rpc('get_friends', {
     client: client,
@@ -9,7 +12,11 @@ export default GetFriends = async () => {
 
   return data;
 };
+const queryAllFriend = () => {
+  return useQuery(['get_friends'], GetFriends);
+};
 
+//* Return room ID of friend, if not exist return null
 const findRoomID = async (op_id) => {
   const client = clientID.get();
 
@@ -22,3 +29,4 @@ const findRoomID = async (op_id) => {
 };
 
 export { findRoomID };
+export default queryAllFriend;

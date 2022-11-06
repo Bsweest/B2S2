@@ -14,7 +14,14 @@ configureObservablePersistence({
   persistLocal: ObservablePersistMMKV,
 });
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 300000,
+      cacheTime: Infinity,
+    },
+  },
+});
 enableLegendStateReact();
 
 export default function App() {

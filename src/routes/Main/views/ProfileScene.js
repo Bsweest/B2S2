@@ -4,6 +4,8 @@ import { StyleSheet, View } from 'react-native';
 
 import SearchDetails from '../../../components/SearchPages/SearchDetails';
 import UserProfile from '../../../components/UserProfile';
+import ProfileSetting from '../../../components/UserProfile/ProfileSetting';
+import UpdateField from '../../../components/UserProfile/UpdateField';
 import { clientID } from '../../../global/ClientProfile';
 import themes from '../../../values/themes';
 
@@ -27,6 +29,8 @@ export default function ProfileScene() {
           initialParams={{ op_id, isScene: true }}
         />
         <ProfileStack.Screen name="UserShort" component={SearchDetails} />
+        <ProfileStack.Screen name="ProfileSetting" component={ProfileSetting} />
+        <ProfileStack.Screen name="UpdateField" component={UpdateField} />
       </ProfileStack.Navigator>
     </View>
   );

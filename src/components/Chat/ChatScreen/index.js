@@ -1,5 +1,4 @@
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import { useQuery } from '@tanstack/react-query';
 import { useQueryClient } from '@tanstack/react-query';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
@@ -7,28 +6,24 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Bubble, GiftedChat, Send } from 'react-native-gifted-chat';
 
 import mutateChat from '../../../../backend/mutation/ChatMutation';
-import { getInfiniteMessages } from '../../../../backend/services/ChatServices';
+import { queryInfiniteMessages } from '../../../../backend/services/ChatServices';
 import { changeReadStatus } from '../../../../backend/services/RealTimeChat';
-import getUserProfile from '../../../../backend/services/ShareProfileServices';
-import ClientProfile from '../../../global/ClientProfile';
+import queryUserData from '../../../../backend/services/ShareProfileServices';
+import { ClientData } from '../../../../backend/services/ShareProfileServices';
 import themes from '../../../values/themes';
 
 const ChatScreen = ({ route, navigation }) => {
   const { room_id, op_id } = route.params;
-  const clientData = ClientProfile.get();
+  const { data: clientData } = ClientData();
   const queryClient = useQueryClient();
 
   const [messages, setMessages] = useState();
   const [isClicked, setIsClicked] = useState(false);
 
-  const { data: messData } = useQuery(['get_user_data', op_id], () =>
-    getUserProfile(op_id),
-  );
+  const { data: messData } = queryUserData(op_id);
 
-  const { data, isLoading, isError, isSuccess } = useQuery(
-    ['get_chatroom', room_id],
-    () => getInfiniteMessages(room_id),
-  );
+  const { data, isLoading, isError, isSuccess } =
+    queryInfiniteMessages(room_id);
 
   const { mutate, isLoading: addChat } = mutateChat(room_id);
 

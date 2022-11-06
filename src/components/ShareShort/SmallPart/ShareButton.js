@@ -1,12 +1,12 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { TouchableOpacity, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 
 import styles from './styles';
 
 export default function ShareButton() {
   return (
     <View style={styles.shareContainer}>
-      <TouchableOpacity>
+      <Pressable>
         <View style={styles.icon}>
           <FontAwesome
             style={styles.commentAddition}
@@ -15,7 +15,7 @@ export default function ShareButton() {
             color={'#FBFBFB'}
           />
         </View>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }

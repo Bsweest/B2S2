@@ -1,10 +1,9 @@
 import { FlashList } from '@shopify/flash-list';
-import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import LittleShort from '.';
-import { captionSearch } from '../../../backend/services/FullTextSearh';
+import querySeachShorts from '../../../backend/services/FullTextSearh';
 import themes from '../../values/themes';
 import InputBar from '../InputBar';
 
@@ -13,10 +12,7 @@ const SearchList = ({ route, navigation }) => {
 
   const ac = new AbortController();
 
-  const { data, error, isSuccess } = useQuery(
-    ['search_caption', text_search],
-    () => captionSearch(text_search, ac),
-  );
+  const { data, error, isSuccess } = querySeachShorts(text_search, ac);
 
   useEffect(() => {
     return () => {

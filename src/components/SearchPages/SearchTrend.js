@@ -36,5 +36,6 @@ const styles = StyleSheet.create({
   header: {
     fontSize: themes.SIZE,
     color: themes.ACTIVE,
+    paddingLeft: 15,
   },
 });

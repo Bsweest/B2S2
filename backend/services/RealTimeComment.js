@@ -22,23 +22,21 @@ const ListenCommentSection = () => {
         (payload) => {
           const pid = payload.new.parent_id;
 
-          queryClient.setQueryData(['comment_section', fetchID, pid], (old) => [
-            ...old,
-            payload.new,
-          ]);
+          if (pid)
+            queryClient.setQueryData(
+              ['cnt_childcomment', pid],
+              (prev) => ++prev,
+            );
 
           queryClient.setQueryData(
-            ['short_services', payload.new.ssid],
-            ({ bm, count_comment, count_heart, hs }) => ({
-              bm: bm,
-              count_comment: count_comment,
-              hs: hs,
-              count_heart: ++count_heart,
-            }),
+            ['comment_section', fetchID, pid],
+            (prev) => [...prev, payload.new],
           );
 
-          if (pid)
-            queryClient.setQueryData(['cnt_childcomment', pid], (old) => ++old);
+          queryClient.setQueryData(['short_services', fetchID], (prev) => ({
+            ...prev,
+            count_comment: ++prev.count_comment,
+          }));
         },
       )
       .subscribe();

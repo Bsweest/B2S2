@@ -1,11 +1,10 @@
 import { createMotionAnimatedComponent } from '@legendapp/motion';
-import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 
 import mutateFollow from '../../../../backend/mutation/FollowServices';
-import { isFollowingOP } from '../../../../backend/services/ShareProfileServices';
+import { queryCheckFollow } from '../../../../backend/services/ShareProfileServices';
 
 const MotionPath = createMotionAnimatedComponent(Path);
 const MotionCircle = createMotionAnimatedComponent(Circle);
@@ -31,9 +30,7 @@ const FollowButton = ({ op_id }) => {
 
   const isFinish = useRef(true);
 
-  const { data: isFL } = useQuery(['is_following', op_id], () =>
-    isFollowingOP(op_id),
-  );
+  const { data: isFL } = queryCheckFollow(op_id);
   const { mutate, isLoading } = mutateFollow(op_id);
 
   const update = () => {

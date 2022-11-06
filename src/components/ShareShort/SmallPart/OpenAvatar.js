@@ -1,22 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
 import { Image, Pressable, StyleSheet, View } from 'react-native';
 
-import getUserProfile from '../../../../backend/services/ShareProfileServices';
+import queryUserData from '../../../../backend/services/ShareProfileServices';
 import { clientID } from '../../../global/ClientProfile';
 import FollowButton from './FollowButton';
 
 const OpenAvatar = ({ navigation, op_id }) => {
   const isClient = clientID.get() === op_id;
 
-  const { data, isLoading, isError, isSuccess } = useQuery(
-    ['get_user_data', op_id],
-    () => getUserProfile(op_id),
-    {
-      placeholderData: {
-        avatar_url: '',
-      },
-    },
-  );
+  const { data, isLoading, isError, isSuccess } = queryUserData(op_id);
 
   const open = () => {
     navigation.navigate('ShareProfile', {

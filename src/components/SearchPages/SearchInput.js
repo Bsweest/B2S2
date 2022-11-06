@@ -57,12 +57,13 @@ const styles = StyleSheet.create({
     backgroundColor: themes.BACKGROUND,
   },
   header: {
-    fontSize: themes.BIG,
+    fontSize: themes.SIZE,
     color: themes.SECONDCOLOR,
     fontWeight: 'bold',
-    marginLeft: 5,
+    paddingLeft: 10,
   },
   keys: {
+    paddingLeft: 10,
     fontSize: themes.SIZE,
     color: themes.ACTIVE,
   },

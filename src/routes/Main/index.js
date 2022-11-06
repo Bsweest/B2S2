@@ -1,18 +1,16 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useSelector } from '@legendapp/state/react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   NavigationContainer,
   getFocusedRouteNameFromRoute,
 } from '@react-navigation/native';
-import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import getUserProfile from '../../../backend/services/ShareProfileServices';
 import CommentSection from '../../components/Comments/CommentSection';
-import ClientProfile from '../../global/ClientProfile';
 import themes from '../../values/themes';
 import AddScene from './views/AddScene';
 import HomeScene from './views/HomeScene';
@@ -24,18 +22,6 @@ const BottomTab = createBottomTabNavigator();
 const iconsize = 25;
 
 export default function Main() {
-  const op_id = '739fe296-3bfb-43d9-b1fb-12a280ab557a';
-
-  const { data } = useQuery(['get_user_data', op_id], () =>
-    getUserProfile(op_id),
-  );
-
-  useEffect(() => {
-    if (data) {
-      ClientProfile.set(data);
-    }
-  }, [data]);
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -57,7 +43,7 @@ export default function Main() {
                   <Ionicons
                     name={focused ? 'ios-home' : 'ios-home-outline'}
                     size={iconsize}
-                    color={focused ? themes.ACTIVE : themes.INACTIVE}
+                    color={focused ? themes.ACTIVE : themes.SECONDCOLOR}
                   />
                 ),
                 tabBarLabelStyle: styles.label,
@@ -72,7 +58,7 @@ export default function Main() {
                   <Ionicons
                     name={focused ? 'ios-search' : 'ios-search-outline'}
                     size={iconsize}
-                    color={focused ? themes.ACTIVE : themes.INACTIVE}
+                    color={focused ? themes.ACTIVE : themes.SECONDCOLOR}
                   />
                 ),
                 tabBarLabelStyle: styles.label,
@@ -104,7 +90,7 @@ export default function Main() {
                       focused ? 'ios-chatbox-ellipses' : 'ios-chatbox-outline'
                     }
                     size={iconsize}
-                    color={focused ? themes.ACTIVE : themes.INACTIVE}
+                    color={focused ? themes.ACTIVE : themes.SECONDCOLOR}
                   />
                 ),
                 tabBarLabelStyle: styles.label,
@@ -119,7 +105,7 @@ export default function Main() {
                   <Ionicons
                     name={focused ? 'ios-person' : 'person-outline'}
                     size={iconsize}
-                    color={focused ? themes.ACTIVE : themes.INACTIVE}
+                    color={focused ? themes.ACTIVE : themes.SECONDCOLOR}
                   />
                 ),
                 tabBarLabelStyle: styles.label,
@@ -139,7 +125,7 @@ const styles = StyleSheet.create({
   navigator: {
     height: 45,
     borderTopWidth: 0,
-    backgroundColor: themes.CONSTRACT,
+    backgroundColor: themes.BACKGROUND,
     borderTopWidth: 0.5,
     borderTopColor: themes.ACTIVE,
   },
@@ -165,6 +151,16 @@ const styles = StyleSheet.create({
   },
 });
 
+const getTabBarStyleHome = (route) => {
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'NewFeed';
+  switch (routeName) {
+    case 'NewFeed':
+      return styles.navigator;
+    default:
+      return styles.none;
+  }
+};
+
 const getTabBarStyleSearch = (route) => {
   const routeName = getFocusedRouteNameFromRoute(route) ?? 'SearchTrend';
   switch (routeName) {
@@ -185,22 +181,12 @@ const getTabBarStyleInbox = (route) => {
   }
 };
 
-const getTabBarStyleHome = (route) => {
-  const routeName = getFocusedRouteNameFromRoute(route) ?? 'NewFeed';
-  switch (routeName) {
-    case 'NewFeed':
-      return styles.navigator;
-    case 'ShareProfile':
-      return styles.none;
-  }
-};
-
 const getTabBarStyleProfile = (route) => {
   const routeName = getFocusedRouteNameFromRoute(route) ?? 'OwnProfile';
   switch (routeName) {
     case 'OwnProfile':
       return styles.navigator;
-    case 'UserShort':
+    default:
       return styles.none;
   }
 };

@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import themes from '../../../values/themes';
 
-const TopBarShare = ({ displayname, goBack }) => {
+const TopBarShare = ({ displayname, goBack, chat }) => {
   return (
     <View style={styles.topBar}>
       <Text style={styles.nickname}>{displayname}</Text>
@@ -18,7 +18,7 @@ const TopBarShare = ({ displayname, goBack }) => {
           />
         </Pressable>
 
-        <Pressable>
+        <Pressable onPress={chat}>
           <Ionicons
             name="chatbubbles-sharp"
             size={25}

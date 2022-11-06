@@ -1,10 +1,11 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import getExplore from '../../../../backend/services/GetNewFeed';
+import { queryExploreFeed } from '../../../../backend/services/GetNewFeed';
+import ChatScreen from '../../../components/Chat/ChatScreen';
 import ListShort from '../../../components/ShareShort/ListShort';
+import ProfileSetting from '../../../components/UserProfile/ProfileSetting';
 import ShareProfile from '../../../components/UserProfile/ShareProfile';
 
 const HomeStack = createNativeStackNavigator();
@@ -20,16 +21,15 @@ export default function HomeScene() {
       >
         <HomeStack.Screen name="NewFeed" component={NewFeed} />
         <HomeStack.Screen name="ShareProfile" component={ShareProfile} />
+        <HomeStack.Screen name="ProfileSetting" component={ProfileSetting} />
+        <HomeStack.Screen name="ChatScreen" component={ChatScreen} />
       </HomeStack.Navigator>
     </View>
   );
 }
 
 const NewFeed = ({ navigation }) => {
-  const { data, isSuccess, isLoading, isError } = useQuery(
-    ['explore_feed'],
-    getExplore,
-  );
+  const { data, isSuccess, isLoading, isError } = queryExploreFeed();
 
   return (
     <View style={styles.container}>

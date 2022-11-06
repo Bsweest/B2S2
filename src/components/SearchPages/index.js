@@ -1,5 +1,4 @@
 import { FontAwesome5 } from '@expo/vector-icons';
-import { useQuery } from '@tanstack/react-query';
 import {
   Dimensions,
   Image,
@@ -9,29 +8,19 @@ import {
   View,
 } from 'react-native';
 
-import getUserProfile from '../../../backend/services/ShareProfileServices';
-import shortServices from '../../../backend/services/ShortService';
+import queryUserData from '../../../backend/services/ShareProfileServices';
+import queryShortServices from '../../../backend/services/ShortService';
 import themes from '../../values/themes';
 
 const littleWidth = (Dimensions.get('window').width * 44) / 100;
 const littleHeight = (Dimensions.get('window').width * 66) / 100;
-const allHeight = littleHeight + 100;
+const allHeight = littleHeight + 70;
 
 const LittleShort = ({ navigation, item, ts }) => {
   const { id: ssid, op_id } = item;
 
-  const { data, isLoading, isError, isSuccess } = useQuery(
-    ['get_user_data', op_id],
-    () => getUserProfile(op_id),
-    {
-      placeholderData: {
-        avatar_url: '',
-      },
-    },
-  );
-  const { data: services } = useQuery(['short_services', ssid], () =>
-    shortServices(ssid),
-  );
+  const { data, isLoading, isError, isSuccess } = queryUserData(op_id);
+  const { data: services } = queryShortServices(ssid);
 
   const open = () => {
     navigation.navigate('SearchDetails', { text_search: ts });
@@ -68,7 +57,7 @@ const LittleShort = ({ navigation, item, ts }) => {
         <Text style={styles.opname} numberOfLines={1}>
           {data.displayname}
         </Text>
-        <FontAwesome5 name="heart" size={18} color="grey" />
+        <FontAwesome5 name="heart" size={15} color="grey" />
         <Text style={styles.countHeart}>{services.count_heart}</Text>
       </View>
     </View>
@@ -94,7 +83,7 @@ const styles = StyleSheet.create({
     marginVertical: 3,
   },
   originalPoster: {
-    height: 50,
+    // height: 40,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -110,7 +99,7 @@ const styles = StyleSheet.create({
     fontSize: themes.SMALL,
   },
   countHeart: {
-    width: 50,
+    width: 40,
     fontSize: themes.SMALL,
     color: themes.ACTIVE,
     marginLeft: 5,

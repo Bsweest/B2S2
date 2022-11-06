@@ -5,7 +5,6 @@ import BottomSheet, {
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import { useObservable, useSelector } from '@legendapp/state/react';
-import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   BackHandler,
@@ -18,7 +17,7 @@ import {
 import Toast from 'react-native-toast-message';
 
 import addCommentMutation from '../../../backend/mutation/CommentMutation';
-import { getComments } from '../../../backend/services/GetComments';
+import { queryCommentSection } from '../../../backend/services/GetComments';
 import ListenCommentSection from '../../../backend/services/RealTimeComment';
 import CommentSectionState, {
   closeCommentSection,
@@ -37,24 +36,25 @@ const CommentSection = () => {
   const botSheet = useRef(null);
   const ac = new AbortController();
 
-  const { data, isLoading, isError } = useQuery(
-    ['comment_section', fetchID, null],
-    () => getComments(fetchID, null, ac),
-    { enabled: isOpen },
+  const { data, isLoading, isError } = queryCommentSection(
+    fetchID,
+    null,
+    ac,
+    isOpen,
   );
 
   const { mutate, isLoading: doingAdd, status } = addCommentMutation();
+
+  ListenCommentSection();
 
   const onOpen = CommentSectionState.isOpen.onChange((bool) => {
     if (bool) botSheet.current.expand();
   });
 
-  ListenCommentSection();
-
   const onClose = (index) => {
     if (index === -1) {
-      Keyboard.dismiss();
       ac.abort();
+      notReply();
       closeCommentSection();
     }
   };
@@ -159,6 +159,7 @@ const CommentSection = () => {
               style={styles.input}
               placeholder="Add Comment..."
               multiline={true}
+              maxLength={300}
               placeholderTextColor={themes.SECONDCOLOR}
               onChangeText={setContent}
               value={content}
@@ -212,7 +213,7 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   staticText: {
-    color: themes.INACTIVE,
+    color: themes.SECONDCOLOR,
     fontSize: themes.NOTE,
   },
   replyData: {

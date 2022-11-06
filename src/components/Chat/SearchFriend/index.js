@@ -1,5 +1,4 @@
 import { FlashList } from '@shopify/flash-list';
-import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -11,7 +10,7 @@ import {
 } from 'react-native';
 
 import { createRoom } from '../../../../backend/services/ChatServices';
-import GetFriends, {
+import queryAllFriend, {
   findRoomID,
 } from '../../../../backend/services/GetFriends';
 import themes from '../../../values/themes';
@@ -20,18 +19,18 @@ import InputBar from '../../InputBar';
 const SearchFriend = ({ navigation }) => {
   const [friend, setFriend] = useState([]);
 
-  const { data, isLoading, isSuccess } = useQuery(['get_friends'], GetFriends);
+  const { data, isLoading, isSuccess } = queryAllFriend();
 
   const goBack = () => {
     navigation.goBack();
   };
 
-  // const searchFriend = setTimeout((value) => {
-  //  setFriend(data.filter((each) => each.displayname.includes(value)));
-  // }, 1000);
-
   const searchFriend = (value) => {
-    setFriend(data.filter((each) => each.displayname.includes(value)));
+    setFriend(
+      data.filter((each) =>
+        each.displayname.toLowerCase().includes(value.toLowerCase()),
+      ),
+    );
   };
 
   const goToChatroom = async (op_id) => {

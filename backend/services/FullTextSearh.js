@@ -1,3 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
+
 import { supabase } from '../supabase';
 
 const captionSearch = async (text_search, ac) => {
@@ -10,4 +12,10 @@ const captionSearch = async (text_search, ac) => {
   return data;
 };
 
-export { captionSearch };
+const querySeachShorts = (text_search, ac) => {
+  return useQuery(['search_caption', text_search], () =>
+    captionSearch(text_search, ac),
+  );
+};
+
+export default querySeachShorts;

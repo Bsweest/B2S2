@@ -3,8 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { captionSearch } from '../../../backend/services/FullTextSearh';
-import { getShortsOfUser } from '../../../backend/services/ShareProfileServices';
+import querySeachShorts from '../../../backend/services/FullTextSearh';
+import { queryShortsOfuser } from '../../../backend/services/ShareProfileServices';
 import themes from '../../values/themes';
 import ListShort from '../ShareShort/ListShort';
 
@@ -14,13 +14,12 @@ const SearchDetails = ({ navigation, route }) => {
   const ac = new AbortController();
 
   const { data, isSuccess } = op_id
-    ? useQuery(['get_user_shorts', op_id], () => getShortsOfUser(op_id))
-    : useQuery(['search_caption', text_search], () =>
-        captionSearch(text_search, ac),
-      );
+    ? queryShortsOfuser(op_id)
+    : querySeachShorts(text_search, ac);
 
   const goBack = () => {
     navigation.goBack();
+    ac.abort();
   };
 
   return (

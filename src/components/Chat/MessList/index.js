@@ -1,15 +1,14 @@
 import { FlashList } from '@shopify/flash-list';
-import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { getChatRooms } from '../../../../backend/services/ChatServices';
+import { queryChatRooms } from '../../../../backend/services/ChatServices';
 import themes from '../../../values/themes';
 import InputBar from '../../InputBar';
 import Messenger from './Messenger';
 
 const MessList = ({ navigation }) => {
-  const { data, isSuccess, isFetch } = useQuery(['mess_list'], getChatRooms);
+  const { data, isSuccess } = queryChatRooms(true);
 
   const goToSearchInput = () => {
     navigation.navigate('SearchFriend');
@@ -32,7 +31,7 @@ const MessList = ({ navigation }) => {
         data={data}
         estimatedItemSize={20}
         renderItem={renderItem}
-        keyExtractor={(item) => item}
+        keyExtractor={(item) => item.room_id}
       />
     </View>
   );

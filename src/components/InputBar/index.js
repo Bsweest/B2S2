@@ -18,9 +18,11 @@ const InputBar = ({ next, prev, auto, init, placeholder, searchFriend }) => {
 
   useEffect(() => {
     if (!searchFriend) return;
-    if (value) searchFriend(value);
+    const timeout = setTimeout(() => {
+      if (value) searchFriend(value);
+    }, 1000);
 
-    // return () => clearTimeout(searchFriend);
+    return () => clearTimeout(timeout);
   }, [value]);
 
   return (
