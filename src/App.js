@@ -1,12 +1,13 @@
 import { ObservablePersistMMKV } from '@legendapp/state/mmkv';
 import { configureObservablePersistence } from '@legendapp/state/persist';
 import { enableLegendStateReact } from '@legendapp/state/react';
+import { NavigationContainer } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import numbro from 'numbro';
 import Toast from 'react-native-toast-message';
 
 import { clientID } from './global/ClientProfile';
-import Main from './routes/Main';
+import Routes from './routes';
 
 // Global configuration
 configureObservablePersistence({
@@ -25,13 +26,15 @@ const queryClient = new QueryClient({
 enableLegendStateReact();
 
 export default function App() {
-  clientID.set('739fe296-3bfb-43d9-b1fb-12a280ab557a');
+  clientID.set('6e25bebf-aaaa-4e98-89c2-6f11211f9539');
   numbro.setLanguage('en-US');
 
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <Main />
+        <NavigationContainer>
+          <Routes />
+        </NavigationContainer>
       </QueryClientProvider>
       <Toast />
     </>

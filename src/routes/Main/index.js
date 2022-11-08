@@ -1,9 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {
-  NavigationContainer,
-  getFocusedRouteNameFromRoute,
-} from '@react-navigation/native';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { Image, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -26,97 +23,95 @@ export default function Main() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <NavigationContainer>
-          <BottomTab.Navigator
-            screenOptions={{
-              headerShown: false,
-              tabBarActiveTintColor: themes.ACTIVE,
-              tabBarStyle: styles.navigator,
-              tabBarHideOnKeyboard: true,
+        <BottomTab.Navigator
+          screenOptions={{
+            headerShown: false,
+            tabBarActiveTintColor: themes.ACTIVE,
+            tabBarStyle: styles.navigator,
+            tabBarHideOnKeyboard: true,
+          }}
+          initialRouteName="Home"
+        >
+          <BottomTab.Screen
+            name="Home"
+            component={HomeScene}
+            options={({ route }) => ({
+              tabBarIcon: ({ focused }) => (
+                <Ionicons
+                  name={focused ? 'ios-home' : 'ios-home-outline'}
+                  size={iconsize}
+                  color={focused ? themes.ACTIVE : themes.SECONDCOLOR}
+                />
+              ),
+              tabBarLabelStyle: styles.label,
+              tabBarStyle: getTabBarStyleHome(route),
+            })}
+          />
+          <BottomTab.Screen
+            name="Search"
+            component={SearchScene}
+            options={({ route }) => ({
+              tabBarIcon: ({ focused }) => (
+                <Ionicons
+                  name={focused ? 'ios-search' : 'ios-search-outline'}
+                  size={iconsize}
+                  color={focused ? themes.ACTIVE : themes.SECONDCOLOR}
+                />
+              ),
+              tabBarLabelStyle: styles.label,
+              tabBarStyle: getTabBarStyleSearch(route),
+            })}
+          />
+          <BottomTab.Screen
+            name="AddShort"
+            component={AddScene}
+            options={{
+              tabBarIcon: () => (
+                <View style={styles.addicon}>
+                  <Image
+                    source={require('../../assets/AddShortButton.png')}
+                    style={styles.icon}
+                  />
+                </View>
+              ),
+              tabBarLabel: () => null,
             }}
-            initialRouteName="Home"
-          >
-            <BottomTab.Screen
-              name="Home"
-              component={HomeScene}
-              options={({ route }) => ({
-                tabBarIcon: ({ focused }) => (
-                  <Ionicons
-                    name={focused ? 'ios-home' : 'ios-home-outline'}
-                    size={iconsize}
-                    color={focused ? themes.ACTIVE : themes.SECONDCOLOR}
-                  />
-                ),
-                tabBarLabelStyle: styles.label,
-                tabBarStyle: getTabBarStyleHome(route),
-              })}
-            />
-            <BottomTab.Screen
-              name="Search"
-              component={SearchScene}
-              options={({ route }) => ({
-                tabBarIcon: ({ focused }) => (
-                  <Ionicons
-                    name={focused ? 'ios-search' : 'ios-search-outline'}
-                    size={iconsize}
-                    color={focused ? themes.ACTIVE : themes.SECONDCOLOR}
-                  />
-                ),
-                tabBarLabelStyle: styles.label,
-                tabBarStyle: getTabBarStyleSearch(route),
-              })}
-            />
-            <BottomTab.Screen
-              name="AddShort"
-              component={AddScene}
-              options={{
-                tabBarIcon: () => (
-                  <View style={styles.addicon}>
-                    <Image
-                      source={require('../../assets/AddShortButton.png')}
-                      style={styles.icon}
-                    />
-                  </View>
-                ),
-                tabBarLabel: () => null,
-              }}
-            />
-            <BottomTab.Screen
-              name="Inbox"
-              component={InboxScene}
-              options={({ route }) => ({
-                tabBarIcon: ({ focused }) => (
-                  <Ionicons
-                    name={
-                      focused ? 'ios-chatbox-ellipses' : 'ios-chatbox-outline'
-                    }
-                    size={iconsize}
-                    color={focused ? themes.ACTIVE : themes.SECONDCOLOR}
-                  />
-                ),
-                tabBarLabelStyle: styles.label,
-                tabBarStyle: getTabBarStyleInbox(route),
-              })}
-            />
-            <BottomTab.Screen
-              name="Profile"
-              component={ProfileScene}
-              options={({ route }) => ({
-                tabBarIcon: ({ focused }) => (
-                  <Ionicons
-                    name={focused ? 'ios-person' : 'person-outline'}
-                    size={iconsize}
-                    color={focused ? themes.ACTIVE : themes.SECONDCOLOR}
-                  />
-                ),
-                tabBarLabelStyle: styles.label,
-                tabBarStyle: getTabBarStyleProfile(route),
-              })}
-            />
-          </BottomTab.Navigator>
+          />
+          <BottomTab.Screen
+            name="Inbox"
+            component={InboxScene}
+            options={({ route }) => ({
+              tabBarIcon: ({ focused }) => (
+                <Ionicons
+                  name={
+                    focused ? 'ios-chatbox-ellipses' : 'ios-chatbox-outline'
+                  }
+                  size={iconsize}
+                  color={focused ? themes.ACTIVE : themes.SECONDCOLOR}
+                />
+              ),
+              tabBarLabelStyle: styles.label,
+              tabBarStyle: getTabBarStyleInbox(route),
+            })}
+          />
+          <BottomTab.Screen
+            name="Profile"
+            component={ProfileScene}
+            options={({ route }) => ({
+              tabBarIcon: ({ focused }) => (
+                <Ionicons
+                  name={focused ? 'ios-person' : 'person-outline'}
+                  size={iconsize}
+                  color={focused ? themes.ACTIVE : themes.SECONDCOLOR}
+                />
+              ),
+              tabBarLabelStyle: styles.label,
+              tabBarStyle: getTabBarStyleProfile(route),
+            })}
+          />
+        </BottomTab.Navigator>
 
-          <CommentSection />
-        </NavigationContainer>
+        <CommentSection />
       </SafeAreaView>
     </GestureHandlerRootView>
   );
