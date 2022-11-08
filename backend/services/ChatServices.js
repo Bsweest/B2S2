@@ -20,13 +20,12 @@ const queryChatRooms = (bool) => {
 
 //* Get last Messages of Chatroom
 const getLastMessage = async (room_id) => {
-  const { data, error } = await supabase
-    .from('messages')
-    .select()
-    .eq('room_id', room_id)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single();
+  const client = clientID.get();
+
+  const { data, error } = await supabase.rpc('get_last_message', {
+    rmid: room_id,
+    client: client,
+  });
 
   return data;
 };
@@ -37,7 +36,8 @@ const queryLastMessage = (room_id) => {
     {
       placeholderData: {
         content: '',
-        read_status: true,
+        id: null,
+        last_read_id: null,
       },
     },
   );

@@ -1,10 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import querySeachShorts from '../../../backend/services/FullTextSearh';
-import { queryShortsOfuser } from '../../../backend/services/ShareProfileServices';
+import { queryShortsOfUser } from '../../../backend/services/ShareProfileServices';
 import themes from '../../values/themes';
 import ListShort from '../ShareShort/ListShort';
 
@@ -14,7 +13,7 @@ const SearchDetails = ({ navigation, route }) => {
   const ac = new AbortController();
 
   const { data, isSuccess } = op_id
-    ? queryShortsOfuser(op_id)
+    ? queryShortsOfUser(op_id)
     : querySeachShorts(text_search, ac);
 
   const goBack = () => {

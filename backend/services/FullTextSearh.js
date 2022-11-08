@@ -13,8 +13,12 @@ const captionSearch = async (text_search, ac) => {
 };
 
 const querySeachShorts = (text_search, ac) => {
-  return useQuery(['search_caption', text_search], () =>
-    captionSearch(text_search, ac),
+  return useQuery(
+    ['search_caption', text_search],
+    () => captionSearch(text_search, ac),
+    {
+      staleTime: 60000,
+    },
   );
 };
 

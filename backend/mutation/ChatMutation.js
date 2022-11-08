@@ -24,4 +24,25 @@ const mutateChat = () => {
   return useMutation(addChat);
 };
 
+const changeReadStatus = async (props) => {
+  const client = clientID.get();
+  const { room_id, messID } = props;
+
+  const { data, error } = await supabase
+    .from('chat_parti')
+    .update({ last_read_id: messID })
+    .match({
+      room_id: room_id,
+      parti_id: client,
+    });
+
+  if (error) throw new Error(error);
+
+  return data;
+};
+
+export const mutateLastReadMess = () => {
+  return useMutation(changeReadStatus);
+};
+
 export default mutateChat;

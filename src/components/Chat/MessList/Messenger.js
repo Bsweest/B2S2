@@ -10,20 +10,26 @@ const Messenger = ({ passID, navigation }) => {
   const { room_id, parti_id: op_id } = passID;
   const client = clientID.get();
 
-  const { data, isLoading, isError, isSuccess } = queryUserData(op_id);
-  const { data: lastMessage } = queryLastMessage(room_id);
-
   ListenChatroom(room_id);
+
+  const { data, isLoading } = queryUserData(op_id);
+  const {
+    data: last,
+    isSuccess,
+    isError,
+    isFetched,
+  } = queryLastMessage(room_id);
 
   const openChat = () => {
     navigation.navigate('ChatScreen', {
       room_id: room_id,
       op_id: op_id,
+      lastID: last.last_read_id,
     });
   };
 
   return (
-    <Pressable onPress={openChat}>
+    <Pressable disabled={!isFetched} onPress={openChat}>
       <View style={styles.container}>
         <Image
           source={
@@ -38,10 +44,11 @@ const Messenger = ({ passID, navigation }) => {
             style={[
               styles.messenger,
               {
-                fontWeight: lastMessage.read_status ? 'normal' : 'bold',
-                color: lastMessage.read_status
-                  ? themes.SECONDCOLOR
-                  : themes.COLOR,
+                fontWeight: last.id === last.last_read_id ? 'normal' : 'bold',
+                color:
+                  last.id === last.last_read_id
+                    ? themes.SECONDCOLOR
+                    : themes.COLOR,
               },
             ]}
           >
@@ -51,15 +58,16 @@ const Messenger = ({ passID, navigation }) => {
             style={[
               styles.lastMessage,
               {
-                fontWeight: lastMessage.read_status ? 'normal' : 'bold',
-                color: lastMessage.read_status
-                  ? themes.SECONDCOLOR
-                  : themes.COLOR,
+                fontWeight: last.id === last.last_read_id ? 'normal' : 'bold',
+                color:
+                  last.id === last.last_read_id
+                    ? themes.SECONDCOLOR
+                    : themes.COLOR,
               },
             ]}
           >
-            {lastMessage.sender === client ? 'You: ' : ''}
-            {lastMessage.content}
+            {last.sender === client ? 'You: ' : ''}
+            {last.content}
           </Text>
         </View>
       </View>

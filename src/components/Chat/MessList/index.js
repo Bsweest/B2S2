@@ -1,3 +1,4 @@
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { FlashList } from '@shopify/flash-list';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -7,15 +8,11 @@ import themes from '../../../values/themes';
 import InputBar from '../../InputBar';
 import Messenger from './Messenger';
 
-const MessList = ({ navigation }) => {
-  const { data, isSuccess } = queryChatRooms(true);
+const TopTab = createMaterialTopTabNavigator();
 
+const MessList = ({ navigation }) => {
   const goToSearchInput = () => {
     navigation.navigate('SearchFriend');
-  };
-
-  const renderItem = ({ item }) => {
-    return <Messenger passID={item} navigation={navigation} />;
   };
 
   return (
@@ -27,6 +24,44 @@ const MessList = ({ navigation }) => {
         placeholder="Search Friend..."
       />
 
+      <TopTab.Navigator
+        initialRouteName="FriendRooms"
+        screenOptions={{
+          tabBarStyle: styles.tabBar,
+          tabBarLabelStyle: styles.label,
+        }}
+      >
+        <TopTab.Screen
+          name="FriendRooms"
+          component={Rooms}
+          initialParams={{ bool: true }}
+          options={{
+            tabBarLabel: 'Friends',
+          }}
+        />
+        <TopTab.Screen
+          name="StrangerRooms"
+          component={Rooms}
+          initialParams={{ bool: false }}
+          options={{
+            tabBarLabel: 'Strangers',
+          }}
+        />
+      </TopTab.Navigator>
+    </View>
+  );
+};
+
+const Rooms = ({ navigation, route }) => {
+  const { bool } = route.params;
+  const { data } = queryChatRooms(bool);
+
+  const renderItem = ({ item }) => {
+    return <Messenger passID={item} navigation={navigation} />;
+  };
+
+  return (
+    <View style={styles.list}>
       <FlashList
         data={data}
         estimatedItemSize={20}
@@ -70,6 +105,19 @@ const styles = StyleSheet.create({
   cancel: {
     width: 30,
     alignItems: 'center',
+  },
+  tabBar: {
+    backgroundColor: themes.BACKGROUND,
+    color: themes.COLOR,
+    height: 40,
+  },
+  label: {
+    color: themes.COLOR,
+    marginTop: -5,
+  },
+  list: {
+    flex: 1,
+    backgroundColor: themes.BACKGROUND,
   },
 });
 

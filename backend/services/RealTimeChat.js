@@ -1,10 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 
+import ChatRoomInFocused from '../../src/global/ChatRoomInFocused';
 import { supabase } from '../supabase';
-
-export const changeReadStatus = async (id) => {
-  await supabase.from('messages').update({ read_status: true }).eq('id', id);
-};
 
 const ListenChatroom = (room_id) => {
   const queryClient = useQueryClient();
@@ -26,7 +23,25 @@ const ListenChatroom = (room_id) => {
         ]);
         queryClient.setQueryData(
           ['get_last_message', room_id],
-          () => payload.new,
+          ({ id, last_read_id }) => {
+            console.log(
+              'chatID',
+              ChatRoomInFocused.get(),
+              'room',
+              room_id,
+              'id',
+              payload.new.id,
+              'last',
+              last_read_id,
+            );
+            return {
+              ...payload.new,
+              last_read_id:
+                ChatRoomInFocused.get() === room_id
+                  ? payload.new.id
+                  : last_read_id,
+            };
+          },
         );
       },
     )

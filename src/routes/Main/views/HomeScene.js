@@ -5,7 +5,6 @@ import { StyleSheet, View } from 'react-native';
 import { queryExploreFeed } from '../../../../backend/services/GetNewFeed';
 import ChatScreen from '../../../components/Chat/ChatScreen';
 import ListShort from '../../../components/ShareShort/ListShort';
-import ProfileSetting from '../../../components/UserProfile/ProfileSetting';
 import ShareProfile from '../../../components/UserProfile/ShareProfile';
 
 const HomeStack = createNativeStackNavigator();
@@ -21,7 +20,6 @@ export default function HomeScene() {
       >
         <HomeStack.Screen name="NewFeed" component={NewFeed} />
         <HomeStack.Screen name="ShareProfile" component={ShareProfile} />
-        <HomeStack.Screen name="ProfileSetting" component={ProfileSetting} />
         <HomeStack.Screen name="ChatScreen" component={ChatScreen} />
       </HomeStack.Navigator>
     </View>

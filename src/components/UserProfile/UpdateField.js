@@ -95,7 +95,7 @@ const UpdateField = ({ navigation, route }) => {
   };
 
   const update = () => {
-    Alert.alert('Alert Title', 'My Alert Msg', [
+    Alert.alert('Update', `Change your ${field} to: ${input.get()}`, [
       {
         text: 'Cancel',
         style: 'cancel',
@@ -104,8 +104,7 @@ const UpdateField = ({ navigation, route }) => {
       {
         text: 'OK',
         onPress: () => {
-          const value = input.get();
-          mutate({ field: field, value: value, client: data.id });
+          mutate({ field: field, value: input.get(), client: data.id });
         },
       },
     ]);

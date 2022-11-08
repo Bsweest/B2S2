@@ -32,11 +32,13 @@ const ClientData = () => {
   });
 };
 
-//Get Following, Follower, Number of heart
+// Get Following, Follower, Number of heart
 const getInteractNumbers = async (op_id) => {
-  const { data, error } = await supabase.rpc('get_interact_number', {
-    opid: op_id,
+  const { data, error } = await supabase.rpc('get_interact_numbers', {
+    pf_id: op_id,
   });
+
+  if (error) throw new Error(error);
 
   return data;
 };
@@ -46,7 +48,7 @@ const queryInteractNumbers = (op_id) => {
   );
 };
 
-//Get all short videos of user
+//* Get all short videos of user
 const getShortsOfUser = async (op_id) => {
   const { data, error } = await supabase
     .from('shareshorts')
@@ -55,8 +57,32 @@ const getShortsOfUser = async (op_id) => {
 
   return data;
 };
-const queryShortsOfuser = (op_id) => {
+const queryShortsOfUser = (op_id) => {
   return useQuery(['get_user_shorts', op_id], () => getShortsOfUser(op_id));
+};
+
+//* Get shorts that user like
+const getLikedShorts = async (op_id) => {
+  const { data, error } = await supabase.rpc('get_liked_shorts', {
+    props_id: op_id,
+  });
+
+  return data;
+};
+const queryLikedShorts = (op_id) => {
+  return useQuery(['get_liked_shorts', op_id], () => getLikedShorts(op_id));
+};
+
+//* Get shorts that user like
+const getMarkedShorts = async (op_id) => {
+  const { data, error } = await supabase.rpc('get_marked_shorts', {
+    props_id: op_id,
+  });
+
+  return data;
+};
+const queryMarkedShorts = (op_id) => {
+  return useQuery(['get_marked_shorts', op_id], () => getMarkedShorts(op_id));
 };
 
 //* Check Follow
@@ -90,11 +116,13 @@ const queryCheckFollowBack = (op_id) => {
 };
 
 export {
-  queryShortsOfuser,
+  queryShortsOfUser,
   queryInteractNumbers,
   queryCheckFollow,
   ClientData,
   queryCheckFollowBack,
+  queryLikedShorts,
+  queryMarkedShorts,
 };
 
 export default queryUserData;

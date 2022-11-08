@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { clientID } from '../../src/global/ClientProfile';
 import { supabase } from '../supabase';
 
 const updateAvatar = async (client, file, isAdd) => {
@@ -28,21 +29,21 @@ const updateAvatar = async (client, file, isAdd) => {
 const updateProfleField = async (props) => {
   const { field, value, client } = props;
 
-  const update = await supabase
+  const { data, error } = await supabase
     .from('profiles')
     .update({ [field]: value })
-    .eq('id', client)
-    .select()
-    .single();
+    .eq('id', client);
 
-  return update;
+  if (error) throw new Error(error);
+
+  return data;
 };
 const mutateProfileField = () => {
   const queryClient = useQueryClient();
 
   return useMutation(updateProfleField, {
-    onSuccess: (variables) => {
-      queryClient.invalidateQueries(['get_user_data', variables.client]);
+    onSuccess: () => {
+      queryClient.invalidateQueries(['get_user_data', clientID.get()]);
     },
   });
 };

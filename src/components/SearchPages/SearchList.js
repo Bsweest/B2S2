@@ -41,7 +41,7 @@ const SearchList = ({ route, navigation }) => {
           data={data}
           estimatedItemSize={6}
           renderItem={renderItem}
-          keyExtractor={(item) => item}
+          keyExtractor={(item) => item.id}
           numColumns={2}
           automaticallyAdjustContentInsets={false}
         />

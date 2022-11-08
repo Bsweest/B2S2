@@ -1,9 +1,8 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Feather, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Motion } from '@legendapp/motion';
-import { FlashList } from '@shopify/flash-list';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React, { useEffect, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import Toast from 'react-native-toast-message';
 
 import mutateFollow from '../../../backend/mutation/FollowServices';
 import { createRoom } from '../../../backend/services/ChatServices';
@@ -12,14 +11,15 @@ import queryUserData, {
   queryCheckFollow,
   queryCheckFollowBack,
   queryInteractNumbers,
-  queryShortsOfuser,
 } from '../../../backend/services/ShareProfileServices';
 import { clientID } from '../../global/ClientProfile';
 import FormatInteractNumber from '../../hooks/NumBro';
 import themes from '../../values/themes';
-import Library from './Library';
+import GroupShort from './GroupShort';
 import TopBarClient from './TopBar/TopBarClient';
 import TopBarShare from './TopBar/TopBarShare';
+
+const TopTab = createMaterialTopTabNavigator();
 
 const UserProfile = ({ route, navigation }) => {
   const { op_id, isScene } = route.params;
@@ -34,7 +34,6 @@ const UserProfile = ({ route, navigation }) => {
 
   const { data: interactNumber, isSuccess: doneNumbers } =
     queryInteractNumbers(op_id);
-  const { data: userShorts, isSuccess: doneShorts } = queryShortsOfuser(op_id);
 
   useEffect(() => {
     if (interactNumber) setNumbers(FormatInteractNumber(interactNumber));
@@ -46,16 +45,16 @@ const UserProfile = ({ route, navigation }) => {
     mutate({ op_id: op_id, bool: !isFL });
   };
 
-  const renderItem = ({ item, index }) => {
-    return <Library data={item} navigation={navigation} index={index} />;
-  };
-
   const goBack = () => {
     navigation.goBack();
   };
 
   const goToSetting = () => {
-    navigation.navigate('ProfileSetting');
+    isScene
+      ? navigation.navigate('ProfileSetting')
+      : navigation.navigate('Profile', {
+          screen: 'ProfileSetting',
+        });
   };
 
   const chat = async () => {
@@ -75,10 +74,24 @@ const UserProfile = ({ route, navigation }) => {
     }
   };
 
-  const header = () => {
-    return (
+  return (
+    <View style={styles.container}>
+      {isClient ? (
+        <TopBarClient
+          displayname={data.displayname}
+          goBack={goBack}
+          isScene={isScene}
+        />
+      ) : (
+        <TopBarShare
+          displayname={data.displayname}
+          goBack={goBack}
+          chat={chat}
+        />
+      )}
+
       <>
-        {doneShorts && doneNumbers ? (
+        {doneNumbers ? (
           <View style={styles.topContainer}>
             <Image
               style={styles.avatar}
@@ -162,36 +175,62 @@ const UserProfile = ({ route, navigation }) => {
           <></>
         )}
       </>
-    );
-  };
 
-  return (
-    <View style={styles.container}>
-      {isClient ? (
-        <TopBarClient
-          displayname={data.displayname}
-          goBack={goBack}
-          isScene={isScene}
+      <TopTab.Navigator
+        initialRouteName="GroupAll"
+        screenOptions={{
+          tabBarStyle: styles.tabBar,
+          tabBarShowLabel: false,
+          tabBarIconStyle: styles.tabIcon,
+          tabBarIndicatorStyle: styles.indicator,
+        }}
+      >
+        <TopTab.Screen
+          name="GroupAll"
+          component={GroupShort}
+          initialParams={{ fetch: 'all', op_id: op_id }}
+          options={{
+            tabBarIcon: () => (
+              <MaterialIcons
+                name="view-week"
+                size={iconsize}
+                color={themes.ACTIVE}
+              />
+            ),
+          }}
         />
-      ) : (
-        <TopBarShare
-          displayname={data.displayname}
-          goBack={goBack}
-          chat={chat}
+        <TopTab.Screen
+          name="GroupHeart"
+          component={GroupShort}
+          initialParams={{ fetch: 'heart', op_id: op_id }}
+          options={{
+            tabBarIcon: () => (
+              <Feather name="heart" size={iconsize} color={themes.ACTIVE} />
+            ),
+          }}
         />
-      )}
-
-      <FlashList
-        data={userShorts}
-        estimatedItemSize={20}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        numColumns={3}
-        ListHeaderComponent={header}
-      />
+        {isClient && (
+          <TopTab.Screen
+            name="GroupBookmark"
+            component={GroupShort}
+            initialParams={{ fetch: 'bookmark', op_id: op_id }}
+            options={{
+              tabBarIcon: () => (
+                <MaterialIcons
+                  name="bookmarks"
+                  size={iconsize}
+                  color={themes.ACTIVE}
+                />
+              ),
+            }}
+          />
+        )}
+      </TopTab.Navigator>
     </View>
   );
 };
+
+const iconsize = 22;
 
 const styles = StyleSheet.create({
   container: {
@@ -200,9 +239,6 @@ const styles = StyleSheet.create({
   },
   topContainer: {
     alignItems: 'center',
-    borderBottomWidth: 0.5,
-    borderBottomColor: 'white',
-    marginBottom: 0.5,
   },
   avatar: {
     width: 100,
@@ -263,6 +299,21 @@ const styles = StyleSheet.create({
   },
   settingIcon: {
     marginLeft: 2,
+  },
+  tabBar: {
+    backgroundColor: themes.BACKGROUND,
+    color: themes.COLOR,
+    height: 40,
+  },
+  list: {
+    flex: 1,
+    backgroundColor: themes.BACKGROUND,
+  },
+  tabIcon: {
+    marginTop: -7,
+  },
+  indicator: {
+    height: 2.5,
   },
 });
 

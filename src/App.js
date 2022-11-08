@@ -17,7 +17,7 @@ configureObservablePersistence({
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 300000,
+      staleTime: Infinity,
       cacheTime: Infinity,
     },
   },

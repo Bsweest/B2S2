@@ -1,21 +1,22 @@
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
-import { useQueryClient } from '@tanstack/react-query';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Bubble, GiftedChat, Send } from 'react-native-gifted-chat';
 
-import mutateChat from '../../../../backend/mutation/ChatMutation';
+import mutateChat, {
+  mutateLastReadMess,
+} from '../../../../backend/mutation/ChatMutation';
 import { queryInfiniteMessages } from '../../../../backend/services/ChatServices';
-import { changeReadStatus } from '../../../../backend/services/RealTimeChat';
-import queryUserData from '../../../../backend/services/ShareProfileServices';
-import { ClientData } from '../../../../backend/services/ShareProfileServices';
+import queryUserData, {
+  ClientData,
+} from '../../../../backend/services/ShareProfileServices';
+import ChatRoomInFocused from '../../../global/ChatRoomInFocused';
 import themes from '../../../values/themes';
 
 const ChatScreen = ({ route, navigation }) => {
-  const { room_id, op_id } = route.params;
+  const { room_id, op_id, lastID } = route.params;
   const { data: clientData } = ClientData();
-  const queryClient = useQueryClient();
 
   const [messages, setMessages] = useState();
   const [isClicked, setIsClicked] = useState(false);
@@ -26,6 +27,7 @@ const ChatScreen = ({ route, navigation }) => {
     queryInfiniteMessages(room_id);
 
   const { mutate, isLoading: addChat } = mutateChat(room_id);
+  const { mutate: changeLastMess } = mutateLastReadMess(room_id);
 
   const client = {
     _id: clientData.id,
@@ -39,28 +41,28 @@ const ChatScreen = ({ route, navigation }) => {
   };
 
   useEffect(() => {
-    if (!data) return;
-    const convert = data.map(
-      ({ id, created_at, sender, content, read_status }) => {
-        if (!read_status) changeReadStatus(id);
+    ChatRoomInFocused.set(room_id);
 
-        return {
-          _id: id,
-          text: content,
-          createdAt: created_at,
-          user: sender === client._id ? client : mess,
-        };
-      },
-    );
+    return () => {
+      ChatRoomInFocused.set();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!data) return;
+
+    if (lastID !== data[0].id)
+      changeLastMess({ room_id: room_id, messID: data[0].id });
+
+    const convert = data.map(({ id, created_at, sender, content }) => ({
+      _id: id,
+      text: content,
+      createdAt: created_at,
+      user: sender === client._id ? client : mess,
+    }));
 
     setMessages(convert);
   }, [data]);
-
-  useEffect(() => {
-    return () => {
-      queryClient.invalidateQueries(['get_last_message', room_id]);
-    };
-  }, []);
 
   const onClick = () => {
     setIsClicked((prev) => !prev);

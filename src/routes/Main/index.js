@@ -1,15 +1,14 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useSelector } from '@legendapp/state/react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   NavigationContainer,
   getFocusedRouteNameFromRoute,
 } from '@react-navigation/native';
-import { useEffect } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { ClientData } from '../../../backend/services/ShareProfileServices';
 import CommentSection from '../../components/Comments/CommentSection';
 import themes from '../../values/themes';
 import AddScene from './views/AddScene';
@@ -22,6 +21,8 @@ const BottomTab = createBottomTabNavigator();
 const iconsize = 25;
 
 export default function Main() {
+  ClientData();
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
