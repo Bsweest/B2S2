@@ -9,6 +9,7 @@ const AppStack = createNativeStackNavigator();
 const Routes = () => {
   return (
     <AppStack.Navigator
+      initialRouteName="Authentication"
       screenOptions={{
         headerShown: false,
       }}

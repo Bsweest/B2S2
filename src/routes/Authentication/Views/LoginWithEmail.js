@@ -6,6 +6,8 @@ import { FlatButton, TextField } from '../../../components/Auth/Button';
 import PressableOpacity from '../../../components/PressableOpacity';
 
 const LoginWithEmail = ({ navigation }) => {
+  const onClick = () => navigation.navigate('MainApp');
+
   return (
     <View style={styles.container}>
       <View style={styles.topContainer}>
@@ -28,7 +30,7 @@ const LoginWithEmail = ({ navigation }) => {
             Forgot password?
           </Text>
         </PressableOpacity>
-        <FlatButton title="Next" />
+        <FlatButton title="Next" onClick={onClick} />
       </View>
     </View>
   );

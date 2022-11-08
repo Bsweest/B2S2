@@ -23,6 +23,7 @@ const queryClient = new QueryClient({
     },
   },
 });
+
 enableLegendStateReact();
 
 export default function App() {
